@@ -69,17 +69,17 @@
               <span>Rental Car</span>
               <em id="imt-rental-car-count">16 plans</em>
             </label>
-            <label class="imt-check-row">
-              <input type="checkbox" />
+            <label class="imt-check-row" id="imt-vacation-rental-row">
+              <input type="checkbox" id="imt-vacation-rental-filter" />
               <span class="imt-checkmark"></span>
-              <span>Vacation</span>
-              <em>1 plan</em>
+              <span>Vacation Rental</span>
+              <em id="imt-vacation-rental-count">1 plan</em>
             </label>
-            <label class="imt-check-row">
-              <input type="checkbox" />
+            <label class="imt-check-row" id="imt-cruise-row">
+              <input type="checkbox" id="imt-cruise-filter" />
               <span class="imt-checkmark"></span>
               <span>Cruise</span>
-              <em>4 plans</em>
+              <em id="imt-cruise-count">4 plans</em>
             </label>
           </section>
 
@@ -316,8 +316,12 @@
         'preferred',
         'lx with cfar',
       ];
+      const cruisePlanAliases = ['flexipax', 'ultimate', 'elevate', 'explore'];
+      const vacationRentalPlanAliases = ['ultimate'];
       let tripCancellationParentSelected = false;
+      let cruiseSelected = false;
       let rentalCarSelected = false;
+      let vacationRentalSelected = false;
       let tripInterruptionSelected = false;
       let travelDelaySelected = false;
       let preExistingWaiverSelected = false;
@@ -474,6 +478,16 @@
         return rentalCarPlanAliases.some((alias) => normalizedName.includes(alias));
       }
 
+      function planHasCruiseCoverage(plan) {
+        const normalizedName = normalizePlanName(plan && plan.name);
+        return cruisePlanAliases.some((alias) => normalizedName.includes(alias));
+      }
+
+      function planHasVacationRentalCoverage(plan) {
+        const normalizedName = normalizePlanName(plan && plan.name);
+        return vacationRentalPlanAliases.some((alias) => normalizedName.includes(alias));
+      }
+
       function planMatchesMedicalValue(plan, filterValue) {
         if (filterValue === 'all') return true;
         const amount = parseMetricAmount(plan.metrics && plan.metrics.medical);
@@ -509,8 +523,16 @@
         return !rentalCarSelected || planHasRentalCarCoverage(plan);
       }
 
+      function planMatchesCruiseFilter(plan) {
+        return !cruiseSelected || planHasCruiseCoverage(plan);
+      }
+
+      function planMatchesVacationRentalFilter(plan) {
+        return !vacationRentalSelected || planHasVacationRentalCoverage(plan);
+      }
+
       function planMatchesAllFilters(plan) {
-        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan);
+        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan) && planMatchesCruiseFilter(plan) && planMatchesVacationRentalFilter(plan);
       }
 
       function planHasTripCancellation(plan) {
@@ -565,6 +587,23 @@
         input.disabled = disabled;
         row.classList.toggle('imt-check-row--disabled', disabled);
         filterBlock.classList.toggle('imt-filter-block--active', rentalCarSelected);
+      }
+
+      function renderSimpleCoverageFilter(config) {
+        const input = document.getElementById(config.inputId);
+        const row = document.getElementById(config.rowId);
+        const countNode = document.getElementById(config.countId);
+        if (!input || !row || !countNode) return;
+
+        const count = getBasePlans().filter((plan) => {
+          return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan) && config.hasCoverage(plan);
+        }).length;
+        const disabled = count === 0 && !config.isSelected();
+
+        countNode.textContent = count + ' plan' + (count === 1 ? '' : 's');
+        input.checked = config.isSelected();
+        input.disabled = disabled;
+        row.classList.toggle('imt-check-row--disabled', disabled);
       }
 
       function planMatchesReasonFilters(plan) {
@@ -831,6 +870,20 @@
         }
         renderTripCancellationReasonFilters();
         renderRentalCarFilter();
+        renderSimpleCoverageFilter({
+          inputId: 'imt-vacation-rental-filter',
+          rowId: 'imt-vacation-rental-row',
+          countId: 'imt-vacation-rental-count',
+          isSelected: () => vacationRentalSelected,
+          hasCoverage: planHasVacationRentalCoverage,
+        });
+        renderSimpleCoverageFilter({
+          inputId: 'imt-cruise-filter',
+          rowId: 'imt-cruise-row',
+          countId: 'imt-cruise-count',
+          isSelected: () => cruiseSelected,
+          hasCoverage: planHasCruiseCoverage,
+        });
         renderMedicalFilters();
         renderEvacuationFilters();
         attachPlanCardEvents();
@@ -860,6 +913,22 @@
       if (rentalCarInput) {
         rentalCarInput.addEventListener('change', (event) => {
           rentalCarSelected = event.target.checked;
+          renderPlans();
+        });
+      }
+
+      const vacationRentalInput = document.getElementById('imt-vacation-rental-filter');
+      if (vacationRentalInput) {
+        vacationRentalInput.addEventListener('change', (event) => {
+          vacationRentalSelected = event.target.checked;
+          renderPlans();
+        });
+      }
+
+      const cruiseInput = document.getElementById('imt-cruise-filter');
+      if (cruiseInput) {
+        cruiseInput.addEventListener('change', (event) => {
+          cruiseSelected = event.target.checked;
           renderPlans();
         });
       }
