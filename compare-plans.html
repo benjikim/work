@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compare Plans | Soventure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./design-system/theme.css" />
+    <link rel="stylesheet" href="./site.css" />
+  </head>
+  <body class="imt-page">
+    <header class="imt-nav">
+      <div class="imt-nav__inner">
+        <a class="imt-logo" href="./index.html" aria-label="InsureMyTrip home">
+          <img class="imt-logo__image" src="https://assets.insuremytrip.com/wp-content/uploads/2026/03/11140041/imt-logo-2.svg" alt="insuremytrip" />
+        </a>
+        <nav class="imt-nav__links" aria-label="Primary">
+          <a href="./travel-protection.html">Discover Insurance</a>
+          <a href="./resources.html">Reviews &amp; FAQs</a>
+          <a href="./resources.html">Resources</a>
+          <a href="./get-support.html">Get Support</a>
+        </nav>
+        <a class="imt-quote-button" href="./quote-single-trip.html">Start a Quote</a>
+      </div>
+    </header>
+
+    <div class="imt-utility-bar">
+      <div class="imt-utility-bar__inner">
+        <span>Italy</span>
+        <span>Jul 22, 2024 - Jul 31, 2024</span>
+        <span>1 Traveler</span>
+        <span>$2860 on 04/20/24</span>
+      </div>
+    </div>
+
+    <main class="imt-results-page">
+      <div class="imt-results-layout">
+        <aside class="imt-filters" aria-label="Filters">
+          <section class="imt-filter-block">
+            <p class="imt-filters__count" id="imt-visible-plan-count">Showing 20 Plans</p>
+            <a class="imt-filters__reset" id="imt-reset-filters" href="./compare-plans.html" hidden>Reset Filters (Show all 34 Plans)</a>
+          </section>
+
+          <section class="imt-filter-block" id="imt-trip-protection-filter">
+            <div class="imt-filter-heading">
+              <h2>Trip Protection</h2>
+              <span>i</span>
+            </div>
+            <div id="imt-trip-cancellation-reasons-parent"></div>
+            <div class="imt-filter-group-box" id="imt-trip-cancellation-group" hidden>
+              <div class="imt-filter-subheading" id="imt-trip-cancellation-reasons-label" hidden>Covered Reasons</div>
+              <div id="imt-trip-cancellation-reasons" hidden></div>
+            </div>
+          </section>
+
+          <section class="imt-filter-block">
+            <div class="imt-filter-heading">
+              <h2>Other Coverages</h2>
+              <span>i</span>
+            </div>
+            <label class="imt-check-row">
+              <input type="checkbox" />
+              <span class="imt-checkmark"></span>
+              <span>Rental Car</span>
+              <em>16 plans</em>
+            </label>
+            <label class="imt-check-row">
+              <input type="checkbox" />
+              <span class="imt-checkmark"></span>
+              <span>Vacation</span>
+              <em>1 plan</em>
+            </label>
+            <label class="imt-check-row">
+              <input type="checkbox" />
+              <span class="imt-checkmark"></span>
+              <span>Cruise</span>
+              <em>4 plans</em>
+            </label>
+          </section>
+
+          <section class="imt-filter-block">
+            <div class="imt-filter-heading">
+              <h2>Medical Coverage</h2>
+              <span>i</span>
+            </div>
+            <label class="imt-radio-row">
+              <input type="radio" name="medical" value="all" checked />
+              <span class="imt-radio"></span>
+              <span>All Amounts</span>
+              <em>25 plans</em>
+            </label>
+            <label class="imt-radio-row">
+              <input type="radio" name="medical" value="up-to-50000" />
+              <span class="imt-radio"></span>
+              <span>up to $50,000</span>
+              <em>5 plans</em>
+            </label>
+            <label class="imt-radio-row">
+              <input type="radio" name="medical" value="50000-and-up" />
+              <span class="imt-radio"></span>
+              <span>$50,000 and up</span>
+              <em>19 plans</em>
+            </label>
+            <label class="imt-radio-row">
+              <input type="radio" name="medical" value="100000-and-up" />
+              <span class="imt-radio"></span>
+              <span>$100,000 and up</span>
+              <em>15 plans</em>
+            </label>
+            <label class="imt-radio-row">
+              <input type="radio" name="medical" value="250000-and-up" />
+              <span class="imt-radio"></span>
+              <span>$250,000 and up</span>
+              <em>9 plans</em>
+            </label>
+            <div class="imt-filter-suboption">
+              <label class="imt-check-row">
+                <input type="checkbox" />
+                <span class="imt-checkmark"></span>
+                <span>Primary Only</span>
+                <em>18 plans</em>
+              </label>
+            </div>
+          </section>
+
+          <section class="imt-filter-block">
+            <div class="imt-filter-heading">
+              <h2>Emergency Evacuation</h2>
+              <span>i</span>
+            </div>
+            <label class="imt-radio-row">
+              <input type="radio" name="evacuation" value="all" checked />
+              <span class="imt-radio"></span>
+              <span>All Amounts</span>
+              <em>25 plans</em>
+            </label>
+            <label class="imt-radio-row">
+              <input type="radio" name="evacuation" value="up-to-150000" />
+              <span class="imt-radio"></span>
+              <span>up to $150,000</span>
+              <em>1 plan</em>
+            </label>
+            <label class="imt-radio-row">
+              <input type="radio" name="evacuation" value="250000" />
+              <span class="imt-radio"></span>
+              <span>$250,000</span>
+              <em>2 plans</em>
+            </label>
+            <label class="imt-radio-row">
+              <input type="radio" name="evacuation" value="500000" />
+              <span class="imt-radio"></span>
+              <span>$500,000</span>
+              <em>7 plans</em>
+            </label>
+            <label class="imt-radio-row">
+              <input type="radio" name="evacuation" value="1000000" />
+              <span class="imt-radio"></span>
+              <span>$1,000,000</span>
+              <em>9 plans</em>
+            </label>
+            <label class="imt-radio-row imt-radio-row--disabled">
+              <input type="radio" name="evacuation" value="unlimited" disabled />
+              <span class="imt-radio"></span>
+              <span>Unlimited</span>
+              <em>0 plans</em>
+            </label>
+            <div class="imt-filter-suboption">
+              <label class="imt-check-row">
+                <input type="checkbox" />
+                <span class="imt-checkmark"></span>
+                <span>Primary Only</span>
+                <em>19 plans</em>
+              </label>
+            </div>
+          </section>
+
+          <section class="imt-filter-block imt-filter-block--collapsed">
+            <div class="imt-filter-heading">
+              <h2>Baggage</h2>
+              <span>i</span>
+            </div>
+          </section>
+
+          <section class="imt-filter-block imt-filter-block--collapsed">
+            <div class="imt-filter-heading">
+              <h2>Baggage Delay</h2>
+              <span>i</span>
+            </div>
+          </section>
+
+          <section class="imt-filter-block imt-filter-block--collapsed">
+            <div class="imt-filter-heading">
+              <h2>Insurance Providers</h2>
+              <span>i</span>
+            </div>
+          </section>
+
+          <section class="imt-filter-block imt-filter-block--collapsed">
+            <div class="imt-filter-heading">
+              <h2>Accidental Death</h2>
+              <span>i</span>
+            </div>
+          </section>
+
+          <section class="imt-price-card">
+            <header class="imt-price-card__header">
+              <span class="imt-price-card__coin">$</span>
+              <strong>Lowest Prices Anywhere</strong>
+            </header>
+            <div class="imt-price-card__body">
+              <h3>Why Prices Are the Same Everywhere</h3>
+              <p>
+                Travel insurance prices are regulated by state law. Because of this, insurers must
+                charge the same price for the same plan, whether you buy it directly from the
+                provider or through a comparison site.
+              </p>
+            </div>
+            <div class="imt-price-card__band">Added Support With InsureMyTrip</div>
+            <div class="imt-price-card__assist">
+              <h4>Added Support With InsureMyTrip</h4>
+              <div class="imt-price-card__assist-grid">
+                <p>
+                  Free with every plan, get access to licensed insurance pros who explain your
+                  coverage, guide you through claims, and answer your questions.
+                </p>
+                <div class="imt-assist-logo">
+                  <strong>IMT</strong>
+                  <span>ASSIST</span>
+                  <a href="./get-support.html">Learn More</a>
+                </div>
+              </div>
+            </div>
+          </section>
+        </aside>
+
+        <section class="imt-results">
+          <section class="imt-callout">
+            <div class="imt-callout__copy">
+              <h2>Pre-Existing Conditions</h2>
+              <p>
+                Most policies exclude pre-existing conditions unless you qualify for a waiver on
+                specific plans. Check the look-back period, typically 60 to 180 days before buying
+                the policy.
+              </p>
+            </div>
+            <div class="imt-callout__art" aria-hidden="true">
+              <div class="imt-callout__icon"></div>
+            </div>
+          </section>
+
+          <div class="imt-results-toolbar">
+            <label class="imt-sort-control">
+              <select id="imt-plan-sort" aria-label="Sort plans">
+                <option value="default">Most Popular</option>
+                <option value="price-low">Price low</option>
+                <option value="price-high">Price high</option>
+                <option value="coverage-average">Coverage score</option>
+              </select>
+            </label>
+            <a href="./compare-plans.html">Share results</a>
+          </div>
+
+          <div class="imt-plan-list" id="imt-plan-list"></div>
+        </section>
+      </div>
+    </main>
+    <script src="./plan-data.js"></script>
+    <script>
+      const metricDefinitions = [
+        { key: 'medical', label: 'Medical Limit' },
+        { key: 'evacuation', label: 'Evacuation' },
+        { key: 'tripCancellation', label: 'Trip Cancellation' },
+        { key: 'tripInterruption', label: 'Trip Interruption' },
+        { key: 'travelDelay', label: 'Travel Delay' },
+        { key: 'baggage', label: 'Baggage Loss' },
+        { key: 'baggageDelay', label: 'Baggage Delay' },
+        { key: 'accidentalDeath', label: 'Accidental Death' },
+        { key: 'lookbackPeriod', label: 'Lookback Period' },
+        { key: 'preExWaiver', label: 'Pre-Ex Waiver' },
+      ];
+      const tripCancellationReasonOrder = [
+        'Medical or death',
+        'Family member illness',
+        'Job loss',
+        'Work reasons',
+        'Military duty',
+        'Weather',
+        'Natural disaster',
+        'Traffic accident',
+        'Quarantine',
+        'Terrorism',
+        'Supplier default',
+        'Jury or legal duty',
+        'Mechanical failure',
+        'Felonious assault',
+        'Hijacking',
+        'Host at destination',
+        'Home uninhabitable',
+      ];
+      const selectedTripCancellationReasons = new Set();
+      let tripCancellationParentSelected = false;
+      let tripInterruptionSelected = false;
+      let travelDelaySelected = false;
+      let preExistingWaiverSelected = false;
+      let selectedMedicalFilter = 'all';
+      let selectedEvacuationFilter = 'all';
+      const medicalFilterOptions = [
+        { value: 'all', label: 'All Amounts' },
+        { value: 'up-to-50000', label: 'up to $50,000' },
+        { value: '50000-and-up', label: '$50,000 and up' },
+        { value: '100000-and-up', label: '$100,000 and up' },
+        { value: '250000-and-up', label: '$250,000 and up' },
+      ];
+      const evacuationFilterOptions = [
+        { value: 'all', label: 'All Amounts' },
+        { value: 'up-to-150000', label: 'up to $150,000' },
+        { value: '250000', label: '$250,000' },
+        { value: '500000', label: '$500,000' },
+        { value: '1000000', label: '$1,000,000' },
+        { value: 'unlimited', label: 'Unlimited' },
+      ];
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function metricClass(metric) {
+        if (!metric) return 'imt-coverage-cell imt-coverage-cell--none';
+        if (metric.kind === 'check') return 'imt-coverage-cell imt-coverage-cell--check';
+        if (metric.kind === 'info') return 'imt-coverage-cell imt-coverage-cell--info';
+        if (metric.kind === 'none') return 'imt-coverage-cell imt-coverage-cell--none';
+        return 'imt-coverage-cell';
+      }
+
+      function metricStyle(metric) {
+        if (!metric || metric.kind !== 'bar') return '';
+        return ' style="--bar: ' + metric.score + '%; --bar-factor: ' + metric.score + '"';
+      }
+
+      function renderCoverageLine(score) {
+        const clamped = Math.max(0, Math.min(100, score));
+        const filledDots = Math.max(0, Math.min(5, Math.round((clamped / 100) * 5)));
+        return [
+          '<span class="imt-coverage-dots" aria-hidden="true">',
+          Array.from({ length: 5 }, (_, index) => '<span class="imt-coverage-dot' + (index < filledDots ? ' imt-coverage-dot--filled' : '') + '"></span>').join(''),
+          '</span>',
+        ].join('');
+      }
+
+      function renderMetricCell(definition, metric, showCoverageScores) {
+        const cell = metric || { kind: 'none', text: 'X Not included', score: 0 };
+        const score = typeof cell.score === 'number' ? cell.score : 0;
+        const scoreMarkup = showCoverageScores
+          ? '<small class="imt-coverage-score">' + renderCoverageLine(score) + '</small>'
+          : '';
+        return '<div class="' + metricClass(cell) + '"' + metricStyle(cell) + '><span>' + escapeHtml(definition.label) + '</span><strong>' + escapeHtml(cell.text) + '</strong>' + scoreMarkup + '</div>';
+      }
+
+      function renderPrice(priceDisplay) {
+        const [whole, cents = '00'] = priceDisplay.split('.');
+        return '<div class="imt-amount"><span>$</span>' + escapeHtml(whole) + '<small>.' + escapeHtml(cents) + '</small></div>';
+      }
+
+      function getCoverageScore(plan) {
+        const metrics = Object.values((plan && plan.metrics) || {});
+        const scores = metrics
+          .map((metric) => (metric && typeof metric.score === 'number' ? metric.score : null))
+          .filter((score) => score != null);
+
+        if (!scores.length) return 0;
+        return Math.round(scores.reduce((total, score) => total + score, 0) / scores.length);
+      }
+
+      function getDisplayCoverageScore(plan, maxCoverageScore) {
+        const rawScore = getCoverageScore(plan);
+        if (!maxCoverageScore) return 0;
+        return Math.round((rawScore / maxCoverageScore) * 100);
+      }
+
+      function renderPlanCard(plan, showCoverageScores, maxCoverageScore) {
+        const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable');
+        const note = plan.note ? '<p class="imt-plan-card__notice">' + escapeHtml(plan.note) + '</p>' : '';
+        const coverageScore = getDisplayCoverageScore(plan, maxCoverageScore);
+        const actionButton = plan.available
+          ? '<a class="imt-select-button" href="./single-trip.html">Select</a>'
+          : '<span class="imt-select-button imt-select-button--disabled">Unavailable</span>';
+        const providerBadge = plan.providerLogo
+          ? '<div class="imt-plan-card__provider imt-plan-card__provider--img"><img src="' + escapeHtml(plan.providerLogo) + '" alt="' + escapeHtml(plan.provider) + '" loading="lazy" /></div>'
+          : '<div class="imt-plan-card__provider">' + escapeHtml(plan.provider) + '</div>';
+
+        return [
+          '<article class="' + cardClass + '" data-plan-index="' + plan.index + '">',
+          '  <div class="imt-plan-card__main">',
+          '    <div class="imt-plan-card__brand-row">',
+          '      ' + providerBadge,
+          '      <div class="imt-plan-card__headline-group">',
+          '        <div class="imt-plan-card__headline">',
+          '          <p>' + escapeHtml(plan.type) + '</p>',
+          '          <div class="imt-plan-card__title-row">',
+          '            <h3>' + escapeHtml(plan.name) + '</h3>',
+          '            <span class="imt-plan-card__score">Coverage Score ' + escapeHtml(coverageScore) + '%</span>',
+          '          </div>',
+          '        </div>',
+          '      </div>',
+          '    </div>',
+          note,
+          '    <div class="imt-plan-card__metrics">',
+          metricDefinitions.map((definition) => renderMetricCell(definition, plan.metrics[definition.key], showCoverageScores)).join(''),
+          '    </div>',
+          '  </div>',
+          '  <div class="imt-plan-card__price">',
+          renderPrice(plan.priceDisplay),
+          '    <div class="imt-total-label">Total</div>',
+          '    ' + actionButton,
+          '    <div class="imt-plan-card__actions">',
+          '      <a href="./compare-plans.html">Compare</a>',
+          '      <a href="./travel-protection.html">Details</a>',
+          '    </div>',
+          '  </div>',
+          '</article>',
+        ].join('');
+      }
+
+      function getBasePlans() {
+        return planData.filter((plan) => plan.available);
+      }
+
+      function parseMetricAmount(metric) {
+        if (!metric || !metric.text) return null;
+        const text = String(metric.text).trim().toLowerCase();
+        if (text.includes('unlimited')) return Number.POSITIVE_INFINITY;
+        const digits = text.replace(/[^0-9]/g, '');
+        if (!digits) return null;
+        return Number.parseInt(digits, 10);
+      }
+
+      function planMatchesMedicalValue(plan, filterValue) {
+        if (filterValue === 'all') return true;
+        const amount = parseMetricAmount(plan.metrics && plan.metrics.medical);
+        if (amount == null) return false;
+        if (filterValue === 'up-to-50000') return amount <= 50000;
+        if (filterValue === '50000-and-up') return amount >= 50000;
+        if (filterValue === '100000-and-up') return amount >= 100000;
+        if (filterValue === '250000-and-up') return amount >= 250000;
+        return true;
+      }
+
+      function planMatchesEvacuationValue(plan, filterValue) {
+        if (filterValue === 'all') return true;
+        const amount = parseMetricAmount(plan.metrics && plan.metrics.evacuation);
+        if (amount == null) return false;
+        if (filterValue === 'up-to-150000') return amount <= 150000;
+        if (filterValue === '250000') return amount === 250000;
+        if (filterValue === '500000') return amount === 500000;
+        if (filterValue === '1000000') return amount === 1000000;
+        if (filterValue === 'unlimited') return amount === Number.POSITIVE_INFINITY;
+        return true;
+      }
+
+      function planMatchesMedicalFilter(plan) {
+        return planMatchesMedicalValue(plan, selectedMedicalFilter);
+      }
+
+      function planMatchesEvacuationFilter(plan) {
+        return planMatchesEvacuationValue(plan, selectedEvacuationFilter);
+      }
+
+      function planMatchesAllFilters(plan) {
+        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan);
+      }
+
+      function planHasTripCancellation(plan) {
+        return (plan.tripCancellationReasons || []).length > 0;
+      }
+
+      function planHasTripInterruption(plan) {
+        const metric = plan.metrics && plan.metrics.tripInterruption;
+        return metric && metric.kind && metric.kind !== 'none';
+      }
+
+      function planHasTravelDelay(plan) {
+        const metric = plan.metrics && plan.metrics.travelDelay;
+        return metric && metric.kind && metric.kind !== 'none';
+      }
+
+      function planHasPreExistingWaiver(plan) {
+        const metric = plan.metrics && plan.metrics.preExWaiver;
+        return metric && metric.kind && metric.kind !== 'none';
+      }
+
+      function planMatchesTripInterruptionFilter(plan) {
+        return !tripInterruptionSelected || planHasTripInterruption(plan);
+      }
+
+      function planMatchesTravelDelayFilter(plan) {
+        return !travelDelaySelected || planHasTravelDelay(plan);
+      }
+
+      function planMatchesPreExistingWaiverFilter(plan) {
+        return !preExistingWaiverSelected || planHasPreExistingWaiver(plan);
+      }
+
+      function isTripProtectionActive() {
+        return tripCancellationParentSelected || tripInterruptionSelected || travelDelaySelected || preExistingWaiverSelected || selectedTripCancellationReasons.size > 0;
+      }
+
+      function planMatchesReasonFilters(plan) {
+        if (tripCancellationParentSelected && !planHasTripCancellation(plan)) return false;
+        if (!selectedTripCancellationReasons.size) return true;
+        const reasons = plan.tripCancellationReasons || [];
+        return Array.from(selectedTripCancellationReasons).every((reason) => reasons.includes(reason));
+      }
+
+      function planMatchesReasonFiltersExcluding(plan, excludedReason) {
+        const activeReasons = Array.from(selectedTripCancellationReasons).filter((reason) => reason !== excludedReason);
+        if (!activeReasons.length) return true;
+        const reasons = plan.tripCancellationReasons || [];
+        return activeReasons.every((reason) => reasons.includes(reason));
+      }
+
+      function renderTripCancellationReasonFilters() {
+        const filterBlock = document.getElementById('imt-trip-protection-filter');
+        const groupBox = document.getElementById('imt-trip-cancellation-group');
+        const parentContainer = document.getElementById('imt-trip-cancellation-reasons-parent');
+        const label = document.getElementById('imt-trip-cancellation-reasons-label');
+        const container = document.getElementById('imt-trip-cancellation-reasons');
+        if (!container || !parentContainer || !label || !filterBlock || !groupBox) return;
+
+        const counts = new Map();
+        const availablePlans = getBasePlans();
+        const tripCancellationCount = availablePlans.filter((plan) => planHasTripCancellation(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan)).length;
+        const tripInterruptionCount = availablePlans.filter((plan) => planHasTripInterruption(plan) && planMatchesReasonFilters(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan)).length;
+        const travelDelayCount = availablePlans.filter((plan) => planHasTravelDelay(plan) && planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan)).length;
+        const preExistingWaiverCount = availablePlans.filter((plan) => planHasPreExistingWaiver(plan) && planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan)).length;
+
+        tripCancellationReasonOrder.forEach((reason) => {
+          const count = availablePlans.filter((plan) => {
+            const reasons = plan.tripCancellationReasons || [];
+            return planHasTripCancellation(plan) && planMatchesReasonFiltersExcluding(plan, reason) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && reasons.includes(reason);
+          }).length;
+          counts.set(reason, count);
+        });
+
+        const reasons = tripCancellationReasonOrder;
+        const selectableReasons = reasons.filter((reason) => (counts.get(reason) || 0) > 0 || selectedTripCancellationReasons.has(reason));
+        const selectedSelectableCount = selectableReasons.filter((reason) => selectedTripCancellationReasons.has(reason)).length;
+        const someSelectableChecked = selectedSelectableCount > 0;
+        const tripInterruptionDisabled = tripInterruptionCount === 0 && !tripInterruptionSelected;
+        const travelDelayDisabled = travelDelayCount === 0 && !travelDelaySelected;
+        const preExistingWaiverDisabled = preExistingWaiverCount === 0 && !preExistingWaiverSelected;
+
+        parentContainer.innerHTML = [
+          '<label class="imt-check-row">',
+          '  <input type="checkbox" id="imt-trip-cancellation-parent"' + (tripCancellationParentSelected ? ' checked' : '') + ' />',
+          '  <span class="imt-checkmark"></span>',
+          '  <span>Trip cancellation</span>',
+          '  <em>' + tripCancellationCount + ' plan' + (tripCancellationCount === 1 ? '' : 's') + '</em>',
+          '</label>',
+          '<label class="imt-check-row' + (tripInterruptionDisabled ? ' imt-check-row--disabled' : '') + '">',
+          '  <input type="checkbox" id="imt-trip-interruption-filter"' + (tripInterruptionSelected ? ' checked' : '') + (tripInterruptionDisabled ? ' disabled' : '') + ' />',
+          '  <span class="imt-checkmark"></span>',
+          '  <span>Trip interruption</span>',
+          '  <em>' + tripInterruptionCount + ' plan' + (tripInterruptionCount === 1 ? '' : 's') + '</em>',
+          '</label>',
+          '<label class="imt-check-row' + (travelDelayDisabled ? ' imt-check-row--disabled' : '') + '">',
+          '  <input type="checkbox" id="imt-travel-delay-filter"' + (travelDelaySelected ? ' checked' : '') + (travelDelayDisabled ? ' disabled' : '') + ' />',
+          '  <span class="imt-checkmark"></span>',
+          '  <span>Travel delay</span>',
+          '  <em>' + travelDelayCount + ' plan' + (travelDelayCount === 1 ? '' : 's') + '</em>',
+          '</label>',
+          '<label class="imt-check-row' + (preExistingWaiverDisabled ? ' imt-check-row--disabled' : '') + '">',
+          '  <input type="checkbox" id="imt-pre-existing-waiver-filter"' + (preExistingWaiverSelected ? ' checked' : '') + (preExistingWaiverDisabled ? ' disabled' : '') + ' />',
+          '  <span class="imt-checkmark"></span>',
+          '  <span>Pre-Ex waiver</span>',
+          '  <em>' + preExistingWaiverCount + ' plan' + (preExistingWaiverCount === 1 ? '' : 's') + '</em>',
+          '</label>',
+        ].join('');
+
+        container.innerHTML = reasons
+          .map((reason) => {
+            const checked = selectedTripCancellationReasons.has(reason) ? ' checked' : '';
+            const count = counts.get(reason) || 0;
+            const disabled = count === 0 && !selectedTripCancellationReasons.has(reason);
+            const disabledAttr = disabled ? ' disabled' : '';
+            const disabledClass = disabled ? ' imt-check-row--disabled' : '';
+            return [
+              '<label class="imt-check-row' + disabledClass + '">',
+              '  <input type="checkbox" value="' + escapeHtml(reason) + '"' + checked + disabledAttr + ' />',
+              '  <span class="imt-checkmark"></span>',
+              '  <span>' + escapeHtml(reason) + '</span>',
+              '  <em>' + count + ' plan' + (count === 1 ? '' : 's') + '</em>',
+              '</label>',
+            ].join('');
+          })
+          .join('');
+        filterBlock.classList.toggle('imt-filter-block--active', isTripProtectionActive());
+        groupBox.hidden = !tripCancellationParentSelected;
+        label.hidden = !tripCancellationParentSelected;
+        container.hidden = !tripCancellationParentSelected;
+
+        const parentInput = parentContainer.querySelector('#imt-trip-cancellation-parent');
+        if (parentInput) {
+          parentInput.indeterminate = !tripCancellationParentSelected && someSelectableChecked;
+          parentInput.addEventListener('change', (event) => {
+            tripCancellationParentSelected = event.target.checked;
+            if (!tripCancellationParentSelected) {
+              selectedTripCancellationReasons.clear();
+            }
+            renderPlans();
+          });
+        }
+
+        const tripInterruptionInput = parentContainer.querySelector('#imt-trip-interruption-filter');
+        if (tripInterruptionInput) {
+          tripInterruptionInput.addEventListener('change', (event) => {
+            tripInterruptionSelected = event.target.checked;
+            renderPlans();
+          });
+        }
+
+        const travelDelayInput = parentContainer.querySelector('#imt-travel-delay-filter');
+        if (travelDelayInput) {
+          travelDelayInput.addEventListener('change', (event) => {
+            travelDelaySelected = event.target.checked;
+            renderPlans();
+          });
+        }
+
+        const preExistingWaiverInput = parentContainer.querySelector('#imt-pre-existing-waiver-filter');
+        if (preExistingWaiverInput) {
+          preExistingWaiverInput.addEventListener('change', (event) => {
+            preExistingWaiverSelected = event.target.checked;
+            renderPlans();
+          });
+        }
+
+        container.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+          input.addEventListener('change', (event) => {
+            const reason = event.target.value;
+            if (event.target.checked) {
+              selectedTripCancellationReasons.add(reason);
+            } else {
+              selectedTripCancellationReasons.delete(reason);
+            }
+            renderPlans();
+          });
+        });
+      }
+
+      function updateRadioFilterCounts(name, options, countMatcher, selectedValue) {
+        options.forEach((option) => {
+          const input = document.querySelector('input[name="' + name + '"][value="' + option.value + '"]');
+          if (!input) return;
+          const label = input.closest('.imt-radio-row');
+          const countNode = label ? label.querySelector('em') : null;
+          const count = getBasePlans().filter((plan) => countMatcher(plan, option.value)).length;
+          const disabled = count === 0 && option.value !== selectedValue;
+
+          if (countNode) {
+            countNode.textContent = count + ' plan' + (count === 1 ? '' : 's');
+          }
+
+          input.disabled = disabled;
+          if (label) {
+            label.classList.toggle('imt-radio-row--disabled', disabled);
+          }
+        });
+      }
+
+      function renderMedicalFilters() {
+        updateRadioFilterCounts(
+          'medical',
+          medicalFilterOptions,
+          (plan, filterValue) => planMatchesReasonFilters(plan) && planMatchesEvacuationFilter(plan) && planMatchesMedicalValue(plan, filterValue),
+          selectedMedicalFilter
+        );
+      }
+
+      function renderEvacuationFilters() {
+        updateRadioFilterCounts(
+          'evacuation',
+          evacuationFilterOptions,
+          (plan, filterValue) => planMatchesReasonFilters(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationValue(plan, filterValue),
+          selectedEvacuationFilter
+        );
+      }
+
+      function getSortedPlans(selectedValue) {
+        const sorted = getBasePlans().filter((plan) => planMatchesAllFilters(plan));
+
+        if (selectedValue === 'price-low') {
+          sorted.sort((a, b) => {
+            if (a.available !== b.available) return a.available ? -1 : 1;
+            return a.price - b.price || a.index - b.index;
+          });
+        } else if (selectedValue === 'price-high') {
+          sorted.sort((a, b) => {
+            if (a.available !== b.available) return a.available ? -1 : 1;
+            return b.price - a.price || a.index - b.index;
+          });
+        } else if (selectedValue === 'coverage-average') {
+          sorted.sort((a, b) => {
+            if (a.available !== b.available) return a.available ? -1 : 1;
+            return getCoverageScore(b) - getCoverageScore(a) || a.price - b.price || a.index - b.index;
+          });
+        } else {
+          sorted.sort((a, b) => a.index - b.index);
+        }
+
+        return sorted;
+      }
+
+      const sortSelect = document.getElementById('imt-plan-sort');
+      const planList = document.getElementById('imt-plan-list');
+      const visiblePlanCount = document.getElementById('imt-visible-plan-count');
+      const resetFiltersLink = document.getElementById('imt-reset-filters');
+
+      function syncFilterGroupState() {
+        document.querySelectorAll('.imt-filter-block').forEach((block) => {
+          const heading = block.querySelector('.imt-filter-heading');
+          if (!heading) return;
+          heading.setAttribute('role', 'button');
+          heading.setAttribute('tabindex', '0');
+          heading.setAttribute('aria-expanded', String(!block.classList.contains('imt-filter-block--collapsed')));
+        });
+      }
+
+      function attachFilterGroupEvents() {
+        document.querySelectorAll('.imt-filter-heading').forEach((heading) => {
+          if (heading.dataset.toggleBound === 'true') return;
+          heading.dataset.toggleBound = 'true';
+
+          const toggle = () => {
+            const block = heading.closest('.imt-filter-block');
+            if (!block) return;
+            block.classList.toggle('imt-filter-block--collapsed');
+            heading.setAttribute('aria-expanded', String(!block.classList.contains('imt-filter-block--collapsed')));
+          };
+
+          heading.addEventListener('click', toggle);
+          heading.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              toggle();
+            }
+          });
+        });
+      }
+
+      function attachPlanCardEvents() {
+        return;
+      }
+
+      function renderPlans() {
+        if (!planList) return;
+        const selectedValue = sortSelect ? sortSelect.value : 'default';
+        const totalPlans = getBasePlans().length;
+        const visiblePlans = getSortedPlans(selectedValue);
+        const showCoverageScores = selectedValue === 'coverage-average';
+        const maxCoverageScore = visiblePlans.reduce((max, plan) => Math.max(max, getCoverageScore(plan)), 0);
+        planList.innerHTML = visiblePlans.map((plan) => renderPlanCard(plan, showCoverageScores, maxCoverageScore)).join('');
+        if (visiblePlanCount) {
+          visiblePlanCount.textContent = 'Showing ' + visiblePlans.length + ' Plan' + (visiblePlans.length === 1 ? '' : 's');
+        }
+        if (resetFiltersLink) {
+          resetFiltersLink.hidden = visiblePlans.length >= totalPlans;
+          resetFiltersLink.textContent = 'Reset Filters (Show all ' + totalPlans + ' Plans)';
+        }
+        renderTripCancellationReasonFilters();
+        renderMedicalFilters();
+        renderEvacuationFilters();
+        attachPlanCardEvents();
+      }
+
+      if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+          renderPlans();
+        });
+      }
+
+      document.querySelectorAll('input[name="medical"]').forEach((input) => {
+        input.addEventListener('change', (event) => {
+          selectedMedicalFilter = event.target.value;
+          renderPlans();
+        });
+      });
+
+      document.querySelectorAll('input[name="evacuation"]').forEach((input) => {
+        input.addEventListener('change', (event) => {
+          selectedEvacuationFilter = event.target.value;
+          renderPlans();
+        });
+      });
+
+      attachFilterGroupEvents();
+      syncFilterGroupState();
+      renderPlans();
+    </script>
+  </body>
+</html>

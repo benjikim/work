@@ -1,0 +1,156 @@
+:root {
+  --color-brand-dark: #274452;
+  --color-action-primary: #f78403;
+  --color-action-secondary: #0270c0;
+  --color-accent-turquoise: #039097;
+  --color-section-bg: #e0eef7;
+  --color-text-primary: #2a2a2a;
+  --color-text-inverse: #ffffff;
+  --color-neutral-100: #ebebeb;
+  --color-accent-purple: #a51f96;
+
+  --font-display: "Open Sans", sans-serif;
+  --font-body: "Open Sans", sans-serif;
+
+  --type-display-hero-size: 54px;
+  --type-display-hero-line: 64px;
+  --type-display-hero-track: 1px;
+
+  --type-heading-size: 32px;
+  --type-heading-line: 36px;
+  --type-heading-track: 0.5px;
+
+  --type-body-size: 18px;
+  --type-body-line: 30px;
+
+  --type-button-size: 18px;
+  --type-button-line: 19px;
+  --type-button-track: 2.55px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 30px;
+  --space-8: 32px;
+  --space-9: 40px;
+  --space-10: 50px;
+
+  --radius-sm: 12px;
+  --radius-lg: 30px;
+
+  --size-button-height: 67px;
+  --size-button-width-standard: 235px;
+  --size-button-width-wide: 247px;
+  --size-flip-card-width: 327px;
+  --size-flip-card-height: 180px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+}
+
+.ds-container {
+  width: min(100%, 1737px);
+  margin: 0 auto;
+  padding-inline: clamp(16px, 4vw, 120px);
+}
+
+.ds-section-heading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--type-heading-size);
+  line-height: var(--type-heading-line);
+  letter-spacing: var(--type-heading-track);
+  color: var(--color-text-primary);
+}
+
+.ds-body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-line);
+}
+
+.ds-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--size-button-height);
+  padding: 24px 32px;
+  border: 0;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: var(--type-button-track);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--type-button-size);
+  line-height: var(--type-button-line);
+  text-align: center;
+}
+
+.ds-button--primary {
+  background: var(--color-action-primary);
+  color: var(--color-text-inverse);
+}
+
+.ds-button--secondary {
+  background: var(--color-action-secondary);
+  color: var(--color-text-inverse);
+}
+
+.ds-button--outline {
+  background: transparent;
+  color: var(--color-action-primary);
+  border: 1px solid var(--color-action-primary);
+}
+
+.ds-flip-card {
+  position: relative;
+  width: var(--size-flip-card-width);
+  min-height: var(--size-flip-card-height);
+  background: var(--color-accent-turquoise);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-inverse);
+  padding: 60px 49px;
+  display: flex;
+  align-items: center;
+}
+
+.ds-flip-card__title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 30px;
+  font-weight: 600;
+}
+
+.ds-flip-card__trigger {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--color-text-inverse);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
