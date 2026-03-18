@@ -791,6 +791,12 @@
   gap: 15px;
 }
 
+#imt-trip-cancellation-reasons .imt-check-row span,
+#imt-trip-cancellation-reasons-parent .imt-check-row span {
+  font-size: 12.8px;
+  line-height: 19.2px;
+}
+
 .imt-filter-suboption {
   padding-top: 10px;
   border-top: 1px solid rgba(33, 38, 41, 0.5);
