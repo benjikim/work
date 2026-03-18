@@ -673,6 +673,16 @@
   font: 700 12px/1 var(--font-body);
 }
 
+.imt-filter-info-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
 .imt-check-row,
 .imt-radio-row {
   position: relative;
@@ -1099,6 +1109,102 @@
 .imt-results-reset:hover {
   text-decoration: underline;
 }
+
+.imt-modal[hidden] {
+  display: none;
+}
+
+.imt-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+.imt-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 38, 77, 0.42);
+}
+
+.imt-modal__dialog {
+  position: relative;
+  width: min(92vw, 560px);
+  margin: min(12vh, 88px) auto 0;
+  padding: 28px 28px 24px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(8, 38, 77, 0.22);
+}
+
+.imt-modal__close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  border: 0;
+  background: transparent;
+  color: #5f6c76;
+  font: 700 11px/1 var(--font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.imt-modal__eyebrow {
+  margin-bottom: 10px;
+  color: #0270c0;
+  font: 700 12px/1.2 var(--font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.imt-modal__title {
+  margin: 0;
+  color: #08264d;
+  font: 700 30px/1.1 var(--font-body);
+}
+
+.imt-modal__body,
+.imt-modal__note {
+  margin: 14px 0 0;
+  color: #24303b;
+  font: 400 16px/1.5 var(--font-body);
+}
+
+.imt-modal__graphic {
+  margin-top: 20px;
+  padding: 22px 18px;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(123, 184, 51, 0.14), rgba(2, 112, 192, 0.08)),
+    #f8fbfd;
+}
+
+.imt-modal__scale {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.imt-modal__dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #d5dde6;
+}
+
+.imt-modal__dot.is-filled {
+  background: #d4a017;
+}
+
+.imt-modal__scale-labels {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  color: #5f6c76;
+  font: 700 12px/1.2 var(--font-body);
+  text-transform: uppercase;
+}
+
 
 .imt-plan-card {
   display: grid;

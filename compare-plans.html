@@ -245,6 +245,45 @@
         </section>
       </div>
     </main>
+    <div class="imt-modal" id="imt-coverage-score-modal" hidden>
+      <div class="imt-modal__backdrop" data-close-modal="true"></div>
+      <div class="imt-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="imt-coverage-score-title">
+        <button class="imt-modal__close" id="imt-coverage-score-close" type="button" aria-label="Close coverage score explanation">Close</button>
+        <div class="imt-modal__eyebrow">Coverage Score</div>
+        <h2 class="imt-modal__title" id="imt-coverage-score-title">How coverage score works</h2>
+        <p class="imt-modal__body">
+          Coverage score compares each plan&apos;s included benefits against the other plans shown here.
+          More gold dots mean that specific coverage tends to land closer to the strongest end of the
+          available options.
+        </p>
+        <div class="imt-modal__graphic" aria-hidden="true">
+          <div class="imt-modal__scale">
+            <span class="imt-modal__dot is-filled"></span>
+            <span class="imt-modal__dot is-filled"></span>
+            <span class="imt-modal__dot is-filled"></span>
+            <span class="imt-modal__dot is-filled"></span>
+            <span class="imt-modal__dot is-filled"></span>
+          </div>
+          <div class="imt-modal__scale-labels">
+            <span>Lower</span>
+            <span>Middle</span>
+            <span>Higher</span>
+          </div>
+        </div>
+        <p class="imt-modal__note">
+          This view is meant to help you compare relative strength quickly, not replace plan details.
+        </p>
+      </div>
+    </div>
+    <div class="imt-modal" id="imt-filter-info-modal" hidden>
+      <div class="imt-modal__backdrop" data-close-info-modal="true"></div>
+      <div class="imt-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="imt-filter-info-title">
+        <button class="imt-modal__close" id="imt-filter-info-close" type="button" aria-label="Close filter explanation">Close</button>
+        <div class="imt-modal__eyebrow">Filter Info</div>
+        <h2 class="imt-modal__title" id="imt-filter-info-title">Filter details</h2>
+        <p class="imt-modal__body" id="imt-filter-info-body"></p>
+      </div>
+    </div>
     <script src="./plan-data.js"></script>
     <script>
       const metricDefinitions = [
@@ -409,7 +448,6 @@
 
       function renderMetricCell(definition, metric, showCoverageScores) {
         const cell = metric || { kind: 'none', text: 'X Not included', score: 0 };
-        const score = typeof cell.score === 'number' ? cell.score : 0;
         const showMetricDots = showCoverageScores && definition.key !== 'preExWaiver' && cell.kind !== 'none';
         const scoreMarkup = showMetricDots
           ? '<small class="imt-coverage-score">' + renderCoverageLine(definition, cell) + '</small>'
@@ -423,13 +461,15 @@
       }
 
       function getCoverageScore(plan) {
-        const metrics = Object.values((plan && plan.metrics) || {});
-        const scores = metrics
-          .map((metric) => (metric && typeof metric.score === 'number' ? metric.score : null))
-          .filter((score) => score != null);
+        const metrics = (plan && plan.metrics) || {};
+        const dotDefinitions = metricDefinitions.filter((definition) => definition.key !== 'preExWaiver');
+        const maxDots = dotDefinitions.length * 5;
+        const totalDots = dotDefinitions.reduce((sum, definition) => {
+          return sum + getCoverageDotsCount(definition, metrics[definition.key]);
+        }, 0);
 
-        if (!scores.length) return 0;
-        return Math.round(scores.reduce((total, score) => total + score, 0) / scores.length);
+        if (!maxDots) return 0;
+        return Math.round((totalDots / maxDots) * 100);
       }
 
       function getPlanTypeLabel(plan) {
@@ -455,7 +495,7 @@
         const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable');
         const note = plan.note ? '<p class="imt-plan-card__notice">' + escapeHtml(plan.note) + '</p>' : '';
         const coverageScore = getDisplayCoverageScore(plan, maxCoverageScore);
-        const coverageScoreLabel = getCoverageScoreLabel(coverageScore);
+        const coverageScoreLabel = plan.type === 'Evacuation' ? 'Not applicable' : getCoverageScoreLabel(coverageScore);
         const actionButton = plan.available
           ? '<span class="imt-select-button imt-select-button--inactive" aria-disabled="true">Select</span>'
           : '<span class="imt-select-button imt-select-button--disabled">Unavailable</span>';
@@ -917,8 +957,25 @@
       const visiblePlanCount = document.getElementById('imt-visible-plan-count');
       const resetFiltersLink = document.getElementById('imt-reset-filters');
       const resultsResetLink = document.getElementById('imt-results-reset');
+      const coverageScoreModal = document.getElementById('imt-coverage-score-modal');
+      const coverageScoreClose = document.getElementById('imt-coverage-score-close');
+      const filterInfoModal = document.getElementById('imt-filter-info-modal');
+      const filterInfoClose = document.getElementById('imt-filter-info-close');
+      const filterInfoTitle = document.getElementById('imt-filter-info-title');
+      const filterInfoBody = document.getElementById('imt-filter-info-body');
       const tripProtectionBlock = document.getElementById('imt-trip-protection-filter');
       const tripProtectionHeading = document.getElementById('imt-trip-protection-heading');
+      let hasShownCoverageScoreModal = false;
+      const filterInfoCopy = {
+        'Trip Protection': 'Trip protection highlights cancellation and delay benefits that matter most when your itinerary changes before departure or during the trip.',
+        'Other Coverages': 'Other coverages help you surface plans that include add-on style protections such as rental car, vacation rental, or cruise-focused benefits.',
+        'Medical Coverage': 'Medical coverage lets you compare how much emergency illness and injury protection each plan includes while you travel.',
+        'Emergency Evacuation': 'Emergency evacuation shows how much support a plan provides if you need transport to appropriate medical care or a safer location.',
+        'Baggage': 'Baggage compares the amount a plan may reimburse if your belongings are lost, stolen, or damaged during a covered trip.',
+        'Baggage Delay': 'Baggage delay helps you find plans that reimburse essentials when your bags arrive later than expected.',
+        'Insurance Providers': 'Insurance providers helps you narrow the list to carriers you already know or trust.',
+        'Accidental Death': 'Accidental death compares plans that include a lump-sum benefit for severe covered travel accidents.',
+      };
 
       function setFilterBlockCollapsed(block, collapsed) {
         if (!block) return;
@@ -996,6 +1053,89 @@
         return;
       }
 
+      function setCoverageScoreModalOpen(isOpen) {
+        if (!coverageScoreModal) return;
+        coverageScoreModal.hidden = !isOpen;
+      }
+
+      function setFilterInfoModalContent(title) {
+        if (!filterInfoTitle || !filterInfoBody) return;
+        filterInfoTitle.textContent = title;
+        filterInfoBody.textContent = filterInfoCopy[title] || 'This filter helps you narrow the results based on the coverage details shown in this section.';
+      }
+
+      function setFilterInfoModalOpen(isOpen) {
+        if (!filterInfoModal) return;
+        filterInfoModal.hidden = !isOpen;
+      }
+
+      function attachCoverageScoreModalEvents() {
+        if (!coverageScoreModal || coverageScoreModal.dataset.bound === 'true') return;
+        coverageScoreModal.dataset.bound = 'true';
+
+        coverageScoreModal.addEventListener('click', (event) => {
+          const target = event.target;
+          if (target instanceof HTMLElement && target.dataset.closeModal === 'true') {
+            setCoverageScoreModalOpen(false);
+          }
+        });
+
+        if (coverageScoreClose) {
+          coverageScoreClose.addEventListener('click', () => {
+            setCoverageScoreModalOpen(false);
+          });
+        }
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            setCoverageScoreModalOpen(false);
+            setFilterInfoModalOpen(false);
+          }
+        });
+      }
+
+      function attachFilterInfoModalEvents() {
+        if (!filterInfoModal || filterInfoModal.dataset.bound === 'true') return;
+        filterInfoModal.dataset.bound = 'true';
+
+        filterInfoModal.addEventListener('click', (event) => {
+          const target = event.target;
+          if (target instanceof HTMLElement && target.dataset.closeInfoModal === 'true') {
+            setFilterInfoModalOpen(false);
+          }
+        });
+
+        if (filterInfoClose) {
+          filterInfoClose.addEventListener('click', () => {
+            setFilterInfoModalOpen(false);
+          });
+        }
+
+        document.querySelectorAll('.imt-filter-heading').forEach((heading) => {
+          const infoIcon = heading.querySelector('span');
+          const titleNode = heading.querySelector('h2');
+          if (!infoIcon || !titleNode || infoIcon.dataset.infoBound === 'true') return;
+          infoIcon.dataset.infoBound = 'true';
+          infoIcon.setAttribute('role', 'button');
+          infoIcon.setAttribute('tabindex', '0');
+          infoIcon.classList.add('imt-filter-info-trigger');
+
+          const openInfo = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setFilterInfoModalContent(titleNode.textContent.trim());
+            setFilterInfoModalOpen(true);
+          };
+
+          infoIcon.addEventListener('click', openInfo);
+          infoIcon.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              openInfo(event);
+            }
+          });
+        });
+      }
+
       function renderPlans() {
         if (!planList) return;
         const selectedValue = sortSelect ? sortSelect.value : 'default';
@@ -1039,6 +1179,10 @@
 
       if (sortSelect) {
         sortSelect.addEventListener('change', () => {
+          if (sortSelect.value === 'coverage-average' && !hasShownCoverageScoreModal) {
+            hasShownCoverageScoreModal = true;
+            setCoverageScoreModalOpen(true);
+          }
           renderPlans();
         });
       }
@@ -1083,6 +1227,8 @@
 
       attachFilterGroupEvents();
       attachTripProtectionEvents();
+      attachCoverageScoreModalEvents();
+      attachFilterInfoModalEvents();
       syncFilterGroupState();
       renderPlans();
     </script>
