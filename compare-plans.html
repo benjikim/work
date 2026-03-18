@@ -41,7 +41,7 @@
           </section>
 
           <section class="imt-filter-block" id="imt-trip-protection-filter">
-            <div class="imt-filter-heading">
+            <div class="imt-filter-heading" id="imt-trip-protection-heading">
               <h2>Trip Protection</h2>
               <span>i</span>
             </div>
@@ -153,8 +153,8 @@
               <span>$1,000,000</span>
               <em>9 plans</em>
             </label>
-            <label class="imt-radio-row imt-radio-row--disabled" title="This isn't available based on your current selections">
-              <input type="radio" name="evacuation" value="unlimited" disabled title="This isn't available based on your current selections" />
+            <label class="imt-radio-row imt-radio-row--disabled" data-disabled-tooltip="This isn't available based on your current selections">
+              <input type="radio" name="evacuation" value="unlimited" disabled />
               <span class="imt-radio"></span>
               <span>Unlimited</span>
               <em>0 plans</em>
@@ -256,6 +256,7 @@
           </div>
 
           <div class="imt-plan-list" id="imt-plan-list"></div>
+          <a class="imt-results-reset" id="imt-results-reset" href="./compare-plans.html" hidden>Reset Filters (Show all 34 Plans)</a>
         </section>
       </div>
     </main>
@@ -287,10 +288,6 @@
         'Supplier default',
         'Jury or legal duty',
         'Mechanical failure',
-        'Felonious assault',
-        'Hijacking',
-        'Host at destination',
-        'Home uninhabitable',
       ];
       const selectedTripCancellationReasons = new Set();
       const rentalCarPlanAliases = [
@@ -315,6 +312,8 @@
       let tripInterruptionSelected = false;
       let travelDelaySelected = false;
       let preExistingWaiverSelected = false;
+      let previousTripCancellationParentSelected = false;
+      let tripProtectionCollapsed = false;
       let selectedMedicalFilter = 'all';
       let selectedEvacuationFilter = 'all';
       const medicalFilterOptions = [
@@ -400,12 +399,21 @@
         return Math.round((rawScore / maxCoverageScore) * 100);
       }
 
+      function getCoverageScoreLabel(score) {
+        if (score < 20) return 'Value';
+        if (score < 40) return 'Fair';
+        if (score < 60) return 'Good';
+        if (score < 80) return 'Excellent';
+        return 'Best';
+      }
+
       function renderPlanCard(plan, showCoverageScores, maxCoverageScore) {
         const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable');
         const note = plan.note ? '<p class="imt-plan-card__notice">' + escapeHtml(plan.note) + '</p>' : '';
         const coverageScore = getDisplayCoverageScore(plan, maxCoverageScore);
+        const coverageScoreLabel = getCoverageScoreLabel(coverageScore);
         const actionButton = plan.available
-          ? '<a class="imt-select-button" href="./single-trip.html">Select</a>'
+          ? '<span class="imt-select-button imt-select-button--inactive" aria-disabled="true">Select</span>'
           : '<span class="imt-select-button imt-select-button--disabled">Unavailable</span>';
         const providerBadge = plan.providerLogo
           ? '<div class="imt-plan-card__provider imt-plan-card__provider--img"><img src="' + escapeHtml(plan.providerLogo) + '" alt="' + escapeHtml(plan.provider) + '" loading="lazy" /></div>'
@@ -421,7 +429,7 @@
           '          <p>' + escapeHtml(getPlanTypeLabel(plan)) + '</p>',
           '          <div class="imt-plan-card__title-row">',
           '            <h3>' + escapeHtml(plan.name) + '</h3>',
-          '            <span class="imt-plan-card__score">Coverage Score ' + escapeHtml(coverageScore) + '%</span>',
+          '            <span class="imt-plan-card__score">Coverage Score: ' + escapeHtml(coverageScoreLabel) + '</span>',
           '          </div>',
           '        </div>',
           '      </div>',
@@ -437,7 +445,7 @@
           '    ' + actionButton,
           '    <div class="imt-plan-card__actions">',
           '      <a href="./compare-plans.html">Compare</a>',
-          '      <a href="./travel-protection.html">Details</a>',
+          '      <span class="imt-plan-card__action-link imt-plan-card__action-link--inactive" aria-disabled="true">Details</span>',
           '    </div>',
           '  </div>',
           '</article>',
@@ -576,9 +584,12 @@
         countNode.textContent = count + ' plan' + (count === 1 ? '' : 's');
         input.checked = rentalCarSelected;
         input.disabled = disabled;
-        input.title = disabled ? disabledFilterTooltip : '';
         row.classList.toggle('imt-check-row--disabled', disabled);
-        row.title = disabled ? disabledFilterTooltip : '';
+        if (disabled) {
+          row.setAttribute('data-disabled-tooltip', disabledFilterTooltip);
+        } else {
+          row.removeAttribute('data-disabled-tooltip');
+        }
         filterBlock.classList.toggle('imt-filter-block--active', rentalCarSelected);
       }
 
@@ -596,9 +607,12 @@
         countNode.textContent = count + ' plan' + (count === 1 ? '' : 's');
         input.checked = config.isSelected();
         input.disabled = disabled;
-        input.title = disabled ? disabledFilterTooltip : '';
         row.classList.toggle('imt-check-row--disabled', disabled);
-        row.title = disabled ? disabledFilterTooltip : '';
+        if (disabled) {
+          row.setAttribute('data-disabled-tooltip', disabledFilterTooltip);
+        } else {
+          row.removeAttribute('data-disabled-tooltip');
+        }
       }
 
       function planMatchesReasonFilters(plan) {
@@ -650,24 +664,24 @@
           '  <span>Trip cancellation</span>',
           '  <em>' + tripCancellationCount + ' plan' + (tripCancellationCount === 1 ? '' : 's') + '</em>',
           '</label>',
-          '<div class="imt-filter-group-box" id="imt-trip-cancellation-group"' + (tripCancellationParentSelected ? '' : ' hidden') + '>',
-          '  <div class="imt-filter-subheading" id="imt-trip-cancellation-reasons-label"' + (tripCancellationParentSelected ? '' : ' hidden') + '>Covered Reasons</div>',
-          '  <div id="imt-trip-cancellation-reasons"' + (tripCancellationParentSelected ? '' : ' hidden') + '></div>',
+          '<div class="imt-filter-group-box" id="imt-trip-cancellation-group" aria-hidden="' + (!tripCancellationParentSelected) + '">',
+          '  <div class="imt-filter-subheading" id="imt-trip-cancellation-reasons-label">Covered Reasons</div>',
+          '  <div id="imt-trip-cancellation-reasons"></div>',
           '</div>',
-          '<label class="imt-check-row' + (tripInterruptionDisabled ? ' imt-check-row--disabled' : '') + '"' + (tripInterruptionDisabled ? ' title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
-          '  <input type="checkbox" id="imt-trip-interruption-filter"' + (tripInterruptionSelected ? ' checked' : '') + (tripInterruptionDisabled ? ' disabled title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + ' />',
+          '<label class="imt-check-row' + (tripInterruptionDisabled ? ' imt-check-row--disabled' : '') + '"' + (tripInterruptionDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '  <input type="checkbox" id="imt-trip-interruption-filter"' + (tripInterruptionSelected ? ' checked' : '') + (tripInterruptionDisabled ? ' disabled' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Trip interruption</span>',
           '  <em>' + tripInterruptionCount + ' plan' + (tripInterruptionCount === 1 ? '' : 's') + '</em>',
           '</label>',
-          '<label class="imt-check-row' + (travelDelayDisabled ? ' imt-check-row--disabled' : '') + '"' + (travelDelayDisabled ? ' title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
-          '  <input type="checkbox" id="imt-travel-delay-filter"' + (travelDelaySelected ? ' checked' : '') + (travelDelayDisabled ? ' disabled title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + ' />',
+          '<label class="imt-check-row' + (travelDelayDisabled ? ' imt-check-row--disabled' : '') + '"' + (travelDelayDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '  <input type="checkbox" id="imt-travel-delay-filter"' + (travelDelaySelected ? ' checked' : '') + (travelDelayDisabled ? ' disabled' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Travel delay</span>',
           '  <em>' + travelDelayCount + ' plan' + (travelDelayCount === 1 ? '' : 's') + '</em>',
           '</label>',
-          '<label class="imt-check-row' + (preExistingWaiverDisabled ? ' imt-check-row--disabled' : '') + '"' + (preExistingWaiverDisabled ? ' title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
-          '  <input type="checkbox" id="imt-pre-existing-waiver-filter"' + (preExistingWaiverSelected ? ' checked' : '') + (preExistingWaiverDisabled ? ' disabled title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + ' />',
+          '<label class="imt-check-row' + (preExistingWaiverDisabled ? ' imt-check-row--disabled' : '') + '"' + (preExistingWaiverDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '  <input type="checkbox" id="imt-pre-existing-waiver-filter"' + (preExistingWaiverSelected ? ' checked' : '') + (preExistingWaiverDisabled ? ' disabled' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Pre-Ex waiver</span>',
           '  <em>' + preExistingWaiverCount + ' plan' + (preExistingWaiverCount === 1 ? '' : 's') + '</em>',
@@ -686,10 +700,10 @@
             const disabled = count === 0 && !selectedTripCancellationReasons.has(reason);
             const disabledAttr = disabled ? ' disabled' : '';
             const disabledClass = disabled ? ' imt-check-row--disabled' : '';
-            const disabledTitleAttr = disabled ? ' title="' + escapeHtml(disabledFilterTooltip) + '"' : '';
+            const disabledTooltipAttr = disabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '"' : '';
             return [
-              '<label class="imt-check-row' + disabledClass + '"' + disabledTitleAttr + '>',
-              '  <input type="checkbox" value="' + escapeHtml(reason) + '"' + checked + disabledAttr + disabledTitleAttr + ' />',
+              '<label class="imt-check-row' + disabledClass + '"' + disabledTooltipAttr + '>',
+              '  <input type="checkbox" value="' + escapeHtml(reason) + '"' + checked + disabledAttr + ' />',
               '  <span class="imt-checkmark"></span>',
               '  <span>' + escapeHtml(reason) + '</span>',
               '  <em>' + count + ' plan' + (count === 1 ? '' : 's') + '</em>',
@@ -698,9 +712,44 @@
           })
           .join('');
         filterBlock.classList.toggle('imt-filter-block--active', isTripProtectionActive());
-        groupBox.hidden = !tripCancellationParentSelected;
-        label.hidden = !tripCancellationParentSelected;
-        container.hidden = !tripCancellationParentSelected;
+        groupBox.setAttribute('aria-hidden', String(!tripCancellationParentSelected));
+        label.setAttribute('aria-hidden', String(!tripCancellationParentSelected));
+        container.setAttribute('aria-hidden', String(!tripCancellationParentSelected));
+        parentContainer.hidden = tripProtectionCollapsed;
+
+        const shouldAnimateTripCancellationOpen = tripCancellationParentSelected && !previousTripCancellationParentSelected;
+
+        if (tripCancellationParentSelected) {
+          if (shouldAnimateTripCancellationOpen) {
+            groupBox.style.transition = '';
+            groupBox.style.maxHeight = '0px';
+            groupBox.ontransitionend = null;
+            requestAnimationFrame(() => {
+              groupBox.classList.add('is-open');
+              groupBox.style.maxHeight = groupBox.scrollHeight + 'px';
+              groupBox.ontransitionend = (event) => {
+                if (event.propertyName !== 'max-height') return;
+                if (tripCancellationParentSelected) {
+                  groupBox.style.maxHeight = 'none';
+                }
+                groupBox.ontransitionend = null;
+              };
+            });
+          } else {
+            groupBox.style.transition = 'none';
+            groupBox.classList.add('is-open');
+            groupBox.style.maxHeight = 'none';
+            groupBox.offsetHeight;
+            groupBox.style.transition = '';
+          }
+        } else {
+          groupBox.style.transition = '';
+          groupBox.ontransitionend = null;
+          groupBox.classList.remove('is-open');
+          groupBox.style.maxHeight = '0px';
+        }
+
+        previousTripCancellationParentSelected = tripCancellationParentSelected;
 
         const parentInput = parentContainer.querySelector('#imt-trip-cancellation-parent');
         if (parentInput) {
@@ -765,10 +814,13 @@
           }
 
           input.disabled = disabled;
-          input.title = disabled ? disabledFilterTooltip : '';
           if (label) {
             label.classList.toggle('imt-radio-row--disabled', disabled);
-            label.title = disabled ? disabledFilterTooltip : '';
+            if (disabled) {
+              label.setAttribute('data-disabled-tooltip', disabledFilterTooltip);
+            } else {
+              label.removeAttribute('data-disabled-tooltip');
+            }
           }
         });
       }
@@ -820,6 +872,22 @@
       const planList = document.getElementById('imt-plan-list');
       const visiblePlanCount = document.getElementById('imt-visible-plan-count');
       const resetFiltersLink = document.getElementById('imt-reset-filters');
+      const resultsResetLink = document.getElementById('imt-results-reset');
+      const tripProtectionBlock = document.getElementById('imt-trip-protection-filter');
+      const tripProtectionHeading = document.getElementById('imt-trip-protection-heading');
+
+      function setFilterBlockCollapsed(block, collapsed) {
+        if (!block) return;
+        block.classList.toggle('imt-filter-block--collapsed', collapsed);
+        const heading = block.querySelector('.imt-filter-heading');
+        if (heading) {
+          heading.setAttribute('aria-expanded', String(!collapsed));
+        }
+        Array.from(block.children).forEach((child) => {
+          if (child.classList && child.classList.contains('imt-filter-heading')) return;
+          child.hidden = collapsed;
+        });
+      }
 
       function syncFilterGroupState() {
         document.querySelectorAll('.imt-filter-block').forEach((block) => {
@@ -827,20 +895,27 @@
           if (!heading) return;
           heading.setAttribute('role', 'button');
           heading.setAttribute('tabindex', '0');
-          heading.setAttribute('aria-expanded', String(!block.classList.contains('imt-filter-block--collapsed')));
+          if (block.id === 'imt-trip-protection-filter') {
+            setFilterBlockCollapsed(block, tripProtectionCollapsed);
+          } else {
+            setFilterBlockCollapsed(block, block.classList.contains('imt-filter-block--collapsed'));
+          }
         });
       }
 
       function attachFilterGroupEvents() {
         document.querySelectorAll('.imt-filter-heading').forEach((heading) => {
+          if (heading.id === 'imt-trip-protection-heading') return;
           if (heading.dataset.toggleBound === 'true') return;
           heading.dataset.toggleBound = 'true';
 
           const toggle = () => {
             const block = heading.closest('.imt-filter-block');
             if (!block) return;
-            block.classList.toggle('imt-filter-block--collapsed');
-            heading.setAttribute('aria-expanded', String(!block.classList.contains('imt-filter-block--collapsed')));
+            if (block.id === 'imt-trip-protection-filter') {
+              tripProtectionCollapsed = !tripProtectionCollapsed;
+            }
+            setFilterBlockCollapsed(block, !block.classList.contains('imt-filter-block--collapsed'));
           };
 
           heading.addEventListener('click', toggle);
@@ -850,6 +925,26 @@
               toggle();
             }
           });
+        });
+      }
+
+      function attachTripProtectionEvents() {
+        if (!tripProtectionHeading || !tripProtectionBlock || tripProtectionHeading.dataset.toggleBound === 'true') return;
+        tripProtectionHeading.dataset.toggleBound = 'true';
+        tripProtectionHeading.setAttribute('role', 'button');
+        tripProtectionHeading.setAttribute('tabindex', '0');
+
+        const toggle = () => {
+          tripProtectionCollapsed = !tripProtectionCollapsed;
+          setFilterBlockCollapsed(tripProtectionBlock, tripProtectionCollapsed);
+        };
+
+        tripProtectionHeading.addEventListener('click', toggle);
+        tripProtectionHeading.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggle();
+          }
         });
       }
 
@@ -871,6 +966,11 @@
         if (resetFiltersLink) {
           resetFiltersLink.hidden = visiblePlans.length >= totalPlans;
           resetFiltersLink.textContent = 'Reset Filters (Show all ' + totalPlans + ' Plans)';
+        }
+        if (resultsResetLink) {
+          const showResultsReset = visiblePlans.length < totalPlans && visiblePlans.length <= 5;
+          resultsResetLink.hidden = !showResultsReset;
+          resultsResetLink.textContent = 'Reset Filters (Show all ' + totalPlans + ' Plans)';
         }
         renderTripCancellationReasonFilters();
         renderRentalCarFilter();
@@ -938,6 +1038,7 @@
       }
 
       attachFilterGroupEvents();
+      attachTripProtectionEvents();
       syncFilterGroupState();
       renderPlans();
     </script>
