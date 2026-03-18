@@ -63,11 +63,11 @@
               <h2>Other Coverages</h2>
               <span>i</span>
             </div>
-            <label class="imt-check-row">
-              <input type="checkbox" />
+            <label class="imt-check-row" id="imt-rental-car-row">
+              <input type="checkbox" id="imt-rental-car-filter" />
               <span class="imt-checkmark"></span>
               <span>Rental Car</span>
-              <em>16 plans</em>
+              <em id="imt-rental-car-count">16 plans</em>
             </label>
             <label class="imt-check-row">
               <input type="checkbox" />
@@ -303,7 +303,21 @@
         'Home uninhabitable',
       ];
       const selectedTripCancellationReasons = new Set();
+      const rentalCarPlanAliases = [
+        'elite',
+        'ultimate',
+        'exactcare',
+        'flexipax',
+        'platinum',
+        'elevate',
+        'explore',
+        'travel lx',
+        'gold',
+        'preferred',
+        'lx with cfar',
+      ];
       let tripCancellationParentSelected = false;
+      let rentalCarSelected = false;
       let tripInterruptionSelected = false;
       let travelDelaySelected = false;
       let preExistingWaiverSelected = false;
@@ -448,6 +462,18 @@
         return Number.parseInt(digits, 10);
       }
 
+      function normalizePlanName(value) {
+        return String(value || '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, ' ')
+          .trim();
+      }
+
+      function planHasRentalCarCoverage(plan) {
+        const normalizedName = normalizePlanName(plan && plan.name);
+        return rentalCarPlanAliases.some((alias) => normalizedName.includes(alias));
+      }
+
       function planMatchesMedicalValue(plan, filterValue) {
         if (filterValue === 'all') return true;
         const amount = parseMetricAmount(plan.metrics && plan.metrics.medical);
@@ -479,8 +505,12 @@
         return planMatchesEvacuationValue(plan, selectedEvacuationFilter);
       }
 
+      function planMatchesRentalCarFilter(plan) {
+        return !rentalCarSelected || planHasRentalCarCoverage(plan);
+      }
+
       function planMatchesAllFilters(plan) {
-        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan);
+        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan);
       }
 
       function planHasTripCancellation(plan) {
@@ -516,6 +546,25 @@
 
       function isTripProtectionActive() {
         return tripCancellationParentSelected || tripInterruptionSelected || travelDelaySelected || preExistingWaiverSelected || selectedTripCancellationReasons.size > 0;
+      }
+
+      function renderRentalCarFilter() {
+        const input = document.getElementById('imt-rental-car-filter');
+        const row = document.getElementById('imt-rental-car-row');
+        const countNode = document.getElementById('imt-rental-car-count');
+        const filterBlock = row ? row.closest('.imt-filter-block') : null;
+        if (!input || !row || !countNode || !filterBlock) return;
+
+        const count = getBasePlans().filter((plan) => {
+          return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planHasRentalCarCoverage(plan);
+        }).length;
+        const disabled = count === 0 && !rentalCarSelected;
+
+        countNode.textContent = count + ' plan' + (count === 1 ? '' : 's');
+        input.checked = rentalCarSelected;
+        input.disabled = disabled;
+        row.classList.toggle('imt-check-row--disabled', disabled);
+        filterBlock.classList.toggle('imt-filter-block--active', rentalCarSelected);
       }
 
       function planMatchesReasonFilters(plan) {
@@ -781,6 +830,7 @@
           resetFiltersLink.textContent = 'Reset Filters (Show all ' + totalPlans + ' Plans)';
         }
         renderTripCancellationReasonFilters();
+        renderRentalCarFilter();
         renderMedicalFilters();
         renderEvacuationFilters();
         attachPlanCardEvents();
@@ -805,6 +855,14 @@
           renderPlans();
         });
       });
+
+      const rentalCarInput = document.getElementById('imt-rental-car-filter');
+      if (rentalCarInput) {
+        rentalCarInput.addEventListener('change', (event) => {
+          rentalCarSelected = event.target.checked;
+          renderPlans();
+        });
+      }
 
       attachFilterGroupEvents();
       syncFilterGroupState();
