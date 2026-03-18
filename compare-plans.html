@@ -380,6 +380,11 @@
         return Math.round(scores.reduce((total, score) => total + score, 0) / scores.length);
       }
 
+      function getPlanTypeLabel(plan) {
+        if (plan.type === 'Unknown Product Type') return 'Multi-Trip Plan';
+        return plan.type;
+      }
+
       function getDisplayCoverageScore(plan, maxCoverageScore) {
         const rawScore = getCoverageScore(plan);
         if (!maxCoverageScore) return 0;
@@ -404,7 +409,7 @@
           '      ' + providerBadge,
           '      <div class="imt-plan-card__headline-group">',
           '        <div class="imt-plan-card__headline">',
-          '          <p>' + escapeHtml(plan.type) + '</p>',
+          '          <p>' + escapeHtml(getPlanTypeLabel(plan)) + '</p>',
           '          <div class="imt-plan-card__title-row">',
           '            <h3>' + escapeHtml(plan.name) + '</h3>',
           '            <span class="imt-plan-card__score">Coverage Score ' + escapeHtml(coverageScore) + '%</span>',
