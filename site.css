@@ -554,6 +554,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin-left: auto;
   min-height: 40px;
   padding: 0 18px;
   border-radius: 2px;
@@ -788,13 +789,16 @@
 #imt-trip-cancellation-reasons-parent,
 #imt-trip-cancellation-reasons {
   display: grid;
-  gap: 15px;
+  gap: 10px;
 }
 
-#imt-trip-cancellation-reasons .imt-check-row span,
-#imt-trip-cancellation-reasons-parent .imt-check-row span {
+#imt-trip-cancellation-reasons .imt-check-row span {
   font-size: 12.8px;
   line-height: 19.2px;
+}
+
+#imt-trip-cancellation-reasons .imt-check-row {
+  align-items: center;
 }
 
 .imt-filter-suboption {
@@ -1090,11 +1094,8 @@
 }
 
 .imt-plan-card__title-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: grid;
+  gap: 4px;
 }
 
 .imt-plan-card__headline h3 {
@@ -1103,9 +1104,8 @@
 }
 
 .imt-plan-card__score {
-  margin-left: auto;
   color: #5f6c76;
-  font: 700 11px/1.1 var(--font-body);
+  font: 700 11px/1 var(--font-body);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   white-space: nowrap;
@@ -1436,6 +1436,10 @@
   .imt-nav__inner {
     min-height: 76px;
     justify-content: space-between;
+  }
+
+  .imt-quote-button {
+    margin-left: 0;
   }
 
   .imt-utility-bar__inner {

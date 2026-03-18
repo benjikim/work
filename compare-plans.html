@@ -19,12 +19,6 @@
         <a class="imt-logo" href="./index.html" aria-label="InsureMyTrip home">
           <img class="imt-logo__image" src="https://assets.insuremytrip.com/wp-content/uploads/2026/03/11140041/imt-logo-2.svg" alt="insuremytrip" />
         </a>
-        <nav class="imt-nav__links" aria-label="Primary">
-          <a href="./travel-protection.html">Discover Insurance</a>
-          <a href="./resources.html">Reviews &amp; FAQs</a>
-          <a href="./resources.html">Resources</a>
-          <a href="./get-support.html">Get Support</a>
-        </nav>
         <a class="imt-quote-button" href="./quote-single-trip.html">Start a Quote</a>
       </div>
     </header>
@@ -52,10 +46,6 @@
               <span>i</span>
             </div>
             <div id="imt-trip-cancellation-reasons-parent"></div>
-            <div class="imt-filter-group-box" id="imt-trip-cancellation-group" hidden>
-              <div class="imt-filter-subheading" id="imt-trip-cancellation-reasons-label" hidden>Covered Reasons</div>
-              <div id="imt-trip-cancellation-reasons" hidden></div>
-            </div>
           </section>
 
           <section class="imt-filter-block">
@@ -622,11 +612,8 @@
 
       function renderTripCancellationReasonFilters() {
         const filterBlock = document.getElementById('imt-trip-protection-filter');
-        const groupBox = document.getElementById('imt-trip-cancellation-group');
         const parentContainer = document.getElementById('imt-trip-cancellation-reasons-parent');
-        const label = document.getElementById('imt-trip-cancellation-reasons-label');
-        const container = document.getElementById('imt-trip-cancellation-reasons');
-        if (!container || !parentContainer || !label || !filterBlock || !groupBox) return;
+        if (!parentContainer || !filterBlock) return;
 
         const counts = new Map();
         const availablePlans = getBasePlans();
@@ -658,6 +645,10 @@
           '  <span>Trip cancellation</span>',
           '  <em>' + tripCancellationCount + ' plan' + (tripCancellationCount === 1 ? '' : 's') + '</em>',
           '</label>',
+          '<div class="imt-filter-group-box" id="imt-trip-cancellation-group"' + (tripCancellationParentSelected ? '' : ' hidden') + '>',
+          '  <div class="imt-filter-subheading" id="imt-trip-cancellation-reasons-label"' + (tripCancellationParentSelected ? '' : ' hidden') + '>Covered Reasons</div>',
+          '  <div id="imt-trip-cancellation-reasons"' + (tripCancellationParentSelected ? '' : ' hidden') + '></div>',
+          '</div>',
           '<label class="imt-check-row' + (tripInterruptionDisabled ? ' imt-check-row--disabled' : '') + '">',
           '  <input type="checkbox" id="imt-trip-interruption-filter"' + (tripInterruptionSelected ? ' checked' : '') + (tripInterruptionDisabled ? ' disabled' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
@@ -677,6 +668,11 @@
           '  <em>' + preExistingWaiverCount + ' plan' + (preExistingWaiverCount === 1 ? '' : 's') + '</em>',
           '</label>',
         ].join('');
+
+        const groupBox = parentContainer.querySelector('#imt-trip-cancellation-group');
+        const label = parentContainer.querySelector('#imt-trip-cancellation-reasons-label');
+        const container = parentContainer.querySelector('#imt-trip-cancellation-reasons');
+        if (!groupBox || !label || !container) return;
 
         container.innerHTML = reasons
           .map((reason) => {
