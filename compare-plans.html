@@ -28,7 +28,6 @@
         <span>Italy</span>
         <span>Jul 22, 2024 - Jul 31, 2024</span>
         <span>1 Traveler</span>
-        <span>$2860 on 04/20/24</span>
       </div>
     </div>
 
@@ -229,20 +228,6 @@
         </aside>
 
         <section class="imt-results">
-          <section class="imt-callout">
-            <div class="imt-callout__copy">
-              <h2>Pre-Existing Conditions</h2>
-              <p>
-                Most policies exclude pre-existing conditions unless you qualify for a waiver on
-                specific plans. Check the look-back period, typically 60 to 180 days before buying
-                the policy.
-              </p>
-            </div>
-            <div class="imt-callout__art" aria-hidden="true">
-              <div class="imt-callout__icon"></div>
-            </div>
-          </section>
-
           <div class="imt-results-toolbar">
             <label class="imt-sort-control">
               <select id="imt-plan-sort" aria-label="Sort plans">
@@ -354,11 +339,69 @@
         return ' style="--bar: ' + metric.score + '%; --bar-factor: ' + metric.score + '"';
       }
 
-      function renderCoverageLine(score) {
+      function getCoverageDotsLabel(dots) {
+        if (dots <= 1) return 'lowest';
+        if (dots === 2) return 'lower';
+        if (dots === 3) return 'middle';
+        if (dots === 4) return 'upper';
+        return 'highest';
+      }
+
+      function getCoverageDotsCount(definition, metric) {
+        if (definition.key === 'medical') {
+          const amount = parseMetricAmount(metric);
+          if (amount == null) return 0;
+          if (amount >= 1000000) return 5;
+          if (amount >= 500000) return 4;
+          if (amount >= 100000) return 3;
+          if (amount >= 50000) return 2;
+          return 1;
+        }
+
+        if (definition.key === 'baggageDelay') {
+          const amount = parseMetricAmount(metric);
+          if (amount == null) return 0;
+
+          const baggageDelayAmounts = getBasePlans()
+            .map((plan) => parseMetricAmount(plan.metrics && plan.metrics.baggageDelay))
+            .filter((value) => value != null)
+            .sort((a, b) => a - b);
+
+          if (!baggageDelayAmounts.length) return 0;
+
+          const minAmount = baggageDelayAmounts[0];
+          const maxAmount = baggageDelayAmounts[baggageDelayAmounts.length - 1];
+
+          if (amount <= minAmount) return 1;
+          if (amount <= 300) return 2;
+          if (amount <= 400) return 3;
+          if (amount <= 600) return 4;
+          if (amount >= maxAmount) return 5;
+          return 4;
+        }
+
+        if (definition.key === 'lookbackPeriod') {
+          const text = String((metric && metric.text) || '').trim().toLowerCase();
+          if (!text) return 0;
+          if (text === 'none') return 5;
+          if (text === '60 days') return 4;
+          if (text === '90 days') return 3;
+          if (text === '180 days') return 4;
+          if (text === '2 years') return 1;
+          if (text === '3 years') return 1;
+          return 0;
+        }
+
+        const score = metric && typeof metric.score === 'number' ? metric.score : 0;
         const clamped = Math.max(0, Math.min(100, score));
-        const filledDots = Math.max(0, Math.min(5, Math.round((clamped / 100) * 5)));
+        return Math.max(0, Math.min(5, Math.round((clamped / 100) * 5)));
+      }
+
+      function renderCoverageLine(definition, metric) {
+        const filledDots = getCoverageDotsCount(definition, metric);
+        const tooltip = 'This ' + String(definition.label || '').toLowerCase() + ' coverage is among the ' + getCoverageDotsLabel(filledDots) + ' of the plans available.';
         return [
-          '<span class="imt-coverage-dots" aria-hidden="true">',
+          '<span class="imt-coverage-dots" aria-label="' + escapeHtml(tooltip) + '" data-tooltip="' + escapeHtml(tooltip) + '" title="' + escapeHtml(tooltip) + '">',
           Array.from({ length: 5 }, (_, index) => '<span class="imt-coverage-dot' + (index < filledDots ? ' imt-coverage-dot--filled' : '') + '"></span>').join(''),
           '</span>',
         ].join('');
@@ -367,8 +410,9 @@
       function renderMetricCell(definition, metric, showCoverageScores) {
         const cell = metric || { kind: 'none', text: 'X Not included', score: 0 };
         const score = typeof cell.score === 'number' ? cell.score : 0;
-        const scoreMarkup = showCoverageScores
-          ? '<small class="imt-coverage-score">' + renderCoverageLine(score) + '</small>'
+        const showMetricDots = showCoverageScores && definition.key !== 'preExWaiver' && cell.kind !== 'none';
+        const scoreMarkup = showMetricDots
+          ? '<small class="imt-coverage-score">' + renderCoverageLine(definition, cell) + '</small>'
           : '';
         return '<div class="' + metricClass(cell) + '"' + metricStyle(cell) + '><span>' + escapeHtml(definition.label) + '</span><strong>' + escapeHtml(cell.text) + '</strong>' + scoreMarkup + '</div>';
       }

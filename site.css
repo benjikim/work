@@ -579,8 +579,7 @@
   gap: 26px;
   padding: 0 14px;
   color: #212629;
-  font: 700 9px/1 var(--font-body);
-  text-transform: uppercase;
+  font: 700 16px/1.2 var(--font-body);
 }
 
 .imt-results-page {
@@ -1297,6 +1296,8 @@
   gap: 4px;
   width: 100%;
   min-height: 12px;
+  position: relative;
+  cursor: help;
   white-space: nowrap;
 }
 
@@ -1313,6 +1314,31 @@
 
 .imt-coverage-dots .imt-coverage-dot--filled {
   background: #d4a017;
+}
+
+.imt-coverage-dots::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  z-index: 6;
+  width: max-content;
+  max-width: 220px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #212629;
+  color: #fff;
+  font: 600 11px/1.35 var(--font-body);
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(2px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.imt-coverage-dots:hover::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .imt-coverage-cell--none .imt-coverage-dot {
