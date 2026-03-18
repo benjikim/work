@@ -153,8 +153,8 @@
               <span>$1,000,000</span>
               <em>9 plans</em>
             </label>
-            <label class="imt-radio-row imt-radio-row--disabled">
-              <input type="radio" name="evacuation" value="unlimited" disabled />
+            <label class="imt-radio-row imt-radio-row--disabled" title="This isn't available based on your current selections">
+              <input type="radio" name="evacuation" value="unlimited" disabled title="This isn't available based on your current selections" />
               <span class="imt-radio"></span>
               <span>Unlimited</span>
               <em>0 plans</em>
@@ -332,6 +332,7 @@
         { value: '1000000', label: '$1,000,000' },
         { value: 'unlimited', label: 'Unlimited' },
       ];
+      const disabledFilterTooltip = "This isn't available based on your current selections";
       function escapeHtml(value) {
         return String(value)
           .replace(/&/g, '&amp;')
@@ -575,7 +576,9 @@
         countNode.textContent = count + ' plan' + (count === 1 ? '' : 's');
         input.checked = rentalCarSelected;
         input.disabled = disabled;
+        input.title = disabled ? disabledFilterTooltip : '';
         row.classList.toggle('imt-check-row--disabled', disabled);
+        row.title = disabled ? disabledFilterTooltip : '';
         filterBlock.classList.toggle('imt-filter-block--active', rentalCarSelected);
       }
 
@@ -593,7 +596,9 @@
         countNode.textContent = count + ' plan' + (count === 1 ? '' : 's');
         input.checked = config.isSelected();
         input.disabled = disabled;
+        input.title = disabled ? disabledFilterTooltip : '';
         row.classList.toggle('imt-check-row--disabled', disabled);
+        row.title = disabled ? disabledFilterTooltip : '';
       }
 
       function planMatchesReasonFilters(plan) {
@@ -649,20 +654,20 @@
           '  <div class="imt-filter-subheading" id="imt-trip-cancellation-reasons-label"' + (tripCancellationParentSelected ? '' : ' hidden') + '>Covered Reasons</div>',
           '  <div id="imt-trip-cancellation-reasons"' + (tripCancellationParentSelected ? '' : ' hidden') + '></div>',
           '</div>',
-          '<label class="imt-check-row' + (tripInterruptionDisabled ? ' imt-check-row--disabled' : '') + '">',
-          '  <input type="checkbox" id="imt-trip-interruption-filter"' + (tripInterruptionSelected ? ' checked' : '') + (tripInterruptionDisabled ? ' disabled' : '') + ' />',
+          '<label class="imt-check-row' + (tripInterruptionDisabled ? ' imt-check-row--disabled' : '') + '"' + (tripInterruptionDisabled ? ' title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '  <input type="checkbox" id="imt-trip-interruption-filter"' + (tripInterruptionSelected ? ' checked' : '') + (tripInterruptionDisabled ? ' disabled title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Trip interruption</span>',
           '  <em>' + tripInterruptionCount + ' plan' + (tripInterruptionCount === 1 ? '' : 's') + '</em>',
           '</label>',
-          '<label class="imt-check-row' + (travelDelayDisabled ? ' imt-check-row--disabled' : '') + '">',
-          '  <input type="checkbox" id="imt-travel-delay-filter"' + (travelDelaySelected ? ' checked' : '') + (travelDelayDisabled ? ' disabled' : '') + ' />',
+          '<label class="imt-check-row' + (travelDelayDisabled ? ' imt-check-row--disabled' : '') + '"' + (travelDelayDisabled ? ' title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '  <input type="checkbox" id="imt-travel-delay-filter"' + (travelDelaySelected ? ' checked' : '') + (travelDelayDisabled ? ' disabled title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Travel delay</span>',
           '  <em>' + travelDelayCount + ' plan' + (travelDelayCount === 1 ? '' : 's') + '</em>',
           '</label>',
-          '<label class="imt-check-row' + (preExistingWaiverDisabled ? ' imt-check-row--disabled' : '') + '">',
-          '  <input type="checkbox" id="imt-pre-existing-waiver-filter"' + (preExistingWaiverSelected ? ' checked' : '') + (preExistingWaiverDisabled ? ' disabled' : '') + ' />',
+          '<label class="imt-check-row' + (preExistingWaiverDisabled ? ' imt-check-row--disabled' : '') + '"' + (preExistingWaiverDisabled ? ' title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '  <input type="checkbox" id="imt-pre-existing-waiver-filter"' + (preExistingWaiverSelected ? ' checked' : '') + (preExistingWaiverDisabled ? ' disabled title="' + escapeHtml(disabledFilterTooltip) + '"' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Pre-Ex waiver</span>',
           '  <em>' + preExistingWaiverCount + ' plan' + (preExistingWaiverCount === 1 ? '' : 's') + '</em>',
@@ -681,9 +686,10 @@
             const disabled = count === 0 && !selectedTripCancellationReasons.has(reason);
             const disabledAttr = disabled ? ' disabled' : '';
             const disabledClass = disabled ? ' imt-check-row--disabled' : '';
+            const disabledTitleAttr = disabled ? ' title="' + escapeHtml(disabledFilterTooltip) + '"' : '';
             return [
-              '<label class="imt-check-row' + disabledClass + '">',
-              '  <input type="checkbox" value="' + escapeHtml(reason) + '"' + checked + disabledAttr + ' />',
+              '<label class="imt-check-row' + disabledClass + '"' + disabledTitleAttr + '>',
+              '  <input type="checkbox" value="' + escapeHtml(reason) + '"' + checked + disabledAttr + disabledTitleAttr + ' />',
               '  <span class="imt-checkmark"></span>',
               '  <span>' + escapeHtml(reason) + '</span>',
               '  <em>' + count + ' plan' + (count === 1 ? '' : 's') + '</em>',
@@ -759,8 +765,10 @@
           }
 
           input.disabled = disabled;
+          input.title = disabled ? disabledFilterTooltip : '';
           if (label) {
             label.classList.toggle('imt-radio-row--disabled', disabled);
+            label.title = disabled ? disabledFilterTooltip : '';
           }
         });
       }
