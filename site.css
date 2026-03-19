@@ -1173,10 +1173,21 @@
   display: inline-grid;
   grid-template-columns: 22px auto;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   color: #212629;
   font: 600 12px/1 var(--font-body);
   cursor: pointer;
+}
+
+.imt-coverage-score-toggle__label {
+  white-space: nowrap;
+}
+
+.imt-coverage-score-toggle__badge {
+  color: #7bb833;
+  font: 700 9px/1 var(--font-body);
+  text-transform: uppercase;
+  vertical-align: super;
 }
 
 .imt-coverage-score-toggle input {
