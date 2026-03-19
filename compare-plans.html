@@ -76,6 +76,18 @@
               <span>Adventure Sports</span>
               <em id="imt-adventure-sports-count">0 plans</em>
             </label>
+            <label class="imt-check-row" id="imt-travel-medical-only-row">
+              <input type="checkbox" id="imt-travel-medical-only-filter" />
+              <span class="imt-checkmark"></span>
+              <span>Travel Medical Only</span>
+              <em id="imt-travel-medical-only-count">0 plans</em>
+            </label>
+            <label class="imt-check-row" id="imt-evacuation-only-row">
+              <input type="checkbox" id="imt-evacuation-only-filter" />
+              <span class="imt-checkmark"></span>
+              <span>Evacuation Only</span>
+              <em id="imt-evacuation-only-count">0 plans</em>
+            </label>
             <label class="imt-check-row" id="imt-cruise-row">
               <input type="checkbox" id="imt-cruise-filter" />
               <span class="imt-checkmark"></span>
@@ -259,9 +271,6 @@
 
           <div class="imt-plan-list" id="imt-plan-list"></div>
           <div class="imt-selected-filters imt-selected-filters--results" id="imt-selected-filters" hidden></div>
-          <div class="imt-results-footer-action" id="imt-results-footer-action" hidden>
-            <button class="imt-results-footer-action__button" id="imt-scroll-to-top-button" type="button">Scroll to top</button>
-          </div>
         </section>
       </div>
     </main>
@@ -365,6 +374,8 @@
       let cruiseSelected = false;
       let petCareSelected = false;
       let rentalCarSelected = false;
+      let travelMedicalOnlySelected = false;
+      let evacuationOnlySelected = false;
       let vacationRentalSelected = false;
       let tripInterruptionSelected = false;
       let travelDelaySelected = false;
@@ -890,6 +901,14 @@
         return vacationRentalPlanAliases.some((alias) => normalizedName.includes(alias));
       }
 
+      function planHasTravelMedicalOnlyCoverage(plan) {
+        return getPlanTypeLabel(plan) === 'Travel Medical';
+      }
+
+      function planHasEvacuationOnlyCoverage(plan) {
+        return getPlanTypeLabel(plan) === 'Evacuation';
+      }
+
       function planMatchesMedicalValue(plan, filterValue) {
         if (filterValue === 'all') return true;
         const amount = parseMetricAmount(plan.metrics && plan.metrics.medical);
@@ -941,8 +960,38 @@
         return !vacationRentalSelected || planHasVacationRentalCoverage(plan);
       }
 
+      function planMatchesTravelMedicalOnlyFilter(plan) {
+        return !travelMedicalOnlySelected || planHasTravelMedicalOnlyCoverage(plan);
+      }
+
+      function planMatchesEvacuationOnlyFilter(plan) {
+        return !evacuationOnlySelected || planHasEvacuationOnlyCoverage(plan);
+      }
+
       function planMatchesAllFilters(plan) {
-        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan) && planMatchesCruiseFilter(plan) && planMatchesVacationRentalFilter(plan) && planMatchesPetCareFilter(plan) && planMatchesAdventureSportsFilter(plan);
+        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan) && planMatchesCruiseFilter(plan) && planMatchesVacationRentalFilter(plan) && planMatchesPetCareFilter(plan) && planMatchesAdventureSportsFilter(plan) && planMatchesTravelMedicalOnlyFilter(plan) && planMatchesEvacuationOnlyFilter(plan);
+      }
+
+      function planMatchesCurrentCountContext(plan, options = {}) {
+        if (!options.excludeReasons && !planMatchesReasonFilters(plan)) return false;
+        if (!options.excludeTripInterruption && !planMatchesTripInterruptionFilter(plan)) return false;
+        if (!options.excludeTravelDelay && !planMatchesTravelDelayFilter(plan)) return false;
+        if (!options.excludePreExistingWaiver && !planMatchesPreExistingWaiverFilter(plan)) return false;
+        if (!options.excludeMedical && !planMatchesMedicalFilter(plan)) return false;
+        if (!options.excludeEvacuation && !planMatchesEvacuationFilter(plan)) return false;
+        if (!planMatchesOtherCoverageFilters(plan, options.excludeOtherCoverageKey || '')) return false;
+        return true;
+      }
+
+      function planMatchesOtherCoverageFilters(plan, excludedKey) {
+        if (excludedKey !== 'rental-car' && rentalCarSelected && !planHasRentalCarCoverage(plan)) return false;
+        if (excludedKey !== 'vacation-rental' && vacationRentalSelected && !planHasVacationRentalCoverage(plan)) return false;
+        if (excludedKey !== 'pet-care' && petCareSelected && !planHasPetCareCoverage(plan)) return false;
+        if (excludedKey !== 'adventure-sports' && adventureSportsSelected && !planHasAdventureSportsCoverage(plan)) return false;
+        if (excludedKey !== 'travel-medical-only' && travelMedicalOnlySelected && !planHasTravelMedicalOnlyCoverage(plan)) return false;
+        if (excludedKey !== 'evacuation-only' && evacuationOnlySelected && !planHasEvacuationOnlyCoverage(plan)) return false;
+        if (excludedKey !== 'cruise' && cruiseSelected && !planHasCruiseCoverage(plan)) return false;
+        return true;
       }
 
       function planHasTripCancellation(plan) {
@@ -988,7 +1037,8 @@
         if (!input || !row || !countNode || !filterBlock) return;
 
         const count = getBasePlans().filter((plan) => {
-          return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planHasRentalCarCoverage(plan);
+          return planMatchesCurrentCountContext(plan, { excludeOtherCoverageKey: 'rental-car' }) &&
+            planHasRentalCarCoverage(plan);
         }).length;
         const disabled = count === 0 && !rentalCarSelected;
 
@@ -1011,7 +1061,8 @@
         if (!input || !row || !countNode) return;
 
         const count = getBasePlans().filter((plan) => {
-          return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan) && config.hasCoverage(plan);
+          return planMatchesCurrentCountContext(plan, { excludeOtherCoverageKey: config.key }) &&
+            config.hasCoverage(plan);
         }).length;
         const disabled = count === 0 && !config.isSelected();
 
@@ -1047,15 +1098,18 @@
 
         const counts = new Map();
         const availablePlans = getBasePlans();
-        const tripCancellationCount = availablePlans.filter((plan) => planHasTripCancellation(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan)).length;
-        const tripInterruptionCount = availablePlans.filter((plan) => planHasTripInterruption(plan) && planMatchesReasonFilters(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan)).length;
-        const travelDelayCount = availablePlans.filter((plan) => planHasTravelDelay(plan) && planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan)).length;
-        const preExistingWaiverCount = availablePlans.filter((plan) => planHasPreExistingWaiver(plan) && planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan)).length;
+        const tripCancellationCount = availablePlans.filter((plan) => planMatchesCurrentCountContext(plan, { excludeReasons: true }) && planHasTripCancellation(plan)).length;
+        const tripInterruptionCount = availablePlans.filter((plan) => planMatchesCurrentCountContext(plan, { excludeTripInterruption: true }) && planHasTripInterruption(plan)).length;
+        const travelDelayCount = availablePlans.filter((plan) => planMatchesCurrentCountContext(plan, { excludeTravelDelay: true }) && planHasTravelDelay(plan)).length;
+        const preExistingWaiverCount = availablePlans.filter((plan) => planMatchesCurrentCountContext(plan, { excludePreExistingWaiver: true }) && planHasPreExistingWaiver(plan)).length;
 
         tripCancellationReasonOrder.forEach((reason) => {
           const count = availablePlans.filter((plan) => {
             const reasons = plan.tripCancellationReasons || [];
-            return planHasTripCancellation(plan) && planMatchesReasonFiltersExcluding(plan, reason) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && reasons.includes(reason);
+            return planMatchesCurrentCountContext(plan, { excludeReasons: true }) &&
+              planHasTripCancellation(plan) &&
+              planMatchesReasonFiltersExcluding(plan, reason) &&
+              reasons.includes(reason);
           }).length;
           counts.set(reason, count);
         });
@@ -1240,7 +1294,7 @@
         updateRadioFilterCounts(
           'medical',
           medicalFilterOptions,
-          (plan, filterValue) => planMatchesReasonFilters(plan) && planMatchesEvacuationFilter(plan) && planMatchesMedicalValue(plan, filterValue),
+          (plan, filterValue) => planMatchesCurrentCountContext(plan, { excludeMedical: true }) && planMatchesMedicalValue(plan, filterValue),
           selectedMedicalFilter
         );
       }
@@ -1249,7 +1303,7 @@
         updateRadioFilterCounts(
           'evacuation',
           evacuationFilterOptions,
-          (plan, filterValue) => planMatchesReasonFilters(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationValue(plan, filterValue),
+          (plan, filterValue) => planMatchesCurrentCountContext(plan, { excludeEvacuation: true }) && planMatchesEvacuationValue(plan, filterValue),
           selectedEvacuationFilter
         );
       }
@@ -1280,8 +1334,9 @@
       const visiblePlanCount = document.getElementById('imt-visible-plan-count');
       const resetFiltersLink = document.getElementById('imt-reset-filters');
       const selectedFiltersNode = document.getElementById('imt-selected-filters');
-      const resultsFooterAction = document.getElementById('imt-results-footer-action');
-      const scrollToTopButton = document.getElementById('imt-scroll-to-top-button');
+      const resultsLayout = document.querySelector('.imt-results-layout');
+      const filtersColumn = document.querySelector('.imt-filters');
+      const resultsColumn = document.querySelector('.imt-results');
       const coverageScoreModal = document.getElementById('imt-coverage-score-modal');
       const coverageScoreClose = document.getElementById('imt-coverage-score-close');
       const filterInfoModal = document.getElementById('imt-filter-info-modal');
@@ -1376,6 +1431,18 @@
           } });
         }
 
+        if (travelMedicalOnlySelected) {
+          chips.push({ label: 'Travel medical only', onRemove: () => {
+            travelMedicalOnlySelected = false;
+          } });
+        }
+
+        if (evacuationOnlySelected) {
+          chips.push({ label: 'Evacuation only', onRemove: () => {
+            evacuationOnlySelected = false;
+          } });
+        }
+
         if (cruiseSelected) {
           chips.push({ label: 'Cruise', onRemove: () => {
             cruiseSelected = false;
@@ -1410,7 +1477,9 @@
         }
 
         selectedFiltersNode.innerHTML = [
-          '<p class="imt-selected-filters__count">Showing ' + visiblePlansLength + ' of ' + totalPlans + ' plans</p>',
+          '<p class="imt-selected-filters__count">' + (visiblePlansLength === 0
+            ? 'No plans match your current filter selections. Adjust or clear filters to see available plans.'
+            : 'Showing ' + visiblePlansLength + ' of ' + totalPlans + ' plans') + '</p>',
           '<a class="imt-selected-filters__reset" href="./compare-plans.html">Show all</a>',
         ].join('');
       }
@@ -1765,22 +1834,21 @@
         });
       }
 
-      function updateResultsFooterAction(visiblePlansLength) {
-        if (!resultsFooterAction || !planList) return;
-        if (!visiblePlansLength) {
-          resultsFooterAction.hidden = true;
+      function updateResultsColumnStickiness() {
+        if (!resultsLayout || !filtersColumn || !resultsColumn) return;
+
+        resultsLayout.classList.remove('imt-results-layout--sticky-results');
+
+        if (window.innerWidth <= 980) return;
+
+        const filtersHeight = filtersColumn.scrollHeight;
+        const resultsHeight = resultsColumn.scrollHeight;
+
+        if (filtersHeight > resultsHeight) {
+          resultsLayout.classList.add('imt-results-layout--sticky-results');
           return;
         }
 
-        const listRect = planList.getBoundingClientRect();
-        const hasVisiblePlanList = listRect.bottom > 0 && listRect.top < window.innerHeight;
-        const planCards = Array.from(planList.querySelectorAll('.imt-plan-card'));
-        const hasVisiblePlanCard = planCards.some((card) => {
-          const rect = card.getBoundingClientRect();
-          return rect.bottom > 0 && rect.top < window.innerHeight;
-        });
-
-        resultsFooterAction.hidden = hasVisiblePlanList || hasVisiblePlanCard;
       }
 
       function renderPlans() {
@@ -1809,11 +1877,12 @@
         }
         renderSelectedFilterChips(visiblePlans.length, totalPlans);
         requestAnimationFrame(() => {
-          updateResultsFooterAction(visiblePlans.length);
+          updateResultsColumnStickiness();
         });
         renderTripCancellationReasonFilters();
         renderRentalCarFilter();
         renderSimpleCoverageFilter({
+          key: 'vacation-rental',
           inputId: 'imt-vacation-rental-filter',
           rowId: 'imt-vacation-rental-row',
           countId: 'imt-vacation-rental-count',
@@ -1821,6 +1890,7 @@
           hasCoverage: planHasVacationRentalCoverage,
         });
         renderSimpleCoverageFilter({
+          key: 'pet-care',
           inputId: 'imt-pet-care-filter',
           rowId: 'imt-pet-care-row',
           countId: 'imt-pet-care-count',
@@ -1828,6 +1898,7 @@
           hasCoverage: planHasPetCareCoverage,
         });
         renderSimpleCoverageFilter({
+          key: 'adventure-sports',
           inputId: 'imt-adventure-sports-filter',
           rowId: 'imt-adventure-sports-row',
           countId: 'imt-adventure-sports-count',
@@ -1835,6 +1906,23 @@
           hasCoverage: planHasAdventureSportsCoverage,
         });
         renderSimpleCoverageFilter({
+          key: 'travel-medical-only',
+          inputId: 'imt-travel-medical-only-filter',
+          rowId: 'imt-travel-medical-only-row',
+          countId: 'imt-travel-medical-only-count',
+          isSelected: () => travelMedicalOnlySelected,
+          hasCoverage: planHasTravelMedicalOnlyCoverage,
+        });
+        renderSimpleCoverageFilter({
+          key: 'evacuation-only',
+          inputId: 'imt-evacuation-only-filter',
+          rowId: 'imt-evacuation-only-row',
+          countId: 'imt-evacuation-only-count',
+          isSelected: () => evacuationOnlySelected,
+          hasCoverage: planHasEvacuationOnlyCoverage,
+        });
+        renderSimpleCoverageFilter({
+          key: 'cruise',
           inputId: 'imt-cruise-filter',
           rowId: 'imt-cruise-row',
           countId: 'imt-cruise-count',
@@ -1909,6 +1997,22 @@
         });
       }
 
+      const travelMedicalOnlyInput = document.getElementById('imt-travel-medical-only-filter');
+      if (travelMedicalOnlyInput) {
+        travelMedicalOnlyInput.addEventListener('change', (event) => {
+          travelMedicalOnlySelected = event.target.checked;
+          renderPlans();
+        });
+      }
+
+      const evacuationOnlyInput = document.getElementById('imt-evacuation-only-filter');
+      if (evacuationOnlyInput) {
+        evacuationOnlyInput.addEventListener('change', (event) => {
+          evacuationOnlySelected = event.target.checked;
+          renderPlans();
+        });
+      }
+
       const cruiseInput = document.getElementById('imt-cruise-filter');
       if (cruiseInput) {
         cruiseInput.addEventListener('change', (event) => {
@@ -1917,24 +2021,17 @@
         });
       }
 
-      if (scrollToTopButton) {
-        scrollToTopButton.addEventListener('click', () => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-      }
-
       window.addEventListener('scroll', () => {
-        updateResultsFooterAction(planList ? planList.children.length : 0);
         updateExpandedPlanStickyShadow();
       }, { passive: true });
 
       window.addEventListener('resize', () => {
-        updateResultsFooterAction(planList ? planList.children.length : 0);
+        updateResultsColumnStickiness();
         updateExpandedPlanStickyShadow();
       });
 
       window.addEventListener('load', () => {
-        updateResultsFooterAction(planList ? planList.children.length : 0);
+        updateResultsColumnStickiness();
         updateExpandedPlanStickyShadow();
       });
 
