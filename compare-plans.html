@@ -19,11 +19,11 @@
         <a class="imt-logo" href="./index.html" aria-label="InsureMyTrip home">
           <img class="imt-logo__image" src="https://assets.insuremytrip.com/wp-content/uploads/2026/03/11140041/imt-logo-2.svg" alt="insuremytrip" />
         </a>
-        <a class="imt-quote-button" href="./quote-single-trip.html">Start a Quote</a>
+        <a class="imt-quote-button" href="./index.html">Start a Quote</a>
       </div>
     </header>
 
-    <div class="imt-utility-bar">
+    <div class="imt-utility-bar" id="imt-utility-bar-trigger" role="button" tabindex="0" aria-label="Edit quote details">
       <div class="imt-utility-bar__inner">
         <span>Italy</span>
         <span>Jul 22, 2024 - Jul 31, 2024</span>
@@ -240,14 +240,20 @@
 
         <section class="imt-results">
           <div class="imt-results-toolbar">
-            <label class="imt-sort-control">
-              <select id="imt-plan-sort" aria-label="Sort plans">
-                <option value="default">Most Popular</option>
-                <option value="price-low">Price low</option>
-                <option value="price-high">Price high</option>
-                <option value="coverage-average">Coverage score</option>
-              </select>
-            </label>
+            <div class="imt-results-toolbar__controls">
+              <label class="imt-sort-control">
+                <select id="imt-plan-sort" aria-label="Sort plans">
+                  <option value="default">Most Popular</option>
+                  <option value="price-low">Price low</option>
+                  <option value="price-high">Price high</option>
+                </select>
+              </label>
+              <label class="imt-coverage-score-toggle">
+                <input type="checkbox" id="imt-coverage-score-toggle" />
+                <span class="imt-checkmark"></span>
+                <span>Show Coverage Scores</span>
+              </label>
+            </div>
             <a href="./compare-plans.html">Share results</a>
           </div>
 
@@ -293,6 +299,14 @@
         <div class="imt-modal__eyebrow">Filter Info</div>
         <h2 class="imt-modal__title" id="imt-filter-info-title">Filter details</h2>
         <p class="imt-modal__body" id="imt-filter-info-body"></p>
+      </div>
+    </div>
+    <div class="imt-modal" id="imt-quote-form-modal" hidden>
+      <div class="imt-modal__backdrop" data-close-quote-modal="true"></div>
+      <div class="imt-modal__dialog imt-modal__dialog--quote" role="dialog" aria-modal="true" aria-labelledby="imt-quote-modal-title">
+        <div class="imt-quote-modal__frame-wrap">
+          <iframe class="imt-quote-modal__frame" src="./quote-form-embed.html" title="Travel insurance quote form"></iframe>
+        </div>
       </div>
     </div>
     <script src="./plan-data.js"></script>
@@ -975,11 +989,6 @@
             if (a.available !== b.available) return a.available ? -1 : 1;
             return b.price - a.price || a.index - b.index;
           });
-        } else if (selectedValue === 'coverage-average') {
-          sorted.sort((a, b) => {
-            if (a.available !== b.available) return a.available ? -1 : 1;
-            return getCoverageScore(b) - getCoverageScore(a) || a.price - b.price || a.index - b.index;
-          });
         } else {
           sorted.sort((a, b) => a.index - b.index);
         }
@@ -988,6 +997,7 @@
       }
 
       const sortSelect = document.getElementById('imt-plan-sort');
+      const coverageScoreToggle = document.getElementById('imt-coverage-score-toggle');
       const planList = document.getElementById('imt-plan-list');
       const visiblePlanCount = document.getElementById('imt-visible-plan-count');
       const resetFiltersLink = document.getElementById('imt-reset-filters');
@@ -998,6 +1008,9 @@
       const filterInfoClose = document.getElementById('imt-filter-info-close');
       const filterInfoTitle = document.getElementById('imt-filter-info-title');
       const filterInfoBody = document.getElementById('imt-filter-info-body');
+      const utilityBarTrigger = document.getElementById('imt-utility-bar-trigger');
+      const quoteFormModal = document.getElementById('imt-quote-form-modal');
+      const quoteFormClose = document.getElementById('imt-quote-form-close');
       const tripProtectionBlock = document.getElementById('imt-trip-protection-filter');
       const tripProtectionHeading = document.getElementById('imt-trip-protection-heading');
       let hasShownCoverageScoreModal = false;
@@ -1208,6 +1221,11 @@
         filterInfoModal.hidden = !isOpen;
       }
 
+      function setQuoteFormModalOpen(isOpen) {
+        if (!quoteFormModal) return;
+        quoteFormModal.hidden = !isOpen;
+      }
+
       function attachCoverageScoreModalEvents() {
         if (!coverageScoreModal || coverageScoreModal.dataset.bound === 'true') return;
         coverageScoreModal.dataset.bound = 'true';
@@ -1229,6 +1247,7 @@
           if (event.key === 'Escape') {
             setCoverageScoreModalOpen(false);
             setFilterInfoModalOpen(false);
+            setQuoteFormModalOpen(false);
           }
         });
       }
@@ -1275,12 +1294,42 @@
         });
       }
 
+      function attachQuoteFormModalEvents() {
+        if (!quoteFormModal || quoteFormModal.dataset.bound === 'true') return;
+        quoteFormModal.dataset.bound = 'true';
+
+        if (utilityBarTrigger) {
+          const openModal = () => setQuoteFormModalOpen(true);
+          utilityBarTrigger.addEventListener('click', openModal);
+          utilityBarTrigger.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              openModal();
+            }
+          });
+        }
+
+        quoteFormModal.addEventListener('click', (event) => {
+          const target = event.target;
+          if (target instanceof HTMLElement && target.dataset.closeQuoteModal === 'true') {
+            setQuoteFormModalOpen(false);
+          }
+        });
+
+        window.addEventListener('message', (event) => {
+          if (event.origin !== window.location.origin) return;
+          if (event.data && event.data.type === 'imt-close-quote-modal') {
+            setQuoteFormModalOpen(false);
+          }
+        });
+      }
+
       function renderPlans() {
         if (!planList) return;
         const selectedValue = sortSelect ? sortSelect.value : 'default';
         const totalPlans = getBasePlans().length;
         const visiblePlans = getSortedPlans(selectedValue);
-        const showCoverageScores = selectedValue === 'coverage-average';
+        const showCoverageScores = coverageScoreToggle ? coverageScoreToggle.checked : false;
         const maxCoverageScore = visiblePlans.reduce((max, plan) => Math.max(max, getCoverageScore(plan)), 0);
         planList.innerHTML = visiblePlans.map((plan) => renderPlanCard(plan, showCoverageScores, maxCoverageScore)).join('');
         if (visiblePlanCount) {
@@ -1327,8 +1376,12 @@
       }
 
       if (sortSelect) {
-        sortSelect.addEventListener('change', () => {
-          if (sortSelect.value === 'coverage-average' && !hasShownCoverageScoreModal) {
+        sortSelect.addEventListener('change', renderPlans);
+      }
+
+      if (coverageScoreToggle) {
+        coverageScoreToggle.addEventListener('change', () => {
+          if (coverageScoreToggle.checked && !hasShownCoverageScoreModal) {
             hasShownCoverageScoreModal = true;
             setCoverageScoreModalOpen(true);
           }
@@ -1394,6 +1447,7 @@
       attachTripProtectionEvents();
       attachCoverageScoreModalEvents();
       attachFilterInfoModalEvents();
+      attachQuoteFormModalEvents();
       syncFilterGroupState();
       renderPlans();
     </script>

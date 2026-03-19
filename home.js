@@ -75,7 +75,7 @@
 
   const state = {
     step: 1,
-    expandedQuoteForm: false,
+    expandedQuoteForm: mount.dataset.defaultForm === "expanded",
     destinationMenuOpen: false,
     destinationActiveIndex: 0,
     datePickerOpen: false,
@@ -99,6 +99,20 @@
       firstDepositDate: "",
     },
   };
+  const submitLabel = mount.dataset.submitLabel || "See Plans And Prices";
+  const submitClosesModal = mount.dataset.submitAction === "close-modal";
+  const fieldHelpText = {
+    destination: "Choose the main country you plan to visit on this trip.",
+    travelDates: "Select your departure and return dates for this trip.",
+    travelers: "Tell us how many travelers should be included in the quote.",
+    age: "Enter the age of the primary traveler.",
+    citizenship: "Select the country of citizenship for the primary traveler.",
+    legalResidence: "Choose the country where the traveler legally resides.",
+    stateTerritory: "Choose the state or territory of legal residence.",
+    totalTripCost: "Add up your prepaid, non-refundable trip expenses.",
+    firstDepositDate: "Enter the date you made your first trip payment.",
+    visitingUsState: "Choose the U.S. state you plan to visit.",
+  };
 
   const fieldIsComplete = (value) => String(value || "").trim().length > 0;
   const comparePlansHref = () =>
@@ -112,6 +126,13 @@
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;");
+
+  const labelMarkup = (label, helpKey) => `
+    <span class="imt-label-text">
+      <span>${label}</span>
+      ${fieldHelpText[helpKey] ? `<button class="imt-label-info" type="button" aria-label="More information" data-tooltip="${escapeHtml(fieldHelpText[helpKey])}">i</button>` : ""}
+    </span>
+  `;
 
   const toIsoDate = (date) => {
     const year = date.getFullYear();
@@ -157,14 +178,14 @@
 
   const inputRow = (label, value, name) => `
     <label class="imt-quote-form__label">
-      <span>${label}</span>
+      ${labelMarkup(label, name)}
       <input class="imt-text-input" name="${name}" value="${escapeHtml(value)}" />
     </label>
   `;
 
   const completeField = (label, value, name) => `
     <label class="imt-quote-form__label">
-      <span>${label}</span>
+      ${labelMarkup(label, name)}
       <div class="imt-input ${fieldIsComplete(value) ? "imt-input--complete" : ""}">
         ${fieldIsComplete(value) ? '<span class="imt-input__check" aria-hidden="true"></span>' : ""}
         <input class="imt-inline-input" name="${name}" value="${escapeHtml(value)}" />
@@ -201,7 +222,7 @@
 
     return `
       <label class="imt-quote-form__label imt-quote-form__label--stacked">
-        <span>Main Destination</span>
+        ${labelMarkup("Main Destination", "destination")}
         <div class="imt-combobox ${state.destinationMenuOpen ? "is-open" : ""}">
           <div class="imt-input ${fieldIsComplete(state.tripDetails.destination) ? "imt-input--complete" : ""}">
             ${fieldIsComplete(state.tripDetails.destination) ? '<span class="imt-input__check" aria-hidden="true"></span>' : ""}
@@ -314,7 +335,7 @@
 
     return `
       <label class="imt-quote-form__label imt-quote-form__label--stacked">
-        <span>Travel Dates</span>
+        ${labelMarkup("Travel Dates", "travelDates")}
         <div class="imt-date-field ${state.datePickerOpen ? "is-open" : ""}">
           <button class="imt-input imt-date-field__trigger ${fieldIsComplete(travelDatesDisplay()) ? "imt-input--complete" : ""}" type="button" data-date-trigger="true">
             ${fieldIsComplete(travelDatesDisplay()) ? '<span class="imt-input__check" aria-hidden="true"></span>' : ""}
@@ -375,11 +396,20 @@
     </div>
   `;
 
+  const nextStepActions = (nextStep) => `
+    <div class="imt-quote-form__actions">
+      <button class="imt-form-toggle-button" type="button" data-toggle-quote-form="true" aria-label="Switch form layout" title="Switch form layout">
+        <span class="imt-form-toggle-button__icon" aria-hidden="true"></span>
+      </button>
+      <button class="imt-next-button" type="button" data-next-step="${nextStep}">Next Step</button>
+    </div>
+  `;
+
   const stepOne = () => `
     <div class="imt-quote-form">
       ${destinationField()}
       ${travelDatesField()}
-      <button class="imt-next-button" type="button" data-next-step="2">Next Step</button>
+      ${nextStepActions(2)}
     </div>
   `;
 
@@ -400,7 +430,7 @@
       <div class="imt-full-quote__section">
         <div class="imt-quote-form__row imt-quote-form__row--compact">
           <label class="imt-quote-form__label imt-quote-form__label--short">
-            <span>How many travelers?</span>
+            ${labelMarkup("How many travelers?", "travelers")}
             <select class="imt-select-input" name="travelers">
               ${["1", "2", "3", "4", "5+"]
                 .map((value) => `<option value="${value}" ${state.travelerInfo.travelers === value ? "selected" : ""}>${value}</option>`)
@@ -427,7 +457,12 @@
           </div>
         ` : ""}
       </div>
-      <a class="imt-submit-button imt-submit-button--wide" href="${comparePlansHref()}">See Plans & Prices</a>
+      <div class="imt-quote-form__actions">
+        <a class="imt-submit-button imt-submit-button--wide" href="${comparePlansHref()}" ${submitClosesModal ? 'data-close-modal-submit="true"' : ''}>${submitLabel}</a>
+        <button class="imt-form-toggle-button" type="button" data-toggle-quote-form="true" aria-label="Switch form layout" title="Switch form layout">
+          <span class="imt-form-toggle-button__icon" aria-hidden="true"></span>
+        </button>
+      </div>
       ${state.tripCostInfoOpen ? `
         <div class="imt-info-modal" role="dialog" aria-modal="true" aria-labelledby="imt-trip-cost-info-title">
           <div class="imt-info-modal__backdrop" data-close-trip-cost-info="true"></div>
@@ -446,7 +481,7 @@
     <div class="imt-quote-form">
       <div class="imt-quote-form__row imt-quote-form__row--compact">
         <label class="imt-quote-form__label imt-quote-form__label--short">
-          <span>Number of Travelers</span>
+          ${labelMarkup("Number of Travelers", "travelers")}
           <select class="imt-select-input" name="travelers">
             ${["1", "2", "3", "4", "5+"]
               .map((value) => `<option value="${value}" ${state.travelerInfo.travelers === value ? "selected" : ""}>${value}</option>`)
@@ -460,7 +495,7 @@
         ${completeField("Legal Residence", state.travelerInfo.legalResidence, "legalResidence")}
         ${completeField("State or Territory", state.travelerInfo.stateTerritory, "stateTerritory")}
       </div>
-      <button class="imt-next-button" type="button" data-next-step="3">Next Step</button>
+      ${nextStepActions(3)}
     </div>
   `;
 
@@ -480,7 +515,7 @@
           ${completeField("First Deposit Date", state.tripCost.firstDepositDate, "firstDepositDate")}
         </div>
       ` : ""}
-      <a class="imt-submit-button" href="${comparePlansHref()}">See Plans And Prices</a>
+      <a class="imt-submit-button" href="${comparePlansHref()}" ${submitClosesModal ? 'data-close-modal-submit="true"' : ''}>${submitLabel}</a>
       ${state.tripCostInfoOpen ? `
         <div class="imt-info-modal" role="dialog" aria-modal="true" aria-labelledby="imt-trip-cost-info-title">
           <div class="imt-info-modal__backdrop" data-close-trip-cost-info="true"></div>
@@ -703,6 +738,13 @@
       button.addEventListener("click", () => {
         state.tripCostInfoOpen = false;
         render();
+      });
+    });
+
+    mount.querySelectorAll("[data-close-modal-submit]").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        window.parent.postMessage({ type: "imt-close-quote-modal" }, window.location.origin);
       });
     });
   };

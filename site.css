@@ -1,5 +1,6 @@
 :root {
-  --font-display: "Gamay", sans-serif;
+  --font-display: "Open Sans", sans-serif;
+  --font-body: "Open Sans", sans-serif;
 }
 
 .site-nav {
@@ -569,6 +570,7 @@
 .imt-utility-bar {
   border-bottom: 1px solid #d8d8d8;
   background: #f8f8f8;
+  cursor: pointer;
 }
 
 .imt-utility-bar__inner {
@@ -580,6 +582,11 @@
   padding: 0 14px;
   color: #212629;
   font: 700 16px/1.2 var(--font-body);
+  transition: color 0.18s ease;
+}
+
+.imt-utility-bar:hover .imt-utility-bar__inner {
+  color: #0354d6;
 }
 
 .imt-results-page {
@@ -1102,6 +1109,12 @@
   padding: 10px;
 }
 
+.imt-results-toolbar__controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .imt-results-toolbar button {
   min-height: 20px;
   padding: 4px 18px;
@@ -1129,6 +1142,47 @@
   background: #fff;
   color: #212629;
   font: 600 12px/1 var(--font-body);
+}
+
+.imt-coverage-score-toggle {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: 22px auto;
+  align-items: center;
+  gap: 10px;
+  color: #212629;
+  font: 600 12px/1 var(--font-body);
+  cursor: pointer;
+}
+
+.imt-coverage-score-toggle input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.imt-coverage-score-toggle .imt-checkmark {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #b7c7d6;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.imt-coverage-score-toggle input:checked + .imt-checkmark {
+  border-color: #0354d6;
+  background: #0354d6;
+}
+
+.imt-coverage-score-toggle input:checked + .imt-checkmark::after {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 6px;
+  margin: 4px 0 0 3px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg);
 }
 
 .imt-plan-list {
@@ -1160,6 +1214,13 @@
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 24px 60px rgba(8, 38, 77, 0.22);
+}
+
+.imt-modal__dialog--quote {
+  width: min(94vw, 780px);
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .imt-modal__close {
@@ -1194,6 +1255,19 @@
   margin: 14px 0 0;
   color: #24303b;
   font: 400 16px/1.5 var(--font-body);
+}
+
+.imt-quote-modal__frame-wrap {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.imt-quote-modal__frame {
+  display: block;
+  width: 100%;
+  height: min(82vh, 1280px);
+  border: 0;
+  background: #ffffff;
 }
 
 .imt-modal__graphic {
@@ -1700,6 +1774,15 @@
     padding: 10px 14px;
   }
 
+  .imt-modal__dialog--quote {
+    width: min(96vw, 760px);
+    padding: 0;
+  }
+
+  .imt-quote-modal__frame {
+    height: min(80vh, 820px);
+  }
+
   .imt-price-card__assist-grid,
   .imt-plan-card__metrics {
     grid-template-columns: 1fr;
@@ -1716,7 +1799,14 @@
     align-items: stretch;
   }
 
-  .imt-sort-control {
+  .imt-results-toolbar__controls {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .imt-sort-control,
+  .imt-coverage-score-toggle {
     margin-left: 0;
   }
 

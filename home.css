@@ -280,6 +280,55 @@ body.imt-home {
   font: 400 13px/1.4 "Gamay", sans-serif;
 }
 
+.imt-label-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.imt-label-info {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  flex: none;
+  border: 1px solid #7a8ba0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #4b6078;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font: 700 10px/1 "Gamay", sans-serif;
+  cursor: help;
+  vertical-align: middle;
+}
+
+.imt-label-info::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  width: 220px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #173876;
+  color: #ffffff;
+  font: 400 12px/1.45 "Gamay", sans-serif;
+  text-align: left;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+  z-index: 8;
+}
+
+.imt-label-info:hover::after,
+.imt-label-info:focus-visible::after {
+  opacity: 1;
+}
+
 .imt-quote-form__label--stacked {
   position: relative;
 }
@@ -599,6 +648,60 @@ body.imt-home {
   color: #ffffff;
   font: 700 10px/1 "Gamay", sans-serif;
   letter-spacing: 0;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.imt-next-button:hover {
+  background: #04698a;
+}
+
+.imt-quote-form__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.imt-quote-form__actions .imt-next-button {
+  flex: 1;
+}
+
+.imt-quote-form__actions .imt-submit-button {
+  flex: 1;
+}
+
+.imt-form-toggle-button {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 1px solid #9fc5ec;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #0280a7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.imt-form-toggle-button:hover {
+  background: #0280a7;
+  border-color: #0280a7;
+  color: #ffffff;
+}
+
+.imt-form-toggle-button__icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="white"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="white"/></svg>') center / contain no-repeat;
+}
+
+.imt-form-toggle-button:focus-visible {
+  outline: 2px solid #0280a7;
+  outline-offset: 2px;
 }
 
 .imt-submit-button {

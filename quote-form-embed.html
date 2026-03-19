@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quote Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./design-system/theme.css" />
+    <link rel="stylesheet" href="./home.css" />
+    <script src="./home.js" defer></script>
+    <style>
+      body.imt-quote-embed {
+        margin: 0;
+        background: #ffffff;
+      }
+
+      .imt-quote-embed__shell {
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+
+      .imt-quote-embed__close {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        border: 0;
+        background: transparent;
+        color: #5f6c76;
+        font: 700 11px/1 "Open Sans", sans-serif;
+        text-transform: uppercase;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .imt-quote-embed .imt-quote-card {
+        width: min(100%, 760px);
+        max-width: 760px;
+        min-width: 0;
+      }
+
+      .imt-quote-embed .imt-quote-form__row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .imt-quote-embed .imt-quote-form__row--compact {
+        grid-template-columns: 150px 121px;
+      }
+
+      .imt-quote-embed .imt-form-toggle-button {
+        display: none;
+      }
+    </style>
+  </head>
+  <body class="imt-home imt-quote-embed">
+    <main class="imt-quote-embed__shell">
+      <button class="imt-quote-embed__close" type="button" onclick="window.parent.postMessage({ type: 'imt-close-quote-modal' }, window.location.origin)">Close</button>
+      <section class="imt-quote-card" aria-label="Get your travel insurance quote" data-quote-form data-default-form="expanded" data-submit-label="Update Quote" data-submit-action="close-modal"></section>
+    </main>
+  </body>
+</html>
