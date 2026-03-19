@@ -259,6 +259,9 @@
 
           <div class="imt-plan-list" id="imt-plan-list"></div>
           <div class="imt-selected-filters imt-selected-filters--results" id="imt-selected-filters" hidden></div>
+          <div class="imt-results-footer-action" id="imt-results-footer-action" hidden>
+            <button class="imt-results-footer-action__button" id="imt-scroll-to-top-button" type="button">Scroll to top</button>
+          </div>
         </section>
       </div>
     </main>
@@ -368,6 +371,8 @@
       let preExistingWaiverSelected = false;
       let previousTripCancellationParentSelected = false;
       let tripProtectionCollapsed = false;
+      let expandedPlanIndex = null;
+      const detailSectionState = {};
       let selectedMedicalFilter = 'all';
       let selectedEvacuationFilter = 'all';
       const medicalFilterOptions = [
@@ -386,6 +391,7 @@
         { value: 'unlimited', label: 'Unlimited' },
       ];
       const disabledFilterTooltip = "This isn't available based on your current selections";
+      const expandedPlanStickyOffset = 10;
       function escapeHtml(value) {
         return String(value)
           .replace(/&/g, '&amp;')
@@ -477,13 +483,17 @@
         ].join('');
       }
 
-      function renderMetricCell(definition, metric, showCoverageScores) {
+      function renderMetricCell(definition, metric, showCoverageScores, plan) {
         const cell = metric || { kind: 'none', text: 'X Not included', score: 0 };
         const showMetricDots = showCoverageScores && definition.key !== 'preExWaiver' && cell.kind !== 'none';
         const scoreMarkup = showMetricDots
           ? '<small class="imt-coverage-score">' + renderCoverageLine(definition, cell) + '</small>'
           : '';
-        return '<div class="' + metricClass(cell) + '"' + metricStyle(cell) + '><span>' + escapeHtml(definition.label) + '</span><strong>' + escapeHtml(cell.text) + '</strong>' + scoreMarkup + '</div>';
+        const tripCancellationReasonsCount = definition.key === 'tripCancellation' ? (plan.tripCancellationReasons || []).length : 0;
+        const resolvedText = definition.key === 'tripCancellation' && tripCancellationReasonsCount
+          ? tripCancellationReasonsCount + ' reason' + (tripCancellationReasonsCount === 1 ? '' : 's')
+          : cell.text;
+        return '<div class="' + metricClass(cell) + '"' + metricStyle(cell) + '><span>' + escapeHtml(definition.label) + '</span><strong>' + escapeHtml(resolvedText) + '</strong>' + scoreMarkup + '</div>';
       }
 
       function renderPrice(priceDisplay) {
@@ -528,8 +538,262 @@
         return "This plan's coverage score is " + score + "% compared with the other plans shown.";
       }
 
+      function hasMetric(plan, key) {
+        const metric = plan && plan.metrics && plan.metrics[key];
+        return metric && metric.kind && metric.kind !== 'none';
+      }
+
+      function getMetricText(plan, key, fallback = 'N/A') {
+        const metric = plan && plan.metrics && plan.metrics[key];
+        if (!metric || !metric.text) return fallback;
+        return metric.text;
+      }
+
+      function getDetailSectionStateKey(planIndex, sectionKey) {
+        return String(planIndex) + ':' + String(sectionKey);
+      }
+
+      function isDetailSectionOpen(planIndex, sectionKey) {
+        const stateKey = getDetailSectionStateKey(planIndex, sectionKey);
+        if (Object.prototype.hasOwnProperty.call(detailSectionState, stateKey)) {
+          return detailSectionState[stateKey];
+        }
+        return sectionKey === 'medical' || sectionKey === 'trip-protection';
+      }
+
+      function getCoverageLimitCaption(section) {
+        if (section.kind === 'list') return section.countLabel || '';
+        return '';
+      }
+
+      function getOptionalCoverageItems(plan) {
+        const items = [];
+        if (planHasRentalCarCoverage(plan)) items.push('Rental car');
+        if (planHasVacationRentalCoverage(plan)) items.push('Vacation rental');
+        if (planHasPetCareCoverage(plan)) items.push('Pet care');
+        if (planHasAdventureSportsCoverage(plan)) items.push('Adventure sports');
+        if (planHasCruiseCoverage(plan)) items.push('Cruise');
+        return items;
+      }
+
+      function getIncludedBenefits(plan) {
+        const benefits = [];
+        const reasonsCount = (plan.tripCancellationReasons || []).length;
+        if (reasonsCount) benefits.push(reasonsCount + ' covered trip cancellation reasons');
+        if (hasMetric(plan, 'travelDelay')) benefits.push(getMetricText(plan, 'travelDelay') + ' travel delay coverage');
+        if (hasMetric(plan, 'baggageDelay')) benefits.push(getMetricText(plan, 'baggageDelay') + ' baggage delay coverage');
+        if (hasMetric(plan, 'baggage')) benefits.push(getMetricText(plan, 'baggage') + ' baggage loss coverage');
+        if (hasMetric(plan, 'preExWaiver')) benefits.push('Pre-existing conditions waiver');
+        if (hasMetric(plan, 'evacuation')) benefits.push(getMetricText(plan, 'evacuation') + ' emergency evacuation');
+        getOptionalCoverageItems(plan).forEach((item) => benefits.push(item));
+        return benefits;
+      }
+
+      function getCoveredActivities(plan) {
+        if (!planHasAdventureSportsCoverage(plan)) return [];
+        return [
+          'Backpacking',
+          'Bungee jumping',
+          'Canoeing',
+          'Cycling',
+          'Fishing',
+          'Hiking',
+          'Kayaking',
+          'Paddleboarding',
+          'Rock climbing',
+          'Scuba diving',
+          'Snorkeling',
+          'Snowboarding',
+        ];
+      }
+
+      function getPlanDescription(plan) {
+        const planType = getPlanTypeLabel(plan).toLowerCase();
+        const highlights = [];
+        if (hasMetric(plan, 'medical')) highlights.push(getMetricText(plan, 'medical') + ' medical coverage');
+        if (hasMetric(plan, 'evacuation')) highlights.push(getMetricText(plan, 'evacuation') + ' evacuation coverage');
+        if (hasMetric(plan, 'tripCancellation')) highlights.push(getMetricText(plan, 'tripCancellation') + ' trip cancellation');
+        if (hasMetric(plan, 'travelDelay')) highlights.push(getMetricText(plan, 'travelDelay') + ' travel delay');
+        const highlightText = highlights.slice(0, 3).join(', ');
+        return plan.name + ' is a ' + planType + ' plan from ' + plan.provider + (highlightText ? ' with ' + highlightText + '.' : '.') + ' Review policy details and certificate language for complete terms, conditions, and exclusions.';
+      }
+
+      function getPlanInfoItems(plan) {
+        return [
+          { label: 'Availability', value: plan.available ? 'U.S. Residents' : 'Not available for this quote' },
+          { label: 'Review Period', value: '10 day Review Period' },
+          { label: 'Provider', value: plan.provider },
+        ];
+      }
+
+      function getPlanDetailSections(plan) {
+        const sections = [];
+
+        if (hasMetric(plan, 'medical')) {
+          sections.push({
+            key: 'medical',
+            title: 'Medical',
+            rows: [
+              { label: 'Medical limit', value: getMetricText(plan, 'medical') },
+            ],
+          });
+        }
+
+        const tripProtectionRows = [];
+        if (hasMetric(plan, 'tripInterruption')) tripProtectionRows.push({ label: 'Trip interruption', value: getMetricText(plan, 'tripInterruption') });
+        if (hasMetric(plan, 'tripCancellation')) {
+          const tripCancellationCount = (plan.tripCancellationReasons || []).length;
+          tripProtectionRows.push({
+            label: 'Trip cancellation',
+            value: tripCancellationCount
+              ? tripCancellationCount + ' reason' + (tripCancellationCount === 1 ? '' : 's')
+              : getMetricText(plan, 'tripCancellation'),
+          });
+        }
+        if ((plan.tripCancellationReasons || []).length) tripProtectionRows.push({ label: 'Covered reasons', list: plan.tripCancellationReasons || [] });
+        if (hasMetric(plan, 'travelDelay')) tripProtectionRows.push({ label: 'Travel delay', value: getMetricText(plan, 'travelDelay') });
+        if (hasMetric(plan, 'baggageDelay')) tripProtectionRows.push({ label: 'Baggage delay', value: getMetricText(plan, 'baggageDelay') });
+        if (hasMetric(plan, 'baggage')) tripProtectionRows.push({ label: 'Baggage loss', value: getMetricText(plan, 'baggage') });
+        if (tripProtectionRows.length) {
+          sections.push({
+            key: 'trip-protection',
+            title: 'Trip Protection',
+            rows: tripProtectionRows,
+          });
+        }
+
+        const preExistingRows = [];
+        if (hasMetric(plan, 'preExWaiver')) preExistingRows.push({ label: 'Waiver', value: getMetricText(plan, 'preExWaiver') });
+        if (hasMetric(plan, 'lookbackPeriod')) preExistingRows.push({ label: 'Lookback period', value: getMetricText(plan, 'lookbackPeriod') });
+        if (preExistingRows.length) {
+          sections.push({
+            key: 'pre-existing',
+            title: 'Pre-Existing Conditions',
+            rows: preExistingRows,
+          });
+        }
+
+        if (hasMetric(plan, 'evacuation')) {
+          sections.push({
+            key: 'evacuation',
+            title: 'Evacuation',
+            rows: [
+              { label: 'Evacuation', value: getMetricText(plan, 'evacuation') },
+            ],
+          });
+        }
+
+        if (hasMetric(plan, 'accidentalDeath')) {
+          sections.push({
+            key: 'accidental-death',
+            title: 'Accidental Death',
+            rows: [
+              { label: 'Accidental death', value: getMetricText(plan, 'accidentalDeath') },
+            ],
+          });
+        }
+
+        const optionalCoverages = getOptionalCoverageItems(plan);
+        sections.push({
+          key: 'optional-coverages',
+          title: 'Optional Coverages',
+          kind: 'list',
+          countLabel: optionalCoverages.length + ' available',
+          items: optionalCoverages.length ? optionalCoverages : ['No optional coverages highlighted'],
+        });
+
+        const includedBenefits = getIncludedBenefits(plan);
+        sections.push({
+          key: 'included-benefits',
+          title: 'Included Benefits',
+          kind: 'list',
+          countLabel: includedBenefits.length + ' included',
+          items: includedBenefits.length ? includedBenefits : ['No included benefits listed'],
+        });
+
+        const coveredActivities = getCoveredActivities(plan);
+        if (coveredActivities.length) {
+          sections.push({
+            key: 'covered-activities',
+            title: 'Covered Activities',
+            kind: 'list',
+            countLabel: coveredActivities.length + ' covered activities',
+            items: coveredActivities,
+            splitColumns: true,
+          });
+        }
+
+        sections.push({
+          key: 'description',
+          title: 'Description',
+          kind: 'description',
+          description: getPlanDescription(plan),
+        });
+
+        return sections;
+      }
+
+      function renderPlanDetailSection(plan, section) {
+        const isOpen = isDetailSectionOpen(plan.index, section.key);
+        const caption = getCoverageLimitCaption(section);
+        const rowsMarkup = (section.rows || []).map((row) => {
+          const tooltip = 'Coverage detail for ' + row.label.toLowerCase() + '.';
+          const valueMarkup = Array.isArray(row.list)
+            ? '<ul class="imt-plan-detail__value-list">' + row.list.map((item) => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>'
+            : '<div class="imt-plan-detail__value">' + escapeHtml(row.value) + '</div>';
+          return '<div class="imt-plan-detail__row">' +
+            '<div class="imt-plan-detail__label"><span class="imt-plan-detail__label-text" data-tooltip="' + escapeHtml(tooltip) + '" title="' + escapeHtml(tooltip) + '">' + escapeHtml(row.label) + '</span></div>' +
+            valueMarkup +
+          '</div>';
+        }).join('');
+        const listClass = 'imt-plan-detail__list' + (section.splitColumns ? ' imt-plan-detail__list--columns' : '');
+        const listMarkup = section.kind === 'list'
+          ? '<ul class="' + listClass + '">' + (section.items || []).map((item) => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>'
+          : '';
+        const descriptionMarkup = section.kind === 'description'
+          ? '<p class="imt-plan-detail__description">' + escapeHtml(section.description || '') + '</p>'
+          : '';
+
+        return [
+          '<section class="imt-plan-detail-section">',
+          '  <button class="imt-plan-detail-section__header" type="button" data-plan-detail-section-toggle="' + escapeHtml(section.key) + '" data-plan-index="' + plan.index + '" aria-expanded="' + isOpen + '">',
+          '    <span class="imt-plan-detail-section__heading">' + escapeHtml(section.title) + '</span>',
+          '    <span class="imt-plan-detail-section__caption">' + escapeHtml(caption) + '</span>',
+          '  </button>',
+          '  <div class="imt-plan-detail-section__body"' + (isOpen ? '' : ' hidden') + '>',
+          rowsMarkup,
+          listMarkup,
+          descriptionMarkup,
+          '  </div>',
+          '</section>',
+        ].join('');
+      }
+
+      function renderExpandedPlanDetails(plan) {
+        const sections = getPlanDetailSections(plan);
+        const planInfoItems = getPlanInfoItems(plan);
+        return [
+          '<div class="imt-plan-card__details">',
+          '  <div class="imt-plan-card__details-main">',
+          sections.map((section) => renderPlanDetailSection(plan, section)).join(''),
+          '  </div>',
+          '  <aside class="imt-plan-card__details-side">',
+          '    <h4>Plan Info</h4>',
+          planInfoItems.map((item) => (
+            '<div class="imt-plan-detail__info-block">' +
+              '<span>' + escapeHtml(item.label) + '</span>' +
+              '<strong>' + escapeHtml(item.value) + '</strong>' +
+            '</div>'
+          )).join(''),
+          '    <span class="imt-plan-detail__certificate">View Certificate</span>',
+          '  </aside>',
+          '</div>',
+        ].join('');
+      }
+
       function renderPlanCard(plan, showCoverageScores, scoreRange) {
-        const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable');
+        const isExpanded = expandedPlanIndex === plan.index;
+        const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable') + (isExpanded ? ' imt-plan-card--expanded' : '');
         const note = plan.note ? '<p class="imt-plan-card__notice">' + escapeHtml(plan.note) + '</p>' : '';
         const coverageScore = getDisplayCoverageScore(plan, scoreRange);
         const coverageScoreLabel = plan.type === 'Evacuation' ? 'Not applicable' : getCoverageScoreLabel(coverageScore);
@@ -546,33 +810,37 @@
 
         return [
           '<article class="' + cardClass + '" data-plan-index="' + plan.index + '">',
-          '  <div class="imt-plan-card__main">',
-          '    <div class="imt-plan-card__brand-row">',
-          '      ' + providerBadge,
-          '      <div class="imt-plan-card__headline-group">',
-          '        <div class="imt-plan-card__headline">',
-          '          <p>' + escapeHtml(getPlanTypeLabel(plan)) + '</p>',
-          '          <div class="imt-plan-card__title-row">',
-          '            <h3>' + escapeHtml(plan.name) + '</h3>',
-          '            ' + coverageScoreMarkup,
+          '  <div class="imt-plan-card__summary">',
+          '    <div class="imt-plan-card__main">',
+          '      <div class="imt-plan-card__brand-row">',
+          '        ' + providerBadge,
+          '        <div class="imt-plan-card__headline-group">',
+          '          <div class="imt-plan-card__headline">',
+          '            <p>' + escapeHtml(getPlanTypeLabel(plan)) + '</p>',
+          '            <div class="imt-plan-card__title-row">',
+          '              <h3>' + escapeHtml(plan.name) + '</h3>',
+          '              ' + coverageScoreMarkup,
+          '            </div>',
           '          </div>',
           '        </div>',
           '      </div>',
-          '    </div>',
           note,
-          '    <div class="imt-plan-card__metrics">',
-          metricDefinitions.map((definition) => renderMetricCell(definition, plan.metrics[definition.key], showCoverageScores)).join(''),
+          '      <div class="imt-plan-card__metrics">',
+          metricDefinitions.map((definition) => renderMetricCell(definition, plan.metrics[definition.key], showCoverageScores, plan)).join(''),
+          '      </div>',
           '    </div>',
-          '  </div>',
-          '  <div class="imt-plan-card__price">',
+          '    <div class="imt-plan-card__price">',
           renderPrice(plan.priceDisplay),
-          '    <div class="imt-total-label">Total</div>',
-          '    ' + actionButton,
-          '    <div class="imt-plan-card__actions">',
-          '      <a href="./compare-plans.html">Compare</a>',
-          '      <span class="imt-plan-card__action-link imt-plan-card__action-link--inactive" aria-disabled="true">Details</span>',
+          '      <div class="imt-total-label">Total for all travelers</div>',
+          '      ' + actionButton,
+          '      <div class="imt-plan-card__actions">',
+          '        <a href="./compare-plans.html">Compare</a>',
+          '        <button class="imt-plan-card__action-link imt-plan-card__details-toggle' + (isExpanded ? ' is-open' : '') + '" type="button" data-plan-details-toggle="' + plan.index + '" aria-expanded="' + isExpanded + '">Details</button>',
+          '      </div>',
+          '    </div>',
           '    </div>',
           '  </div>',
+          isExpanded ? renderExpandedPlanDetails(plan) : '',
           '</article>',
         ].join('');
       }
@@ -1012,6 +1280,8 @@
       const visiblePlanCount = document.getElementById('imt-visible-plan-count');
       const resetFiltersLink = document.getElementById('imt-reset-filters');
       const selectedFiltersNode = document.getElementById('imt-selected-filters');
+      const resultsFooterAction = document.getElementById('imt-results-footer-action');
+      const scrollToTopButton = document.getElementById('imt-scroll-to-top-button');
       const coverageScoreModal = document.getElementById('imt-coverage-score-modal');
       const coverageScoreClose = document.getElementById('imt-coverage-score-close');
       const filterInfoModal = document.getElementById('imt-filter-info-modal');
@@ -1205,7 +1475,175 @@
       }
 
       function attachPlanCardEvents() {
-        return;
+        document.querySelectorAll('[data-plan-details-toggle]').forEach((button) => {
+          if (button.dataset.detailsBound === 'true') return;
+          button.dataset.detailsBound = 'true';
+          button.addEventListener('click', () => {
+            const planIndex = Number(button.getAttribute('data-plan-details-toggle'));
+            const shouldOpen = expandedPlanIndex !== planIndex;
+            if (shouldOpen) {
+              expandedPlanIndex = planIndex;
+              renderPlans();
+              animateExpandPlan(planIndex);
+              scrollExpandedPlanToTop(planIndex);
+              return;
+            }
+
+            animateCollapsePlan(planIndex);
+          });
+        });
+
+        document.querySelectorAll('[data-plan-detail-section-toggle]').forEach((button) => {
+          if (button.dataset.sectionBound === 'true') return;
+          button.dataset.sectionBound = 'true';
+          button.addEventListener('click', () => {
+            const planIndex = button.getAttribute('data-plan-index');
+            const sectionKey = button.getAttribute('data-plan-detail-section-toggle');
+            const previousSummary = document.querySelector('.imt-plan-card[data-plan-index="' + planIndex + '"] .imt-plan-card__summary');
+            const previousTop = previousSummary ? previousSummary.getBoundingClientRect().top : null;
+            const stateKey = getDetailSectionStateKey(planIndex, sectionKey);
+            detailSectionState[stateKey] = !isDetailSectionOpen(planIndex, sectionKey);
+            renderPlans();
+            requestAnimationFrame(() => {
+              const nextSummary = document.querySelector('.imt-plan-card[data-plan-index="' + planIndex + '"] .imt-plan-card__summary');
+              if (!nextSummary || previousTop == null) return;
+              const nextTop = nextSummary.getBoundingClientRect().top;
+              window.scrollBy({
+                top: nextTop - previousTop,
+                behavior: 'auto',
+              });
+            });
+          });
+        });
+      }
+
+      function scrollExpandedPlanToTop(planIndex) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const planCard = document.querySelector('.imt-plan-card[data-plan-index="' + planIndex + '"]');
+            const planSummary = planCard ? planCard.querySelector('.imt-plan-card__summary') : null;
+            const planDetails = planCard ? planCard.querySelector('.imt-plan-card__details') : null;
+            if (!planSummary || !planDetails) return;
+
+            const summaryRect = planSummary.getBoundingClientRect();
+            const detailsRect = planDetails.getBoundingClientRect();
+            const top = window.scrollY + detailsRect.top - summaryRect.height - expandedPlanStickyOffset;
+
+            window.scrollTo({
+              top: Math.max(0, top),
+              behavior: 'smooth',
+            });
+          });
+        });
+      }
+
+      function animateExpandPlan(planIndex) {
+        requestAnimationFrame(() => {
+          const planCard = document.querySelector('.imt-plan-card[data-plan-index="' + planIndex + '"]');
+          const planSummary = planCard ? planCard.querySelector('.imt-plan-card__summary') : null;
+          const planDetails = planCard ? planCard.querySelector('.imt-plan-card__details') : null;
+          if (!planCard || !planSummary || !planDetails) return;
+
+          const summaryHeight = planSummary.getBoundingClientRect().height;
+          const expandedHeight = planCard.getBoundingClientRect().height;
+
+          planCard.style.height = summaryHeight + 'px';
+          planCard.style.overflow = 'hidden';
+          planDetails.style.opacity = '0';
+          planDetails.style.transform = 'translateY(12px)';
+
+          planCard.animate(
+            [
+              { height: summaryHeight + 'px' },
+              { height: expandedHeight + 'px' },
+            ],
+            {
+              duration: 260,
+              easing: 'ease',
+              fill: 'forwards',
+            }
+          ).addEventListener('finish', () => {
+            planCard.style.height = '';
+            planCard.style.overflow = '';
+          }, { once: true });
+
+          planDetails.animate(
+            [
+              { opacity: 0, transform: 'translateY(12px)' },
+              { opacity: 1, transform: 'translateY(0)' },
+            ],
+            {
+              duration: 220,
+              easing: 'ease',
+              fill: 'forwards',
+            }
+          ).addEventListener('finish', () => {
+            planDetails.style.opacity = '';
+            planDetails.style.transform = '';
+          }, { once: true });
+        });
+      }
+
+      function animateCollapsePlan(planIndex) {
+        const planCard = document.querySelector('.imt-plan-card[data-plan-index="' + planIndex + '"]');
+        const planSummary = planCard ? planCard.querySelector('.imt-plan-card__summary') : null;
+        const planDetails = planCard ? planCard.querySelector('.imt-plan-card__details') : null;
+        if (!planCard || !planSummary || !planDetails) {
+          expandedPlanIndex = null;
+          renderPlans();
+          return;
+        }
+
+        const cardHeight = planCard.getBoundingClientRect().height;
+        const summaryHeight = planSummary.getBoundingClientRect().height;
+
+        planCard.style.height = cardHeight + 'px';
+        planCard.style.overflow = 'hidden';
+        planDetails.style.overflow = 'hidden';
+
+        const cardAnimation = planCard.animate(
+          [
+            { height: cardHeight + 'px' },
+            { height: summaryHeight + 'px' },
+          ],
+          {
+            duration: 220,
+            easing: 'ease',
+            fill: 'forwards',
+          }
+        );
+
+        planDetails.animate(
+          [
+            { opacity: 1, transform: 'translateY(0)' },
+            { opacity: 0, transform: 'translateY(-10px)' },
+          ],
+          {
+            duration: 180,
+            easing: 'ease',
+            fill: 'forwards',
+          }
+        );
+
+        cardAnimation.addEventListener('finish', () => {
+          expandedPlanIndex = null;
+          renderPlans();
+        }, { once: true });
+      }
+
+      function updateExpandedPlanStickyShadow() {
+        const expandedCard = document.querySelector('.imt-plan-card--expanded');
+        if (!expandedCard) return;
+        const summary = expandedCard.querySelector('.imt-plan-card__summary');
+        const details = expandedCard.querySelector('.imt-plan-card__details');
+        if (!summary || !details) return;
+
+        const summaryRect = summary.getBoundingClientRect();
+        const detailsRect = details.getBoundingClientRect();
+        const isStickyActive = summaryRect.top <= expandedPlanStickyOffset;
+        const hasContentUnder = detailsRect.top < summaryRect.bottom;
+
+        summary.classList.toggle('is-shadowed', isStickyActive && hasContentUnder);
       }
 
       function setCoverageScoreModalOpen(isOpen) {
@@ -1327,6 +1765,24 @@
         });
       }
 
+      function updateResultsFooterAction(visiblePlansLength) {
+        if (!resultsFooterAction || !planList) return;
+        if (!visiblePlansLength) {
+          resultsFooterAction.hidden = true;
+          return;
+        }
+
+        const listRect = planList.getBoundingClientRect();
+        const hasVisiblePlanList = listRect.bottom > 0 && listRect.top < window.innerHeight;
+        const planCards = Array.from(planList.querySelectorAll('.imt-plan-card'));
+        const hasVisiblePlanCard = planCards.some((card) => {
+          const rect = card.getBoundingClientRect();
+          return rect.bottom > 0 && rect.top < window.innerHeight;
+        });
+
+        resultsFooterAction.hidden = hasVisiblePlanList || hasVisiblePlanCard;
+      }
+
       function renderPlans() {
         if (!planList) return;
         const selectedValue = sortSelect ? sortSelect.value : 'default';
@@ -1352,6 +1808,9 @@
           resetFiltersLink.textContent = 'Reset Filters (Show all ' + totalPlans + ' Plans)';
         }
         renderSelectedFilterChips(visiblePlans.length, totalPlans);
+        requestAnimationFrame(() => {
+          updateResultsFooterAction(visiblePlans.length);
+        });
         renderTripCancellationReasonFilters();
         renderRentalCarFilter();
         renderSimpleCoverageFilter({
@@ -1385,6 +1844,9 @@
         renderMedicalFilters();
         renderEvacuationFilters();
         attachPlanCardEvents();
+        requestAnimationFrame(() => {
+          updateExpandedPlanStickyShadow();
+        });
       }
 
       if (sortSelect) {
@@ -1454,6 +1916,27 @@
           renderPlans();
         });
       }
+
+      if (scrollToTopButton) {
+        scrollToTopButton.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      window.addEventListener('scroll', () => {
+        updateResultsFooterAction(planList ? planList.children.length : 0);
+        updateExpandedPlanStickyShadow();
+      }, { passive: true });
+
+      window.addEventListener('resize', () => {
+        updateResultsFooterAction(planList ? planList.children.length : 0);
+        updateExpandedPlanStickyShadow();
+      });
+
+      window.addEventListener('load', () => {
+        updateResultsFooterAction(planList ? planList.children.length : 0);
+        updateExpandedPlanStickyShadow();
+      });
 
       attachFilterGroupEvents();
       attachTripProtectionEvents();
