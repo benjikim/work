@@ -36,7 +36,7 @@
         <aside class="imt-filters" aria-label="Filters">
           <section class="imt-filter-block">
             <p class="imt-filters__count" id="imt-visible-plan-count">Showing 20 Plans</p>
-            <a class="imt-filters__reset" id="imt-reset-filters" href="./compare-plans.html" hidden>Reset Filters (Show all 34 Plans)</a>
+            <a class="imt-filters__reset" id="imt-reset-filters" href="./compare-plans.html" hidden>Reset Filters (Show all 30 Plans)</a>
           </section>
 
           <section class="imt-filter-block" id="imt-trip-protection-filter">
@@ -455,8 +455,8 @@
           if (text === 'none') return 5;
           if (text === '60 days') return 4;
           if (text === '90 days') return 3;
-          if (text === '120 days') return 3;
-          if (text === '180 days') return 4;
+          if (text === '120 days') return 2;
+          if (text === '180 days') return 1;
           if (text === '2 years') return 1;
           if (text === '3 years') return 1;
           return 0;
@@ -508,25 +508,35 @@
         return plan.type;
       }
 
-      function getDisplayCoverageScore(plan, maxCoverageScore) {
+      function getDisplayCoverageScore(plan, scoreRange) {
         const rawScore = getCoverageScore(plan);
-        if (!maxCoverageScore) return 0;
-        return Math.round((rawScore / maxCoverageScore) * 100);
+        if (!scoreRange || scoreRange.max <= scoreRange.min) return rawScore;
+        return Math.round(((rawScore - scoreRange.min) / (scoreRange.max - scoreRange.min)) * 100);
       }
 
       function getCoverageScoreLabel(score) {
-        if (score < 20) return 'Value';
-        if (score < 40) return 'Fair';
-        if (score < 60) return 'Good';
-        if (score < 80) return 'Excellent';
-        return 'Best';
+        if (score < 15) return 'Value';
+        if (score < 30) return 'Fair';
+        if (score < 45) return 'Good';
+        if (score < 60) return 'Very Good';
+        if (score < 75) return 'Strong';
+        if (score < 90) return 'Excellent';
+        return 'Top';
       }
 
-      function renderPlanCard(plan, showCoverageScores, maxCoverageScore) {
+      function getCoverageScoreTooltip(score) {
+        return "This plan's coverage score is " + score + "% compared with the other plans shown.";
+      }
+
+      function renderPlanCard(plan, showCoverageScores, scoreRange) {
         const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable');
         const note = plan.note ? '<p class="imt-plan-card__notice">' + escapeHtml(plan.note) + '</p>' : '';
-        const coverageScore = getDisplayCoverageScore(plan, maxCoverageScore);
+        const coverageScore = getDisplayCoverageScore(plan, scoreRange);
         const coverageScoreLabel = plan.type === 'Evacuation' ? 'Not applicable' : getCoverageScoreLabel(coverageScore);
+        const coverageScoreTooltip = plan.type === 'Evacuation' ? '' : getCoverageScoreTooltip(coverageScore);
+        const coverageScoreMarkup = showCoverageScores
+          ? '<span class="imt-plan-card__score' + (coverageScoreTooltip ? ' imt-plan-card__score--tooltip' : '') + '"' + (coverageScoreTooltip ? ' data-tooltip="' + escapeHtml(coverageScoreTooltip) + '" title="' + escapeHtml(coverageScoreTooltip) + '"' : '') + '>Coverage Score: ' + escapeHtml(coverageScoreLabel) + '</span>'
+          : '';
         const actionButton = plan.available
           ? '<span class="imt-select-button imt-select-button--inactive" aria-disabled="true">Select</span>'
           : '<span class="imt-select-button imt-select-button--disabled">Unavailable</span>';
@@ -544,7 +554,7 @@
           '          <p>' + escapeHtml(getPlanTypeLabel(plan)) + '</p>',
           '          <div class="imt-plan-card__title-row">',
           '            <h3>' + escapeHtml(plan.name) + '</h3>',
-          '            <span class="imt-plan-card__score">Coverage Score: ' + escapeHtml(coverageScoreLabel) + '</span>',
+          '            ' + coverageScoreMarkup,
           '          </div>',
           '        </div>',
           '      </div>',
@@ -1119,27 +1129,20 @@
         return chips;
       }
 
-      function renderSelectedFilterChips(visiblePlansLength) {
+      function renderSelectedFilterChips(visiblePlansLength, totalPlans) {
         if (!selectedFiltersNode) return;
 
         const chips = buildSelectedFilterChips();
         selectedFiltersNode.hidden = chips.length === 0 || visiblePlansLength > 5;
-        selectedFiltersNode.innerHTML = chips.map((chip, index) => (
-          '<button class="imt-selected-filter-chip" type="button" data-chip-index="' + index + '">' +
-            '<span>' + escapeHtml(chip.label) + '</span>' +
-            '<span aria-hidden="true">&times;</span>' +
-          '</button>'
-        )).join('');
+        if (selectedFiltersNode.hidden) {
+          selectedFiltersNode.innerHTML = '';
+          return;
+        }
 
-        selectedFiltersNode.querySelectorAll('.imt-selected-filter-chip').forEach((button) => {
-          button.addEventListener('click', () => {
-            const chipIndex = Number(button.getAttribute('data-chip-index'));
-            const chip = chips[chipIndex];
-            if (!chip) return;
-            chip.onRemove();
-            renderPlans();
-          });
-        });
+        selectedFiltersNode.innerHTML = [
+          '<p class="imt-selected-filters__count">Showing ' + visiblePlansLength + ' Plan' + (visiblePlansLength === 1 ? '' : 's') + '</p>',
+          '<a class="imt-selected-filters__reset" href="./compare-plans.html">Reset Filters (Show all ' + totalPlans + ' Plans)</a>',
+        ].join('');
       }
 
       function syncFilterGroupState() {
@@ -1330,8 +1333,17 @@
         const totalPlans = getBasePlans().length;
         const visiblePlans = getSortedPlans(selectedValue);
         const showCoverageScores = coverageScoreToggle ? coverageScoreToggle.checked : false;
-        const maxCoverageScore = visiblePlans.reduce((max, plan) => Math.max(max, getCoverageScore(plan)), 0);
-        planList.innerHTML = visiblePlans.map((plan) => renderPlanCard(plan, showCoverageScores, maxCoverageScore)).join('');
+        const scoredPlans = visiblePlans.filter((plan) => plan.type !== 'Evacuation');
+        const scoreRange = scoredPlans.length
+          ? scoredPlans.reduce((range, plan) => {
+              const score = getCoverageScore(plan);
+              return {
+                min: Math.min(range.min, score),
+                max: Math.max(range.max, score),
+              };
+            }, { min: Number.POSITIVE_INFINITY, max: Number.NEGATIVE_INFINITY })
+          : { min: 0, max: 0 };
+        planList.innerHTML = visiblePlans.map((plan) => renderPlanCard(plan, showCoverageScores, scoreRange)).join('');
         if (visiblePlanCount) {
           visiblePlanCount.textContent = 'Showing ' + visiblePlans.length + ' Plan' + (visiblePlans.length === 1 ? '' : 's');
         }
@@ -1339,7 +1351,7 @@
           resetFiltersLink.hidden = visiblePlans.length >= totalPlans;
           resetFiltersLink.textContent = 'Reset Filters (Show all ' + totalPlans + ' Plans)';
         }
-        renderSelectedFilterChips(visiblePlans.length);
+        renderSelectedFilterChips(visiblePlans.length, totalPlans);
         renderTripCancellationReasonFilters();
         renderRentalCarFilter();
         renderSimpleCoverageFilter({
