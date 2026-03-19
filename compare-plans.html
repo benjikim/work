@@ -241,13 +241,13 @@
                   coverage, guide you through claims, and answer your questions.
                 </p>
                 <div class="imt-assist-logo">
-                  <strong>IMT</strong>
-                  <span>ASSIST</span>
+                  <img src="./imt-assist-logo.svg" alt="IMT Assist" loading="lazy" />
                   <a href="./get-support.html">Learn More</a>
                 </div>
               </div>
             </div>
           </section>
+
         </aside>
 
         <section class="imt-results">
@@ -266,9 +266,10 @@
                 <span>Show Coverage Scores</span>
               </label>
             </div>
-            <a href="./compare-plans.html">Share results</a>
+            <button type="button" data-prototype-message="share-results">Share results</button>
           </div>
 
+          <div class="imt-results-explainer" id="imt-results-explainer" hidden></div>
           <div class="imt-plan-list" id="imt-plan-list"></div>
           <div class="imt-selected-filters imt-selected-filters--results" id="imt-selected-filters" hidden></div>
         </section>
@@ -335,6 +336,16 @@
         { key: 'lookbackPeriod', label: 'Lookback Period' },
         { key: 'preExWaiver', label: 'Pre-Ex Waiver' },
       ];
+      const evacuationMetricDefinitions = [
+        { key: 'transportMode', label: 'Transport Mode' },
+        { key: 'transportOfRemains', label: 'Transport of Remains' },
+        { key: 'covidCoverage', label: 'COVID-19 Coverage' },
+        { key: 'medicalMonitoring', label: 'Medical Monitoring' },
+        { key: 'evacuationBenefit', label: 'Evacuation' },
+        { key: 'companionBenefits', label: 'Companion Benefits' },
+        { key: 'crisisResponse', label: 'Crisis Response' },
+        { key: 'assistance', label: 'Assistance' },
+      ];
       const tripCancellationReasonOrder = [
         'Medical or death',
         'Family member illness',
@@ -386,6 +397,8 @@
       const detailSectionState = {};
       let selectedMedicalFilter = 'all';
       let selectedEvacuationFilter = 'all';
+      let lastDisabledFilterTapKey = '';
+      let lastDisabledFilterTapAt = 0;
       const medicalFilterOptions = [
         { value: 'all', label: 'All Amounts' },
         { value: 'up-to-50000', label: 'up to $50,000' },
@@ -505,6 +518,76 @@
           ? tripCancellationReasonsCount + ' reason' + (tripCancellationReasonsCount === 1 ? '' : 's')
           : cell.text;
         return '<div class="' + metricClass(cell) + '"' + metricStyle(cell) + '><span>' + escapeHtml(definition.label) + '</span><strong>' + escapeHtml(resolvedText) + '</strong>' + scoreMarkup + '</div>';
+      }
+
+      function getEvacuationMetricValues(plan) {
+        const planName = String(plan.name || '');
+
+        if (planName === 'Global Traveler Medical & Security Assistance') {
+          return {
+            transportMode: 'Call for details',
+            transportOfRemains: 'Included',
+            covidCoverage: 'Not listed',
+            medicalMonitoring: '24/7',
+            evacuationBenefit: '$1,000,000 aggregate',
+            companionBenefits: 'Travel companion return',
+            crisisResponse: 'Security assistance',
+            assistance: 'Medical + Travel',
+          };
+        }
+
+        if (planName === 'MedjetAssist Annual') {
+          return {
+            transportMode: 'Air/Commercial Escort',
+            transportOfRemains: 'Not listed',
+            covidCoverage: 'Specialized transfer',
+            medicalMonitoring: '24/7 assistance',
+            evacuationBenefit: 'Hospital of choice',
+            companionBenefits: 'Not listed',
+            crisisResponse: 'No',
+            assistance: 'Air-medical transport',
+          };
+        }
+
+        if (planName === 'MedjetHorizon Annual') {
+          return {
+            transportMode: 'Air/Commercial Escort',
+            transportOfRemains: 'Not listed',
+            covidCoverage: 'Specialized transfer',
+            medicalMonitoring: '24/7 security',
+            evacuationBenefit: 'Hospital of choice',
+            companionBenefits: 'Not listed',
+            crisisResponse: 'Crisis Assistance Plus',
+            assistance: 'Security + transport',
+          };
+        }
+
+        return {
+          transportMode: 'Call for details',
+          transportOfRemains: 'Not listed',
+          covidCoverage: 'Not listed',
+          medicalMonitoring: '24/7',
+          evacuationBenefit: getMetricText(plan, 'evacuation'),
+          companionBenefits: 'Not listed',
+          crisisResponse: 'Not listed',
+          assistance: 'Call for details',
+        };
+      }
+
+      function renderEvacuationMetricCell(definition, plan) {
+        const values = getEvacuationMetricValues(plan);
+        const text = values[definition.key] || 'N/A';
+        return '<div class="imt-coverage-cell"><span>' + escapeHtml(definition.label) + '</span><strong>' + escapeHtml(text) + '</strong></div>';
+      }
+
+      function renderPlanMetrics(plan, showCoverageScores) {
+        const definitions = plan.type === 'Evacuation' ? evacuationMetricDefinitions : metricDefinitions;
+        return definitions.map((definition) => {
+          if (plan.type === 'Evacuation') {
+            return renderEvacuationMetricCell(definition, plan);
+          }
+          return renderMetricCell(definition, plan.metrics[definition.key], showCoverageScores, plan);
+        }).join('');
       }
 
       function renderPrice(priceDisplay) {
@@ -804,7 +887,7 @@
 
       function renderPlanCard(plan, showCoverageScores, scoreRange) {
         const isExpanded = expandedPlanIndex === plan.index;
-        const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable') + (isExpanded ? ' imt-plan-card--expanded' : '');
+        const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable') + (plan.type === 'Evacuation' ? ' imt-plan-card--evacuation' : '') + (isExpanded ? ' imt-plan-card--expanded' : '');
         const note = plan.note ? '<p class="imt-plan-card__notice">' + escapeHtml(plan.note) + '</p>' : '';
         const coverageScore = getDisplayCoverageScore(plan, scoreRange);
         const coverageScoreLabel = plan.type === 'Evacuation' ? 'Not applicable' : getCoverageScoreLabel(coverageScore);
@@ -813,15 +896,15 @@
           ? '<span class="imt-plan-card__score' + (coverageScoreTooltip ? ' imt-plan-card__score--tooltip' : '') + '"' + (coverageScoreTooltip ? ' data-tooltip="' + escapeHtml(coverageScoreTooltip) + '" title="' + escapeHtml(coverageScoreTooltip) + '"' : '') + '>Coverage Score: ' + escapeHtml(coverageScoreLabel) + '</span>'
           : '';
         const actionButton = plan.available
-          ? '<span class="imt-select-button imt-select-button--inactive" aria-disabled="true">Select</span>'
+          ? '<button class="imt-select-button imt-select-button--inactive" type="button" data-prototype-message="select">Select</button>'
           : '<span class="imt-select-button imt-select-button--disabled">Unavailable</span>';
         const providerBadge = plan.providerLogo
           ? '<div class="imt-plan-card__provider imt-plan-card__provider--img"><img src="' + escapeHtml(plan.providerLogo) + '" alt="' + escapeHtml(plan.provider) + '" loading="lazy" /></div>'
           : '<div class="imt-plan-card__provider">' + escapeHtml(plan.provider) + '</div>';
 
         return [
-          '<article class="' + cardClass + '" data-plan-index="' + plan.index + '">',
-          '  <div class="imt-plan-card__summary">',
+          '<article class="' + cardClass + '" data-plan-index="' + plan.index + '" title="Click for plan details">',
+          '  <div class="imt-plan-card__summary" title="Click for plan details">',
           '    <div class="imt-plan-card__main">',
           '      <div class="imt-plan-card__brand-row">',
           '        ' + providerBadge,
@@ -837,7 +920,7 @@
           '      </div>',
           note,
           '      <div class="imt-plan-card__metrics">',
-          metricDefinitions.map((definition) => renderMetricCell(definition, plan.metrics[definition.key], showCoverageScores, plan)).join(''),
+          renderPlanMetrics(plan, showCoverageScores),
           '      </div>',
           '    </div>',
           '    <div class="imt-plan-card__price">',
@@ -845,7 +928,7 @@
           '      <div class="imt-total-label">Total for all travelers</div>',
           '      ' + actionButton,
           '      <div class="imt-plan-card__actions">',
-          '        <a href="./compare-plans.html">Compare</a>',
+          '        <button type="button" data-prototype-message="compare">Compare</button>',
           '        <button class="imt-plan-card__action-link imt-plan-card__details-toggle' + (isExpanded ? ' is-open' : '') + '" type="button" data-plan-details-toggle="' + plan.index + '" aria-expanded="' + isExpanded + '">Details</button>',
           '      </div>',
           '    </div>',
@@ -1025,6 +1108,86 @@
         return !preExistingWaiverSelected || planHasPreExistingWaiver(plan);
       }
 
+      function clearAllFilters() {
+        tripCancellationParentSelected = false;
+        selectedTripCancellationReasons.clear();
+        rentalCarSelected = false;
+        vacationRentalSelected = false;
+        petCareSelected = false;
+        adventureSportsSelected = false;
+        travelMedicalOnlySelected = false;
+        evacuationOnlySelected = false;
+        cruiseSelected = false;
+        tripInterruptionSelected = false;
+        travelDelaySelected = false;
+        preExistingWaiverSelected = false;
+        selectedMedicalFilter = 'all';
+        selectedEvacuationFilter = 'all';
+      }
+
+      function applyDisabledFilterSelection(action, value) {
+        clearAllFilters();
+
+        if (action === 'other-coverage') {
+          if (value === 'rental-car') rentalCarSelected = true;
+          if (value === 'vacation-rental') vacationRentalSelected = true;
+          if (value === 'pet-care') petCareSelected = true;
+          if (value === 'adventure-sports') adventureSportsSelected = true;
+          if (value === 'travel-medical-only') travelMedicalOnlySelected = true;
+          if (value === 'evacuation-only') evacuationOnlySelected = true;
+          if (value === 'cruise') cruiseSelected = true;
+        }
+
+        if (action === 'trip-protection') {
+          if (value === 'trip-cancellation') tripCancellationParentSelected = true;
+          if (value === 'trip-interruption') tripInterruptionSelected = true;
+          if (value === 'travel-delay') travelDelaySelected = true;
+          if (value === 'pre-existing-waiver') preExistingWaiverSelected = true;
+        }
+
+        if (action === 'trip-reason') {
+          tripCancellationParentSelected = true;
+          selectedTripCancellationReasons.add(value);
+        }
+
+        if (action === 'medical-radio') {
+          selectedMedicalFilter = value;
+        }
+
+        if (action === 'evacuation-radio') {
+          selectedEvacuationFilter = value;
+        }
+      }
+
+      function attachDisabledFilterDoubleTapEvents() {
+        document.querySelectorAll('[data-disabled-double-tap]').forEach((row) => {
+          if (row.dataset.doubleTapBound === 'true') return;
+          row.dataset.doubleTapBound = 'true';
+
+          row.addEventListener('click', (event) => {
+            if (!row.classList.contains('imt-check-row--disabled') && !row.classList.contains('imt-radio-row--disabled')) return;
+            event.preventDefault();
+
+            const action = row.dataset.disabledAction;
+            const value = row.dataset.disabledValue || '';
+            const tapKey = action + ':' + value;
+            const now = Date.now();
+
+            if (lastDisabledFilterTapKey === tapKey && now - lastDisabledFilterTapAt < 700) {
+              lastDisabledFilterTapKey = '';
+              lastDisabledFilterTapAt = 0;
+              applyDisabledFilterSelection(action, value);
+              renderPlans();
+              return;
+            }
+
+            lastDisabledFilterTapKey = tapKey;
+            lastDisabledFilterTapAt = now;
+            row.setAttribute('data-disabled-tooltip', 'Tap again to clear filters and select this option');
+          });
+        });
+      }
+
       function isTripProtectionActive() {
         return tripCancellationParentSelected || tripInterruptionSelected || travelDelaySelected || preExistingWaiverSelected || selectedTripCancellationReasons.size > 0;
       }
@@ -1048,8 +1211,14 @@
         row.classList.toggle('imt-check-row--disabled', disabled);
         if (disabled) {
           row.setAttribute('data-disabled-tooltip', disabledFilterTooltip);
+          row.setAttribute('data-disabled-double-tap', 'true');
+          row.dataset.disabledAction = 'other-coverage';
+          row.dataset.disabledValue = 'rental-car';
         } else {
           row.removeAttribute('data-disabled-tooltip');
+          row.removeAttribute('data-disabled-double-tap');
+          delete row.dataset.disabledAction;
+          delete row.dataset.disabledValue;
         }
         filterBlock.classList.toggle('imt-filter-block--active', rentalCarSelected);
       }
@@ -1072,8 +1241,14 @@
         row.classList.toggle('imt-check-row--disabled', disabled);
         if (disabled) {
           row.setAttribute('data-disabled-tooltip', disabledFilterTooltip);
+          row.setAttribute('data-disabled-double-tap', 'true');
+          row.dataset.disabledAction = 'other-coverage';
+          row.dataset.disabledValue = config.key;
         } else {
           row.removeAttribute('data-disabled-tooltip');
+          row.removeAttribute('data-disabled-double-tap');
+          delete row.dataset.disabledAction;
+          delete row.dataset.disabledValue;
         }
       }
 
@@ -1133,19 +1308,19 @@
           '  <div class="imt-filter-subheading" id="imt-trip-cancellation-reasons-label">Covered Reasons</div>',
           '  <div id="imt-trip-cancellation-reasons"></div>',
           '</div>',
-          '<label class="imt-check-row' + (tripInterruptionDisabled ? ' imt-check-row--disabled' : '') + '"' + (tripInterruptionDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '<label class="imt-check-row' + (tripInterruptionDisabled ? ' imt-check-row--disabled' : '') + '"' + (tripInterruptionDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '" data-disabled-double-tap="true" data-disabled-action="trip-protection" data-disabled-value="trip-interruption"' : '') + '>',
           '  <input type="checkbox" id="imt-trip-interruption-filter"' + (tripInterruptionSelected ? ' checked' : '') + (tripInterruptionDisabled ? ' disabled' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Trip interruption</span>',
           '  <em>' + tripInterruptionCount + ' plan' + (tripInterruptionCount === 1 ? '' : 's') + '</em>',
           '</label>',
-          '<label class="imt-check-row' + (travelDelayDisabled ? ' imt-check-row--disabled' : '') + '"' + (travelDelayDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '<label class="imt-check-row' + (travelDelayDisabled ? ' imt-check-row--disabled' : '') + '"' + (travelDelayDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '" data-disabled-double-tap="true" data-disabled-action="trip-protection" data-disabled-value="travel-delay"' : '') + '>',
           '  <input type="checkbox" id="imt-travel-delay-filter"' + (travelDelaySelected ? ' checked' : '') + (travelDelayDisabled ? ' disabled' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Travel delay</span>',
           '  <em>' + travelDelayCount + ' plan' + (travelDelayCount === 1 ? '' : 's') + '</em>',
           '</label>',
-          '<label class="imt-check-row' + (preExistingWaiverDisabled ? ' imt-check-row--disabled' : '') + '"' + (preExistingWaiverDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '"' : '') + '>',
+          '<label class="imt-check-row' + (preExistingWaiverDisabled ? ' imt-check-row--disabled' : '') + '"' + (preExistingWaiverDisabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '" data-disabled-double-tap="true" data-disabled-action="trip-protection" data-disabled-value="pre-existing-waiver"' : '') + '>',
           '  <input type="checkbox" id="imt-pre-existing-waiver-filter"' + (preExistingWaiverSelected ? ' checked' : '') + (preExistingWaiverDisabled ? ' disabled' : '') + ' />',
           '  <span class="imt-checkmark"></span>',
           '  <span>Pre-Ex waiver</span>',
@@ -1167,7 +1342,7 @@
             const disabledClass = disabled ? ' imt-check-row--disabled' : '';
             const disabledTooltipAttr = disabled ? ' data-disabled-tooltip="' + escapeHtml(disabledFilterTooltip) + '"' : '';
             return [
-              '<label class="imt-check-row' + disabledClass + '"' + disabledTooltipAttr + '>',
+              '<label class="imt-check-row' + disabledClass + '"' + disabledTooltipAttr + (disabled ? ' data-disabled-double-tap="true" data-disabled-action="trip-reason" data-disabled-value="' + escapeHtml(reason) + '"' : '') + '>',
               '  <input type="checkbox" value="' + escapeHtml(reason) + '"' + checked + disabledAttr + ' />',
               '  <span class="imt-checkmark"></span>',
               '  <span>' + escapeHtml(reason) + '</span>',
@@ -1283,8 +1458,14 @@
             label.classList.toggle('imt-radio-row--disabled', disabled);
             if (disabled) {
               label.setAttribute('data-disabled-tooltip', disabledFilterTooltip);
+              label.setAttribute('data-disabled-double-tap', 'true');
+              label.dataset.disabledAction = name === 'medical' ? 'medical-radio' : 'evacuation-radio';
+              label.dataset.disabledValue = option.value;
             } else {
               label.removeAttribute('data-disabled-tooltip');
+              label.removeAttribute('data-disabled-double-tap');
+              delete label.dataset.disabledAction;
+              delete label.dataset.disabledValue;
             }
           }
         });
@@ -1331,6 +1512,7 @@
       const sortSelect = document.getElementById('imt-plan-sort');
       const coverageScoreToggle = document.getElementById('imt-coverage-score-toggle');
       const planList = document.getElementById('imt-plan-list');
+      const resultsExplainer = document.getElementById('imt-results-explainer');
       const visiblePlanCount = document.getElementById('imt-visible-plan-count');
       const resetFiltersLink = document.getElementById('imt-reset-filters');
       const selectedFiltersNode = document.getElementById('imt-selected-filters');
@@ -1484,6 +1666,31 @@
         ].join('');
       }
 
+      function renderResultsExplainer() {
+        if (!resultsExplainer) return;
+
+        if (travelMedicalOnlySelected && evacuationOnlySelected) {
+          resultsExplainer.hidden = false;
+          resultsExplainer.innerHTML = '<strong>About these plans</strong><p>Travel Medical plans focus on medical treatment while you are traveling, while Evacuation plans focus on medical transport and emergency assistance. Both are more specialized than comprehensive plans, which typically combine trip protection with broader travel coverage. <a href="./compare-plans.html?tripCancellation=1">See comprehensive plans for full travel protection</a>.</p>';
+          return;
+        }
+
+        if (travelMedicalOnlySelected) {
+          resultsExplainer.hidden = false;
+          resultsExplainer.innerHTML = '<strong>About Travel Medical plans</strong><p>Travel Medical plans are designed to help cover unexpected medical expenses while you are away. Unlike comprehensive plans, they usually do not include broader trip-protection benefits such as trip cancellation, trip interruption, or baggage coverage. <a href="./compare-plans.html?tripCancellation=1">See comprehensive plans for full travel protection</a>.</p>';
+          return;
+        }
+
+        if (evacuationOnlySelected) {
+          resultsExplainer.hidden = false;
+          resultsExplainer.innerHTML = '<strong>About Evacuation plans</strong><p>Evacuation plans focus on transportation, medical evacuation, and emergency assistance services. Unlike comprehensive plans, they generally do not include trip cancellation, trip interruption, or other trip-protection benefits. <a href="./compare-plans.html?tripCancellation=1">See comprehensive plans for full travel protection</a>.</p>';
+          return;
+        }
+
+        resultsExplainer.hidden = true;
+        resultsExplainer.innerHTML = '';
+      }
+
       function syncFilterGroupState() {
         document.querySelectorAll('.imt-filter-block').forEach((block) => {
           const heading = block.querySelector('.imt-filter-heading');
@@ -1544,6 +1751,31 @@
       }
 
       function attachPlanCardEvents() {
+        document.querySelectorAll('[data-prototype-message]').forEach((button) => {
+          if (button.dataset.prototypeBound === 'true') return;
+          button.dataset.prototypeBound = 'true';
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            showPrototypeMessage();
+          });
+        });
+
+        document.querySelectorAll('.imt-plan-card').forEach((card) => {
+          if (card.dataset.rowClickBound === 'true') return;
+          card.dataset.rowClickBound = 'true';
+          card.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target instanceof HTMLElement && target.closest('a, button, input, select, label')) return;
+            const planIndex = Number(card.getAttribute('data-plan-index'));
+            if (!Number.isFinite(planIndex) || expandedPlanIndex === planIndex) return;
+            expandedPlanIndex = planIndex;
+            renderPlans();
+            animateExpandPlan(planIndex);
+            scrollExpandedPlanToTop(planIndex);
+          });
+        });
+
         document.querySelectorAll('[data-plan-details-toggle]').forEach((button) => {
           if (button.dataset.detailsBound === 'true') return;
           button.dataset.detailsBound = 'true';
@@ -1606,6 +1838,27 @@
         });
       }
 
+      let prototypeMessageTimeout = null;
+
+      function showPrototypeMessage() {
+        let toast = document.getElementById('imt-prototype-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'imt-prototype-toast';
+          toast.className = 'imt-prototype-toast';
+          toast.textContent = 'Function not available for this prototype';
+          document.body.appendChild(toast);
+        }
+
+        toast.classList.add('is-visible');
+        if (prototypeMessageTimeout) {
+          clearTimeout(prototypeMessageTimeout);
+        }
+        prototypeMessageTimeout = window.setTimeout(() => {
+          toast.classList.remove('is-visible');
+        }, 1800);
+      }
+
       function animateExpandPlan(planIndex) {
         requestAnimationFrame(() => {
           const planCard = document.querySelector('.imt-plan-card[data-plan-index="' + planIndex + '"]');
@@ -1627,7 +1880,7 @@
               { height: expandedHeight + 'px' },
             ],
             {
-              duration: 260,
+              duration: 380,
               easing: 'ease',
               fill: 'forwards',
             }
@@ -1642,7 +1895,7 @@
               { opacity: 1, transform: 'translateY(0)' },
             ],
             {
-              duration: 220,
+              duration: 320,
               easing: 'ease',
               fill: 'forwards',
             }
@@ -1876,6 +2129,7 @@
           resetFiltersLink.textContent = 'Show all';
         }
         renderSelectedFilterChips(visiblePlans.length, totalPlans);
+        renderResultsExplainer();
         requestAnimationFrame(() => {
           updateResultsColumnStickiness();
         });
@@ -1932,6 +2186,7 @@
         renderMedicalFilters();
         renderEvacuationFilters();
         attachPlanCardEvents();
+        attachDisabledFilterDoubleTapEvents();
         requestAnimationFrame(() => {
           updateExpandedPlanStickyShadow();
         });

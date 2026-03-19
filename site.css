@@ -601,8 +601,14 @@
 }
 
 .imt-filters {
-  display: grid;
-  gap: 28px;
+  display: block;
+  align-self: stretch;
+  min-height: 100%;
+  overflow: visible;
+}
+
+.imt-filters > * + * {
+  margin-top: 28px;
 }
 
 .imt-results-layout--sticky-results .imt-results {
@@ -921,6 +927,7 @@
   position: sticky;
   top: 24px;
   align-self: start;
+  z-index: 1;
   overflow: hidden;
   border-radius: 12px;
   background: #fff;
@@ -997,14 +1004,11 @@
   text-align: center;
 }
 
-.imt-assist-logo strong {
-  color: #163d7a;
-  font: 700 28px/1 var(--font-body);
-}
-
-.imt-assist-logo span {
-  color: #163d7a;
-  font: 700 22px/1 var(--font-body);
+.imt-assist-logo img {
+  display: block;
+  width: 100%;
+  max-width: 140px;
+  height: auto;
 }
 
 .imt-assist-logo a {
@@ -1122,6 +1126,27 @@
   background: #fff;
   color: #212629;
   font: 700 10px/1 var(--font-body);
+}
+
+.imt-results-explainer {
+  margin: 0 0 2px;
+  padding: 14px 16px;
+  border: 1px solid #dbe6f5;
+  border-radius: 10px;
+  background: #f7fbff;
+}
+
+.imt-results-explainer strong {
+  display: block;
+  margin: 0 0 6px;
+  color: #08264d;
+  font: 700 16px/1.2 var(--font-body);
+}
+
+.imt-results-explainer p {
+  margin: 0;
+  color: #41526a;
+  font: 400 14px/1.5 var(--font-body);
 }
 
 .imt-sort-control {
@@ -1312,16 +1337,24 @@
   border: 1px solid #d9d9d9;
   border-radius: 6px;
   background: #fff;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.imt-plan-card:not(.imt-plan-card--expanded):hover {
+  border-color: #0270c0;
+  box-shadow: 0 0 0 1px #0270c0;
 }
 
 .imt-plan-card--expanded {
   grid-template-columns: minmax(0, 1fr) 190px;
+  box-shadow: 0 6px 18px rgba(8, 38, 77, 0.08);
 }
 
 .imt-plan-card__summary {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 190px;
+  cursor: pointer;
 }
 
 .imt-plan-card__main {
@@ -1443,9 +1476,13 @@
 .imt-plan-card__metrics {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px 20px;
+  gap: 10px 16px;
   padding-top: 10px;
   border-top: 1px solid #999;
+}
+
+.imt-plan-card--evacuation .imt-plan-card__metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .imt-plan-card__aggregate {
@@ -1719,13 +1756,27 @@
 }
 
 .imt-plan-card__details {
+  position: relative;
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
   gap: 36px;
   padding: 14px 18px 0;
   background: #fff;
-  box-shadow: inset 1px 0 0 #d9d9d9, inset -1px 0 0 #d9d9d9, inset 0 -1px 0 #d9d9d9;
+  border-left: 1px solid #d9d9d9;
+  border-right: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.imt-plan-card__details::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: #fff;
+  pointer-events: none;
 }
 
 .imt-plan-card__details-main {
@@ -1768,7 +1819,7 @@
 .imt-plan-detail-section__heading {
   position: relative;
   padding-left: 30px;
-  font: 700 16px/1.2 var(--font-body);
+  font: 700 14px/1.2 var(--font-body);
 }
 
 .imt-plan-detail-section__heading::before {
@@ -1954,6 +2005,7 @@
   width: 100%;
   min-height: 40px;
   border-radius: 5px;
+  border: 0;
   background: #7bb833;
   color: #fff;
   text-decoration: none;
@@ -1962,8 +2014,7 @@
 }
 
 .imt-select-button--inactive {
-  cursor: default;
-  pointer-events: none;
+  cursor: pointer;
 }
 
 .imt-select-button--disabled {
@@ -1991,6 +2042,23 @@
   text-decoration: none;
   font: 700 10px/1 var(--font-body);
   text-transform: uppercase;
+}
+
+.imt-plan-card__actions button:not(.imt-plan-card__action-link) {
+  flex: 1 1 0;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #0270c0;
+  border-radius: 5px;
+  background: #f6fafd;
+  color: #0270c0;
+  font: 700 10px/1 var(--font-body);
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
 .imt-plan-card__action-link {
@@ -2033,6 +2101,28 @@
 .imt-plan-card__details-toggle.is-open::after {
   margin-top: -2px;
   transform: rotate(-135deg);
+}
+
+.imt-prototype-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(8px);
+  border-radius: 999px;
+  background: rgba(184, 41, 41, 0.96);
+  color: #fff;
+  padding: 12px 18px;
+  font: 600 14px/1.2 var(--font-body);
+  box-shadow: 0 8px 24px rgba(184, 41, 41, 0.22);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease;
+  z-index: 50;
+}
+
+.imt-prototype-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 @media (max-width: 1180px) {

@@ -461,10 +461,6 @@ body.imt-home {
   cursor: pointer;
 }
 
-.imt-combobox__option:hover {
-  background: #f4f5f7;
-}
-
 .imt-combobox__option.is-active {
   background: #edf4ff;
   color: #0354d6;
@@ -651,10 +647,6 @@ body.imt-home {
   transition: background-color 0.18s ease, transform 0.18s ease;
 }
 
-.imt-next-button:hover {
-  background: #04698a;
-}
-
 .imt-quote-form__actions {
   display: flex;
   align-items: center;
@@ -682,12 +674,6 @@ body.imt-home {
   justify-content: center;
   cursor: pointer;
   transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
-}
-
-.imt-form-toggle-button:hover {
-  background: #0280a7;
-  border-color: #0280a7;
-  color: #ffffff;
 }
 
 .imt-form-toggle-button__icon {
@@ -955,6 +941,14 @@ body.imt-home {
   min-height: 88px;
   text-align: center;
   white-space: nowrap;
+}
+
+.imt-provider-brand--image img {
+  display: block;
+  width: 100%;
+  max-width: 170px;
+  max-height: 64px;
+  object-fit: contain;
 }
 
 .imt-provider-brand strong,
