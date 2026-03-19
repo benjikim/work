@@ -288,17 +288,13 @@
         </p>
         <div class="imt-modal__graphic" aria-hidden="true">
           <div class="imt-modal__scale">
-            <span class="imt-modal__dot is-filled"></span>
-            <span class="imt-modal__dot is-filled"></span>
-            <span class="imt-modal__dot is-filled"></span>
-            <span class="imt-modal__dot is-filled"></span>
-            <span class="imt-modal__dot is-filled"></span>
+            <span class="imt-modal__dot" data-coverage-stage="lower"></span>
+            <span class="imt-modal__dot" data-coverage-stage="lower"></span>
+            <span class="imt-modal__dot" data-coverage-stage="middle"></span>
+            <span class="imt-modal__dot" data-coverage-stage="higher"></span>
+            <span class="imt-modal__dot" data-coverage-stage="higher"></span>
           </div>
-          <div class="imt-modal__scale-labels">
-            <span>Lower</span>
-            <span>Middle</span>
-            <span>Higher</span>
-          </div>
+          <div class="imt-modal__scale-label" data-coverage-label-current>Lower</div>
         </div>
         <p class="imt-modal__note">
           This view is meant to help you compare relative strength quickly, not replace plan details.
@@ -1521,6 +1517,8 @@
       const resultsColumn = document.querySelector('.imt-results');
       const coverageScoreModal = document.getElementById('imt-coverage-score-modal');
       const coverageScoreClose = document.getElementById('imt-coverage-score-close');
+      const coverageScoreGraphic = coverageScoreModal ? coverageScoreModal.querySelector('.imt-modal__graphic') : null;
+      const coverageScoreGraphicLabel = coverageScoreGraphic ? coverageScoreGraphic.querySelector('[data-coverage-label-current]') : null;
       const filterInfoModal = document.getElementById('imt-filter-info-modal');
       const filterInfoClose = document.getElementById('imt-filter-info-close');
       const filterInfoTitle = document.getElementById('imt-filter-info-title');
@@ -1531,6 +1529,7 @@
       const tripProtectionBlock = document.getElementById('imt-trip-protection-filter');
       const tripProtectionHeading = document.getElementById('imt-trip-protection-heading');
       let hasShownCoverageScoreModal = false;
+      let coverageScoreGraphicTimeout = null;
       const filterInfoCopy = {
         'Trip Protection': 'Trip protection highlights cancellation and delay benefits that matter most when your itinerary changes before departure or during the trip.',
         'Other Coverages': 'Other coverages help you surface plans that include add-on style protections such as rental car, vacation rental, or cruise-focused benefits.',
@@ -1971,6 +1970,45 @@
       function setCoverageScoreModalOpen(isOpen) {
         if (!coverageScoreModal) return;
         coverageScoreModal.hidden = !isOpen;
+        if (isOpen) {
+          startCoverageScoreGraphicAnimation();
+          return;
+        }
+        resetCoverageScoreGraphic();
+      }
+
+      function resetCoverageScoreGraphic() {
+        if (coverageScoreGraphicTimeout) {
+          clearTimeout(coverageScoreGraphicTimeout);
+          coverageScoreGraphicTimeout = null;
+        }
+        if (!coverageScoreGraphic) return;
+        coverageScoreGraphic.querySelectorAll('.imt-modal__dot').forEach((dot) => {
+          dot.classList.remove('is-filled');
+        });
+        if (coverageScoreGraphicLabel) {
+          coverageScoreGraphicLabel.textContent = 'Lower';
+        }
+      }
+
+      function startCoverageScoreGraphicAnimation() {
+        if (!coverageScoreGraphic) return;
+        resetCoverageScoreGraphic();
+        const dots = Array.from(coverageScoreGraphic.querySelectorAll('.imt-modal__dot'));
+
+        dots.forEach((dot, index) => {
+          window.setTimeout(() => {
+            dot.classList.add('is-filled');
+            const stage = dot.getAttribute('data-coverage-stage');
+            if (stage && coverageScoreGraphicLabel) {
+              coverageScoreGraphicLabel.textContent = stage.charAt(0).toUpperCase() + stage.slice(1);
+            }
+          }, 260 + (index * 260));
+        });
+
+        coverageScoreGraphicTimeout = window.setTimeout(() => {
+          coverageScoreGraphicTimeout = null;
+        }, 260 + (dots.length * 260));
       }
 
       function setFilterInfoModalContent(title) {
