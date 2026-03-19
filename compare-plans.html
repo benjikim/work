@@ -64,6 +64,18 @@
               <span>Vacation Rental</span>
               <em id="imt-vacation-rental-count">1 plan</em>
             </label>
+            <label class="imt-check-row" id="imt-pet-care-row">
+              <input type="checkbox" id="imt-pet-care-filter" />
+              <span class="imt-checkmark"></span>
+              <span>Pet Care</span>
+              <em id="imt-pet-care-count">0 plans</em>
+            </label>
+            <label class="imt-check-row" id="imt-adventure-sports-row">
+              <input type="checkbox" id="imt-adventure-sports-filter" />
+              <span class="imt-checkmark"></span>
+              <span>Adventure Sports</span>
+              <em id="imt-adventure-sports-count">0 plans</em>
+            </label>
             <label class="imt-check-row" id="imt-cruise-row">
               <input type="checkbox" id="imt-cruise-filter" />
               <span class="imt-checkmark"></span>
@@ -328,9 +340,13 @@
         'lx with cfar',
       ];
       const cruisePlanAliases = ['flexipax', 'ultimate', 'elevate', 'explore'];
-      const vacationRentalPlanAliases = ['ultimate'];
+      const petCarePlanAliases = ['ultimate', 'advantage', 'travel lx', 'trip protector preferred', 'exactcare'];
+      const adventureSportsPlanAliases = ['atlas nomads international', 'atlas international', 'atlas multitrip', 'patriot international lite', 'travel lx', 'travel se', 'choice cruise'];
+      const vacationRentalPlanAliases = ['ultimate', 'advantage', 'atlas rental secure'];
       let tripCancellationParentSelected = false;
+      let adventureSportsSelected = false;
       let cruiseSelected = false;
+      let petCareSelected = false;
       let rentalCarSelected = false;
       let vacationRentalSelected = false;
       let tripInterruptionSelected = false;
@@ -425,6 +441,7 @@
           if (text === 'none') return 5;
           if (text === '60 days') return 4;
           if (text === '90 days') return 3;
+          if (text === '120 days') return 3;
           if (text === '180 days') return 4;
           if (text === '2 years') return 1;
           if (text === '3 years') return 1;
@@ -566,6 +583,16 @@
         return cruisePlanAliases.some((alias) => normalizedName.includes(alias));
       }
 
+      function planHasPetCareCoverage(plan) {
+        const normalizedName = normalizePlanName(plan && plan.name);
+        return petCarePlanAliases.some((alias) => normalizedName.includes(alias));
+      }
+
+      function planHasAdventureSportsCoverage(plan) {
+        const normalizedName = normalizePlanName(plan && plan.name);
+        return adventureSportsPlanAliases.some((alias) => normalizedName.includes(alias));
+      }
+
       function planHasVacationRentalCoverage(plan) {
         const normalizedName = normalizePlanName(plan && plan.name);
         return vacationRentalPlanAliases.some((alias) => normalizedName.includes(alias));
@@ -610,12 +637,20 @@
         return !cruiseSelected || planHasCruiseCoverage(plan);
       }
 
+      function planMatchesPetCareFilter(plan) {
+        return !petCareSelected || planHasPetCareCoverage(plan);
+      }
+
+      function planMatchesAdventureSportsFilter(plan) {
+        return !adventureSportsSelected || planHasAdventureSportsCoverage(plan);
+      }
+
       function planMatchesVacationRentalFilter(plan) {
         return !vacationRentalSelected || planHasVacationRentalCoverage(plan);
       }
 
       function planMatchesAllFilters(plan) {
-        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan) && planMatchesCruiseFilter(plan) && planMatchesVacationRentalFilter(plan);
+        return planMatchesReasonFilters(plan) && planMatchesTripInterruptionFilter(plan) && planMatchesTravelDelayFilter(plan) && planMatchesPreExistingWaiverFilter(plan) && planMatchesMedicalFilter(plan) && planMatchesEvacuationFilter(plan) && planMatchesRentalCarFilter(plan) && planMatchesCruiseFilter(plan) && planMatchesVacationRentalFilter(plan) && planMatchesPetCareFilter(plan) && planMatchesAdventureSportsFilter(plan);
       }
 
       function planHasTripCancellation(plan) {
@@ -1166,6 +1201,20 @@
           hasCoverage: planHasVacationRentalCoverage,
         });
         renderSimpleCoverageFilter({
+          inputId: 'imt-pet-care-filter',
+          rowId: 'imt-pet-care-row',
+          countId: 'imt-pet-care-count',
+          isSelected: () => petCareSelected,
+          hasCoverage: planHasPetCareCoverage,
+        });
+        renderSimpleCoverageFilter({
+          inputId: 'imt-adventure-sports-filter',
+          rowId: 'imt-adventure-sports-row',
+          countId: 'imt-adventure-sports-count',
+          isSelected: () => adventureSportsSelected,
+          hasCoverage: planHasAdventureSportsCoverage,
+        });
+        renderSimpleCoverageFilter({
           inputId: 'imt-cruise-filter',
           rowId: 'imt-cruise-row',
           countId: 'imt-cruise-count',
@@ -1213,6 +1262,22 @@
       if (vacationRentalInput) {
         vacationRentalInput.addEventListener('change', (event) => {
           vacationRentalSelected = event.target.checked;
+          renderPlans();
+        });
+      }
+
+      const petCareInput = document.getElementById('imt-pet-care-filter');
+      if (petCareInput) {
+        petCareInput.addEventListener('change', (event) => {
+          petCareSelected = event.target.checked;
+          renderPlans();
+        });
+      }
+
+      const adventureSportsInput = document.getElementById('imt-adventure-sports-filter');
+      if (adventureSportsInput) {
+        adventureSportsInput.addEventListener('change', (event) => {
+          adventureSportsSelected = event.target.checked;
           renderPlans();
         });
       }

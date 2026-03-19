@@ -3,130 +3,152 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Soventure</title>
+    <title>InsureMyTrip Local</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./design-system/theme.css" />
-    <link rel="stylesheet" href="./site.css" />
+    <link rel="stylesheet" href="./home.css" />
+    <script src="./home.js" defer></script>
   </head>
-  <body>
-    <header class="site-nav">
-      <div class="ds-container nav-inner">
-        <a class="brand brand-link" href="./index.html">SOVENTURE</a>
-        <a href="./compare-plans.html" class="ds-button ds-button--primary" style="width: var(--size-button-width-wide)">
-          Compare Plans
-        </a>
+  <body class="imt-home">
+    <header class="imt-nav-shell">
+      <div class="imt-nav-utility">
+        <div class="ds-container imt-nav-utility__inner">
+          <div></div>
+          <a href="./compare-plans.html">Contact us</a>
+        </div>
+      </div>
+      <div class="imt-nav-main">
+        <div class="ds-container imt-nav-main__inner">
+          <a class="imt-brand" href="./index.html" aria-label="InsureMyTrip Local home">
+            <img src="./assets/insuremytrip-logo.png" alt="InsureMyTrip" />
+          </a>
+          <nav class="imt-nav-links" aria-label="Primary">
+            <a href="./compare-plans.html">Discover Insurance</a>
+            <a href="./compare-plans.html">Reviews &amp; FAQs</a>
+            <a href="./compare-plans.html">Resources</a>
+            <a href="./compare-plans.html">Get Support</a>
+          </nav>
+          <div class="imt-nav-actions">
+            <button class="imt-search" type="button" aria-label="Search"></button>
+            <a class="imt-start-quote" href="./compare-plans.html">Start a quote</a>
+          </div>
+        </div>
       </div>
     </header>
 
     <main>
-      <section class="hero">
-        <div class="hero-overlay"></div>
-        <div class="ds-container hero-content">
-          <h1 class="hero-title">Travel insurance for adventure sports</h1>
-          <p class="hero-subtitle">
-            Compare coverage built for active trips, from weekend peaks to months abroad.
-          </p>
-          <p class="hero-kicker">Quote, compare, and buy</p>
-          <div class="hero-actions">
-            <a href="./quote-single-trip.html" class="ds-button ds-button--primary" style="width: var(--size-button-width-standard)">
-              Quote Single-Trip
-            </a>
-            <a href="./quote-multi-trip.html" class="ds-button ds-button--primary" style="width: var(--size-button-width-standard)">
-              Quote Multi-Trip
-            </a>
+      <section class="imt-hero">
+        <div class="imt-hero__backdrop"></div>
+        <div class="ds-container imt-hero__inner">
+          <div class="imt-hero__copy">
+            <h1>Quote, Compare, And Purchase Travel Insurance</h1>
+            <p>Compare top plans and providers to find the best travel insurance for your unique trip.</p>
+          </div>
+
+          <section class="imt-quote-card" aria-label="Get your travel insurance quote" data-quote-form></section>
+        </div>
+      </section>
+
+      <section class="imt-section imt-section--coverages">
+        <div class="ds-container">
+          <h2 class="imt-section-title">The Coverages And Plan Types You Need</h2>
+          <div class="imt-coverage-grid">
+            <article class="imt-coverage-card">
+              <img src="https://www.figma.com/api/mcp/asset/29c0ffcc-653e-4a60-ab13-75ce47ce2a9f" alt="" />
+              <h3>+ Comprehensive</h3>
+              <p>Protect your entire trip, from cancellations and delays to lost baggage and medical emergencies and evacuation.</p>
+            </article>
+            <article class="imt-coverage-card">
+              <img src="https://www.figma.com/api/mcp/asset/3c944614-e9dc-4832-8d79-b26a9c1af2e1" alt="" />
+              <h3>+ Medical</h3>
+              <p>Get emergency medical coverage for illness, injury, and evacuation while travelling abroad.</p>
+            </article>
+            <article class="imt-coverage-card">
+              <img src="https://www.figma.com/api/mcp/asset/0b230910-6306-47b9-8628-9a5d5141e87d" alt="" />
+              <h3>+ Cruise</h3>
+              <p>Protect your cruise investment from missed connections, itinerary changes, and unexpected disruptions at sea.</p>
+            </article>
+            <article class="imt-coverage-card">
+              <img src="https://www.figma.com/api/mcp/asset/7379b954-3428-41a5-bd97-2630c04c70a7" alt="" />
+              <h3>+ Student Travel</h3>
+              <p>From school trips to study abroad, get coverage built for students and educators of any age.</p>
+            </article>
+            <article class="imt-coverage-card">
+              <img src="https://www.figma.com/api/mcp/asset/f696c4fb-4f5a-4029-b847-4a0ada763be2" alt="" />
+              <h3>+ Annual</h3>
+              <p>Travel as often as you like with year-round protection for multiple trips.</p>
+            </article>
+            <article class="imt-coverage-card">
+              <img src="https://www.figma.com/api/mcp/asset/9ebd1fd8-23fa-44f1-9afc-a7d4cefb9c8c" alt="" />
+              <h3>+ Adventure</h3>
+              <p>Coverage for skiing, scuba diving, hiking, and other adventure sports.</p>
+            </article>
           </div>
         </div>
       </section>
 
-      <section class="intro ds-container">
-        <h2 class="ds-section-heading">Go Further. We&apos;ve Got the Risk Covered.</h2>
-        <p class="ds-body">
-          Soventure makes it easy to compare trip protection built around how you explore, so you can
-          choose coverage that fits your adventure.
-        </p>
+      <section class="imt-section imt-section--providers">
+        <div class="ds-container">
+          <h2 class="imt-section-title">Plans From Top Travel Insurance Provider Brands</h2>
+          <div class="imt-provider-logos" aria-label="Provider logos">
+            <img class="imt-provider-logo imt-provider-logo--aig" src="https://www.figma.com/api/mcp/asset/f7e5b5ac-bb55-43ee-89ba-bce29c5c4224" alt="AIG" />
+            <img class="imt-provider-logo imt-provider-logo--manulife" src="https://www.figma.com/api/mcp/asset/9b604bd4-d139-4031-87fd-6c02f58ed3de" alt="Manulife" />
+            <img class="imt-provider-logo imt-provider-logo--tugo" src="https://www.figma.com/api/mcp/asset/71c466c4-80e7-4c4e-b140-44e447bb8657" alt="Tugo" />
+            <img class="imt-provider-logo imt-provider-logo--generali" src="https://www.figma.com/api/mcp/asset/f2e531b4-db48-41f0-82d9-1a53a1119b4c" alt="Generali" />
+            <img class="imt-provider-logo imt-provider-logo--trawick" src="https://www.figma.com/api/mcp/asset/f5c7379d-f357-4abf-acc7-c55285e31c8d" alt="Trawick International" />
+            <img class="imt-provider-logo imt-provider-logo--worldtrips" src="https://www.figma.com/api/mcp/asset/5b2fe60a-1945-4cc7-b647-5ea72541a5c2" alt="WorldTrips" />
+            <img class="imt-provider-logo imt-provider-logo--nationwide" src="https://www.figma.com/api/mcp/asset/6b5f8556-24c0-4007-97ca-c88d89c64e71" alt="Nationwide" />
+            <img class="imt-provider-logo imt-provider-logo--berkshire" src="https://www.figma.com/api/mcp/asset/aa8ea169-15d4-47c4-af5f-e7e921f2f6f3" alt="Berkshire Hathaway Travel Protection" />
+            <img class="imt-provider-logo imt-provider-logo--travelex" src="https://www.figma.com/api/mcp/asset/165c23a4-b933-4025-bb74-ed091b6bb5ce" alt="Travelex Insurance Services" />
+            <img class="imt-provider-logo imt-provider-logo--travelinsured" src="https://www.figma.com/api/mcp/asset/e58cc0de-7ed5-416e-8c72-c94f1e8771ee" alt="Travel Insured International" />
+          </div>
+          <div class="imt-divider"></div>
+        </div>
       </section>
 
-      <section class="cards ds-container">
-        <article class="callout-card">
-          <img class="media" src="https://picsum.photos/seed/soventure-single/900/900" alt="Single trip adventure" />
-          <h3><a class="card-link" href="./single-trip.html">Single Trip</a></h3>
-          <p>Coverage that protects one activity-focused vacation from departure to return.</p>
-        </article>
-        <article class="callout-card">
-          <img class="media" src="https://picsum.photos/seed/soventure-multi/900/900" alt="Multi trip travel moments" />
-          <h3><a class="card-link" href="./multi-trip.html">Multi Trip</a></h3>
-          <p>Annual coverage that protects multiple trips across a 12-month period.</p>
-        </article>
-        <article class="callout-card">
-          <img class="media" src="https://picsum.photos/seed/soventure-cruise/900/900" alt="Cruise and excursion destination" />
-          <h3><a class="card-link" href="./cruise-excursions.html">Cruise &amp; Excursions</a></h3>
-          <p>Plan options tuned for cruise itineraries and adventure day activities.</p>
-        </article>
-      </section>
-
-      <section class="why">
-        <div class="ds-container why-inner">
-          <div class="why-copy">
-            <h2 class="ds-section-heading">Why Travelers Choose SOVENTURE</h2>
-            <p class="ds-body">
-              Thousands of travelers trust us to protect their experiences, wherever they lead.
+      <section class="imt-section imt-section--why">
+        <div class="ds-container imt-why">
+          <div class="imt-why__copy">
+            <h2>Why Purchase Travel Insurance From InsureMyTrip?</h2>
+            <p>
+              Every trip is different, and so are your travel concerns. For over 25 years,
+              InsureMyTrip has helped travelers compare top-rated travel insurance plans from
+              trusted providers. Our simple quote process makes it easy to find coverage that fits
+              your trip, and our licensed insurance agents are here to help before, during, and
+              after you travel.
             </p>
-            <a href="./why-choose-us.html" class="ds-button ds-button--secondary" style="width: var(--size-button-width-standard)">
-              Why Choose Us
-            </a>
+            <a class="imt-learn-more" href="./compare-plans.html">Learn more</a>
           </div>
-          <div class="flip-grid">
-            <article class="ds-flip-card">
-              <p class="ds-flip-card__title">24/7 emergency support</p>
-              <a class="ds-flip-card__trigger" href="./emergency-support.html" aria-label="24/7 emergency support">+</a>
+
+          <div class="imt-why__cards">
+            <article class="imt-flip-card imt-flip-card--offset-top">
+              <span>Medical Emergencies</span>
+              <button type="button" aria-label="Medical Emergencies">+</button>
             </article>
-            <article class="ds-flip-card">
-              <p class="ds-flip-card__title">100,000 travelers insured worldwide</p>
-              <a class="ds-flip-card__trigger" href="./travelers-insured.html" aria-label="100,000 travelers insured worldwide">+</a>
+            <article class="imt-flip-card">
+              <span>Trip Cancellations</span>
+              <button type="button" aria-label="Trip Cancellations">+</button>
             </article>
-            <article class="ds-flip-card">
-              <p class="ds-flip-card__title">Protection for over 250 adventure activities</p>
-              <a class="ds-flip-card__trigger" href="./activities-covered.html" aria-label="Protection for over 250 adventure activities">+</a>
+            <article class="imt-flip-card imt-flip-card--offset-mid">
+              <span>Lost or delayed baggage</span>
+              <button type="button" aria-label="Lost or delayed baggage">+</button>
             </article>
-            <article class="ds-flip-card">
-              <p class="ds-flip-card__title">Global coverage in 180+ countries</p>
-              <a class="ds-flip-card__trigger" href="./global-coverage.html" aria-label="Global coverage in 180+ countries">+</a>
+            <article class="imt-flip-card imt-flip-card--offset-bottom">
+              <span>Emergency Evacuations</span>
+              <button type="button" aria-label="Emergency Evacuations">+</button>
+            </article>
+            <article class="imt-flip-card">
+              <span>Travel Delays</span>
+              <button type="button" aria-label="Travel Delays">+</button>
             </article>
           </div>
         </div>
-      </section>
-
-      <section class="testimonials ds-container">
-        <article class="testimonial">
-          <p class="quote-mark">“</p>
-          <p class="quote">Soventure covered my medical expenses when I broke my leg snowboarding in Japan.</p>
-          <p class="author">- James C.</p>
-        </article>
-        <article class="testimonial">
-          <p class="quote-mark">“</p>
-          <p class="quote">As a digital nomad, I needed both health and travel insurance. It was stress-free.</p>
-          <p class="author">- Riley M.</p>
-        </article>
-        <article class="testimonial">
-          <p class="quote-mark">“</p>
-          <p class="quote">My camera gear was stolen in Peru, and my plan reimbursed me in 48 hours.</p>
-          <p class="author">- Devon K.</p>
-        </article>
       </section>
     </main>
-
-    <footer class="site-footer">
-      <div class="ds-container footer-inner">
-        <p>Adventure-ready travel protection from trusted providers.</p>
-        <a href="./compare-plans.html" class="ds-button ds-button--outline" style="width: var(--size-button-width-standard)">
-          Compare Plans
-        </a>
-      </div>
-    </footer>
   </body>
 </html>

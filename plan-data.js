@@ -1982,9 +1982,9 @@ const planData = [
     "providerLogo": "https://cdn.insuremytrip.com/resources/37871/worldtrips.svg",
     "type": "Comprehensive",
     "available": true,
-    "price": 186,
-    "priceDisplay": "186.00",
-    "aggregate": 48,
+    "price": 165,
+    "priceDisplay": "165.00",
+    "aggregate": 63,
     "note": "",
     "metrics": {
       "medical": {
@@ -1999,8 +1999,8 @@ const planData = [
       },
       "tripCancellation": {
         "kind": "bar",
-        "text": "22 reasons",
-        "score": 88
+        "text": "8 reasons",
+        "score": 100
       },
       "tripInterruption": {
         "kind": "bar",
@@ -2316,5 +2316,152 @@ const planData = [
       }
     },
     "tripCancellationReasons": []
+  },
+  {
+    "index": 34,
+    "name": "Ultimate",
+    "provider": "Travelex",
+    "providerLogo": "",
+    "type": "Cruise Itinerary Change Coverage",
+    "available": true,
+    "price": 144,
+    "priceDisplay": "144.00",
+    "aggregate": 71,
+    "note": "",
+    "metrics": {
+      "medical": {
+        "kind": "bar",
+        "text": "$250,000",
+        "score": 25
+      },
+      "evacuation": {
+        "kind": "bar",
+        "text": "$1,000,000",
+        "score": 100
+      },
+      "tripCancellation": {
+        "kind": "bar",
+        "text": "7 reasons",
+        "score": 100
+      },
+      "tripInterruption": {
+        "kind": "bar",
+        "text": "150%",
+        "score": 49
+      },
+      "travelDelay": {
+        "kind": "bar",
+        "text": "$2,000",
+        "score": 80
+      },
+      "baggage": {
+        "kind": "bar",
+        "text": "$2,000",
+        "score": 67
+      },
+      "baggageDelay": {
+        "kind": "bar",
+        "text": "$500",
+        "score": 20
+      },
+      "accidentalDeath": {
+        "kind": "info",
+        "text": "See details",
+        "score": 20
+      },
+      "lookbackPeriod": {
+        "kind": "bar",
+        "text": "90 Days",
+        "score": 92
+      },
+      "preExWaiver": {
+        "kind": "info",
+        "text": "See details",
+        "score": 25
+      }
+    },
+    "tripCancellationReasons": [
+      "Medical or death",
+      "Family member illness",
+      "Natural disaster",
+      "Traffic accident",
+      "Quarantine",
+      "Terrorism",
+      "Jury or legal duty",
+      "Mechanical failure"
+    ]
+  },
+  {
+    "index": 35,
+    "name": "Advantage",
+    "provider": "Travelex",
+    "providerLogo": "",
+    "type": "Travel Delay Coverage Included",
+    "available": true,
+    "price": 114,
+    "priceDisplay": "114.00",
+    "aggregate": 44,
+    "note": "",
+    "metrics": {
+      "medical": {
+        "kind": "bar",
+        "text": "$50,000",
+        "score": 5
+      },
+      "evacuation": {
+        "kind": "bar",
+        "text": "$250,000",
+        "score": 25
+      },
+      "tripCancellation": {
+        "kind": "bar",
+        "text": "7 reasons",
+        "score": 100
+      },
+      "tripInterruption": {
+        "kind": "bar",
+        "text": "125%",
+        "score": 38
+      },
+      "travelDelay": {
+        "kind": "bar",
+        "text": "$1,000",
+        "score": 40
+      },
+      "baggage": {
+        "kind": "bar",
+        "text": "$1,000",
+        "score": 33
+      },
+      "baggageDelay": {
+        "kind": "bar",
+        "text": "$200",
+        "score": 8
+      },
+      "accidentalDeath": {
+        "kind": "info",
+        "text": "See details",
+        "score": 20
+      },
+      "lookbackPeriod": {
+        "kind": "bar",
+        "text": "120 Days",
+        "score": 75
+      },
+      "preExWaiver": {
+        "kind": "none",
+        "text": "X Not included",
+        "score": 0
+      }
+    },
+    "tripCancellationReasons": [
+      "Medical or death",
+      "Family member illness",
+      "Natural disaster",
+      "Traffic accident",
+      "Quarantine",
+      "Terrorism",
+      "Jury or legal duty"
+    ]
   }
 ];
