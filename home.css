@@ -110,7 +110,7 @@ body.imt-home {
 .imt-hero {
   position: relative;
   min-height: 495px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .imt-hero__backdrop {
@@ -139,7 +139,7 @@ body.imt-home {
 
 .imt-hero__copy h1 {
   margin: 0 0 18px;
-  font: 800 56px/1.18 "Open Sans", sans-serif;
+  font: 800 42px/1.18 "Open Sans", sans-serif;
   letter-spacing: -0.04em;
 }
 
@@ -164,6 +164,17 @@ body.imt-home {
   color: #808080;
   font: 400 17px/1.3 "Open Sans", sans-serif;
   text-align: center;
+}
+
+.imt-quote-card__title {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #203444;
+  font: 700 22px/1.25 "Open Sans", sans-serif;
+  text-align: left;
+  cursor: pointer;
 }
 
 .imt-quote-card__header {
@@ -251,6 +262,10 @@ body.imt-home {
   font: 400 13px/1.4 "Open Sans", sans-serif;
 }
 
+.imt-quote-form__label--stacked {
+  position: relative;
+}
+
 .imt-quote-form__row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -276,6 +291,11 @@ body.imt-home {
   border-radius: 10px;
   color: #333333;
   font: 400 14px/1.4 "Open Sans", sans-serif;
+}
+
+.imt-combobox,
+.imt-date-field {
+  position: relative;
 }
 
 .imt-input__check {
@@ -339,6 +359,209 @@ body.imt-home {
   transform: rotate(-45deg);
 }
 
+.imt-combobox__menu,
+.imt-date-field__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 5;
+  display: none;
+  padding: 10px;
+  border: 1px solid #d4d9de;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 16px 24px rgba(12, 35, 60, 0.14);
+}
+
+.imt-combobox__menu.is-visible,
+.imt-date-field__panel.is-visible {
+  display: grid;
+}
+
+.imt-combobox__menu {
+  gap: 4px;
+}
+
+.imt-combobox__option {
+  border: 0;
+  background: #ffffff;
+  color: #212629;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font: 400 14px/1.4 "Open Sans", sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+
+.imt-combobox__option:hover {
+  background: #f4f5f7;
+}
+
+.imt-combobox__option.is-active {
+  background: #edf4ff;
+  color: #0354d6;
+}
+
+.imt-date-field__trigger {
+  width: 100%;
+  border: 2px solid #d4d9de;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.imt-date-field__value {
+  flex: 1;
+  text-align: left;
+}
+
+.imt-date-field__value.is-placeholder {
+  color: rgba(33, 38, 41, 0.45);
+}
+
+.imt-date-field__icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  flex: none;
+}
+
+.imt-date-field__icon::before,
+.imt-date-field__icon::after {
+  content: "";
+  position: absolute;
+  border: 1.5px solid #8d96a0;
+}
+
+.imt-date-field__icon::before {
+  inset: 3px 1px 1px;
+  border-radius: 3px;
+}
+
+.imt-date-field__icon::after {
+  top: 1px;
+  left: 4px;
+  right: 4px;
+  height: 3px;
+  background: #8d96a0;
+}
+
+.imt-date-field__panel {
+  gap: 12px;
+  width: min(100vw - 48px, 760px);
+  max-width: 760px;
+  right: 0;
+  left: auto;
+}
+
+.imt-date-field__apply {
+  min-height: 40px;
+  border: 0;
+  border-radius: 6px;
+  background: #0354d6;
+  color: #ffffff;
+  font: 700 12px/1 "Open Sans", sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.imt-calendar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.imt-calendar__month {
+  padding: 4px 8px 8px;
+}
+
+.imt-calendar__month--right {
+  border-left: 1px solid #d6dfeb;
+}
+
+.imt-calendar__month-header {
+  display: grid;
+  grid-template-columns: 36px 1fr 36px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #dce5ee;
+}
+
+.imt-calendar__title {
+  color: #3b4d67;
+  font: 700 20px/1.2 "Open Sans", sans-serif;
+  text-align: center;
+}
+
+.imt-calendar__title span {
+  margin-left: 18px;
+}
+
+.imt-calendar__nav,
+.imt-calendar__nav-spacer {
+  width: 36px;
+  height: 36px;
+}
+
+.imt-calendar__nav {
+  border: 0;
+  background: transparent;
+  color: #65758d;
+  font: 400 36px/1 "Open Sans", sans-serif;
+  cursor: pointer;
+}
+
+.imt-calendar__weekdays,
+.imt-calendar__days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.imt-calendar__weekdays {
+  margin-bottom: 8px;
+}
+
+.imt-calendar__weekdays span {
+  color: #41526a;
+  font: 700 18px/1.1 "Open Sans", sans-serif;
+  text-align: center;
+}
+
+.imt-calendar__days {
+  gap: 4px 0;
+}
+
+.imt-calendar__day {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #3d4e67;
+  font: 600 18px/1 "Open Sans", sans-serif;
+  cursor: pointer;
+  position: relative;
+}
+
+.imt-calendar__day.is-outside {
+  color: #8b96a8;
+}
+
+.imt-calendar__day.is-in-range {
+  background: #c7e5a2;
+  color: #111111;
+}
+
+.imt-calendar__day.is-start,
+.imt-calendar__day.is-end {
+  background: #77bb33;
+  color: #ffffff;
+  font-weight: 700;
+}
+
 .imt-input__check::after {
   content: "";
   position: absolute;
@@ -374,19 +597,70 @@ body.imt-home {
   letter-spacing: 0.12em;
 }
 
-.imt-checkbox-row {
-  display: flex;
+.imt-check-row {
+  position: relative;
+  display: grid;
   align-items: center;
-  gap: 11px;
-  padding-left: 5px;
-  color: #0c233c;
-  font: 700 18px/1.45 "Open Sans", sans-serif;
+  gap: 12px;
+  font: 400 16px/1.35 "Open Sans", sans-serif;
 }
 
-.imt-checkbox-row input {
-  width: 20px;
-  height: 20px;
-  accent-color: #77bb33;
+.imt-check-row--inline {
+  grid-template-columns: 22px auto;
+  justify-content: start;
+}
+
+.imt-check-row--inline > span:last-child {
+  white-space: normal;
+  color: #0c233c;
+  font: 400 14px/1.45 "Open Sans", sans-serif;
+}
+
+.imt-check-row--inline a {
+  color: #0354d6;
+  text-decoration: underline;
+}
+
+.imt-inline-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #0354d6;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.imt-check-row input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.imt-checkmark {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #212629;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.imt-check-row input:checked + .imt-checkmark {
+  border-color: #0354d6;
+  background: #0354d6;
+  box-shadow: inset 0 0 0 4px #0354d6;
+}
+
+.imt-check-row input:checked + .imt-checkmark::after {
+  content: "";
+  display: block;
+  width: 12px;
+  height: 7px;
+  margin: 4px 0 0 4px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg);
 }
 
 .imt-quote-form__help {
@@ -398,6 +672,80 @@ body.imt-home {
 .imt-quote-form__help a {
   color: #0354d6;
   text-decoration: underline;
+}
+
+.imt-full-quote {
+  display: grid;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.imt-full-quote__section {
+  display: grid;
+  gap: 12px;
+}
+
+.imt-full-quote__section > .imt-quote-form__label {
+  width: 451px;
+  max-width: 100%;
+}
+
+.imt-full-quote__section--trip-cost {
+  padding-top: 4px;
+}
+
+.imt-submit-button--wide {
+  width: 100%;
+  min-height: 58px;
+  background: #a8ccf0;
+}
+
+.imt-info-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.imt-info-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 38, 77, 0.38);
+}
+
+.imt-info-modal__panel {
+  position: relative;
+  width: min(92vw, 560px);
+  margin: min(12vh, 92px) auto 0;
+  padding: 28px 28px 24px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 56px rgba(8, 38, 77, 0.22);
+}
+
+.imt-info-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #5f6c76;
+  font: 700 11px/1 "Open Sans", sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.imt-info-modal__panel h3 {
+  margin: 0 0 16px;
+  color: #08264d;
+  font: 700 28px/1.15 "Open Sans", sans-serif;
+}
+
+.imt-info-modal__panel p {
+  margin: 0 0 14px;
+  color: #203444;
+  font: 400 16px/1.6 "Open Sans", sans-serif;
 }
 
 .imt-section {
@@ -421,7 +769,7 @@ body.imt-home {
 .imt-section-title {
   margin: 0 0 24px;
   color: #000000;
-  font: 800 56px/1.12 "Open Sans", sans-serif;
+  font: 800 42px/1.12 "Open Sans", sans-serif;
   letter-spacing: -0.04em;
   text-align: center;
 }
@@ -471,68 +819,212 @@ body.imt-home {
   max-width: 1180px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   align-items: center;
   justify-items: center;
-  row-gap: 52px;
-  column-gap: 56px;
+  row-gap: 48px;
+  column-gap: 34px;
 }
 
-.imt-provider-logo {
-  width: auto;
-  height: 70px;
-  object-fit: contain;
-  max-width: 100%;
+.imt-provider-brand {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  justify-items: center;
+  min-height: 88px;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.imt-provider-logo--aig {
-  width: 113px;
-  height: 59px;
+.imt-provider-brand strong,
+.imt-provider-brand span,
+.imt-provider-brand em {
+  display: block;
 }
 
-.imt-provider-logo--manulife {
-  width: 132px;
-  height: 42px;
+.imt-provider-brand--axa {
+  width: 120px;
+  height: 122px;
+  background: #1a179e;
+  color: #ffffff;
+  font: 400 38px/1 "Open Sans", sans-serif;
+  font-style: italic;
+  position: relative;
 }
 
-.imt-provider-logo--tugo {
-  width: 108px;
-  height: 58px;
+.imt-provider-brand--axa::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 14px;
+  width: 6px;
+  height: 100%;
+  background: #ff3a38;
+  transform: skew(-35deg);
 }
 
-.imt-provider-logo--generali {
-  width: 84px;
-  height: 60px;
+.imt-provider-brand--bhtp strong {
+  color: #193968;
+  font: 800 62px/0.95 "Open Sans", sans-serif;
 }
 
-.imt-provider-logo--trawick {
-  width: 160px;
-  height: 48px;
+.imt-provider-brand--bhtp span {
+  border-top: 2px solid #8ab0df;
+  padding-top: 6px;
+  color: #193968;
+  font: 800 19px/1.1 "Open Sans", sans-serif;
 }
 
-.imt-provider-logo--worldtrips {
-  width: 127px;
-  height: 30px;
+.imt-provider-brand--bcbs strong {
+  color: #117fd0;
+  font: 700 20px/1 "Open Sans", sans-serif;
 }
 
-.imt-provider-logo--nationwide {
-  width: 128px;
-  height: 43px;
+.imt-provider-brand--bcbs span {
+  color: #222222;
+  font: 400 18px/1.1 "Open Sans", sans-serif;
 }
 
-.imt-provider-logo--berkshire {
-  width: 163px;
-  height: 42px;
+.imt-provider-brand--travelinsured strong {
+  color: #173876;
+  font: 800 26px/0.92 "Open Sans", sans-serif;
 }
 
-.imt-provider-logo--travelex {
-  width: 154px;
-  height: 38px;
+.imt-provider-brand--travelinsured strong span {
+  color: #20a14b;
 }
 
-.imt-provider-logo--travelinsured {
-  width: 123px;
-  height: 32px;
+.imt-provider-brand--travelinsured em {
+  color: #173876;
+  font: 700 12px/1 "Open Sans", sans-serif;
+  font-style: normal;
+  letter-spacing: 0.08em;
+}
+
+.imt-provider-brand--generali strong {
+  color: #d72d24;
+  font: 700 28px/1 "Times New Roman", serif;
+}
+
+.imt-provider-brand--generali span {
+  color: #d72d24;
+  font: 400 11px/1.1 "Open Sans", sans-serif;
+  letter-spacing: 0.12em;
+}
+
+.imt-provider-brand--hth {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.imt-provider-brand--hth strong {
+  color: #111111;
+  font: 800 28px/1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--hth span {
+  color: #1a78c9;
+  font: 400 27px/1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--img strong {
+  color: #173876;
+  font: 800 62px/1 "Open Sans", sans-serif;
+  letter-spacing: -0.04em;
+}
+
+.imt-provider-brand--isos strong {
+  color: #2f3285;
+  font: 800 26px/1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--isos span {
+  color: #2f3285;
+  font: 700 10px/1.1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--intrip strong {
+  color: #2e83ca;
+  font: 300 82px/0.95 "Open Sans", sans-serif;
+  letter-spacing: -0.05em;
+}
+
+.imt-provider-brand--johnhancock strong {
+  color: #1726e1;
+  font: 400 40px/1 "Times New Roman", serif;
+  font-style: italic;
+}
+
+.imt-provider-brand--johnhancock span {
+  color: #111111;
+  font: 700 16px/1.1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--medjet strong {
+  color: #ac123a;
+  font: 400 42px/1 "Times New Roman", serif;
+}
+
+.imt-provider-brand--medjet span {
+  color: #9b7e59;
+  font: italic 400 13px/1.1 "Times New Roman", serif;
+}
+
+.imt-provider-brand--nationwide strong {
+  color: #212629;
+  font: 700 34px/1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--travelguard strong {
+  color: #114d89;
+  font: 700 30px/1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--travelex strong {
+  color: #4363ba;
+  font: italic 800 34px/1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--travelex span {
+  color: #4363ba;
+  font: 400 12px/1.2 "Open Sans", sans-serif;
+  letter-spacing: 0.14em;
+}
+
+.imt-provider-brand--trawick strong {
+  color: #18256d;
+  font: 800 34px/1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--trawick span {
+  color: #18256d;
+  font: 400 16px/1.1 "Open Sans", sans-serif;
+}
+
+.imt-provider-brand--worldtrips strong {
+  color: #111111;
+  font: 400 36px/1 "Times New Roman", serif;
+}
+
+.imt-provider-logos > :nth-last-child(-n+4) {
+  grid-column: span 1;
+}
+
+.imt-provider-logos > :nth-child(13) {
+  grid-column: 2;
+}
+
+.imt-provider-logos > :nth-child(14) {
+  grid-column: 3;
+}
+
+.imt-provider-logos > :nth-child(15) {
+  grid-column: 4;
+}
+
+.imt-provider-logos > :nth-child(16) {
+  grid-column: 5;
 }
 
 .imt-divider {
@@ -644,6 +1136,13 @@ body.imt-home {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: 36px;
   }
+
+  .imt-provider-logos > :nth-child(13),
+  .imt-provider-logos > :nth-child(14),
+  .imt-provider-logos > :nth-child(15),
+  .imt-provider-logos > :nth-child(16) {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 980px) {
@@ -672,6 +1171,13 @@ body.imt-home {
   .imt-quote-form__row,
   .imt-quote-form__row--compact {
     grid-template-columns: 1fr;
+  }
+
+  .imt-date-field__panel {
+    width: min(100vw - 32px, 640px);
+    max-width: 640px;
+    right: 50%;
+    transform: translateX(50%);
   }
 
   .imt-why__cards {
@@ -708,5 +1214,20 @@ body.imt-home {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 34px;
     column-gap: 24px;
+  }
+
+  .imt-calendar {
+    grid-template-columns: 1fr;
+  }
+
+  .imt-calendar__month--right {
+    border-left: 0;
+    border-top: 1px solid #d6dfeb;
+    padding-top: 14px;
+  }
+
+  .imt-date-field__panel {
+    width: min(100vw - 24px, 360px);
+    max-width: 360px;
   }
 }

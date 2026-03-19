@@ -221,7 +221,6 @@
                 provider or through a comparison site.
               </p>
             </div>
-            <div class="imt-price-card__band">Added Support With InsureMyTrip</div>
             <div class="imt-price-card__assist">
               <h4>Added Support With InsureMyTrip</h4>
               <div class="imt-price-card__assist-grid">
@@ -253,7 +252,7 @@
           </div>
 
           <div class="imt-plan-list" id="imt-plan-list"></div>
-          <a class="imt-results-reset" id="imt-results-reset" href="./compare-plans.html" hidden>Reset Filters (Show all 34 Plans)</a>
+          <div class="imt-selected-filters imt-selected-filters--results" id="imt-selected-filters" hidden></div>
         </section>
       </div>
     </main>
@@ -343,7 +342,8 @@
       const petCarePlanAliases = ['ultimate', 'advantage', 'travel lx', 'trip protector preferred', 'exactcare'];
       const adventureSportsPlanAliases = ['atlas nomads international', 'atlas international', 'atlas multitrip', 'patriot international lite', 'travel lx', 'travel se', 'choice cruise'];
       const vacationRentalPlanAliases = ['ultimate', 'advantage', 'atlas rental secure'];
-      let tripCancellationParentSelected = false;
+      const initialSearchParams = new URLSearchParams(window.location.search);
+      let tripCancellationParentSelected = initialSearchParams.get('tripCancellation') === '1';
       let adventureSportsSelected = false;
       let cruiseSelected = false;
       let petCareSelected = false;
@@ -991,7 +991,7 @@
       const planList = document.getElementById('imt-plan-list');
       const visiblePlanCount = document.getElementById('imt-visible-plan-count');
       const resetFiltersLink = document.getElementById('imt-reset-filters');
-      const resultsResetLink = document.getElementById('imt-results-reset');
+      const selectedFiltersNode = document.getElementById('imt-selected-filters');
       const coverageScoreModal = document.getElementById('imt-coverage-score-modal');
       const coverageScoreClose = document.getElementById('imt-coverage-score-close');
       const filterInfoModal = document.getElementById('imt-filter-info-modal');
@@ -1022,6 +1022,110 @@
         Array.from(block.children).forEach((child) => {
           if (child.classList && child.classList.contains('imt-filter-heading')) return;
           child.hidden = collapsed;
+        });
+      }
+
+      function buildSelectedFilterChips() {
+        const chips = [];
+
+        if (tripCancellationParentSelected) {
+          chips.push({ label: 'Trip cancellation', onRemove: () => {
+            tripCancellationParentSelected = false;
+            selectedTripCancellationReasons.clear();
+          } });
+        }
+
+        Array.from(selectedTripCancellationReasons).forEach((reason) => {
+          chips.push({ label: reason, onRemove: () => {
+            selectedTripCancellationReasons.delete(reason);
+          } });
+        });
+
+        if (tripInterruptionSelected) {
+          chips.push({ label: 'Trip interruption', onRemove: () => {
+            tripInterruptionSelected = false;
+          } });
+        }
+
+        if (travelDelaySelected) {
+          chips.push({ label: 'Travel delay', onRemove: () => {
+            travelDelaySelected = false;
+          } });
+        }
+
+        if (preExistingWaiverSelected) {
+          chips.push({ label: 'Pre-Ex waiver', onRemove: () => {
+            preExistingWaiverSelected = false;
+          } });
+        }
+
+        if (rentalCarSelected) {
+          chips.push({ label: 'Rental car', onRemove: () => {
+            rentalCarSelected = false;
+          } });
+        }
+
+        if (vacationRentalSelected) {
+          chips.push({ label: 'Vacation rental', onRemove: () => {
+            vacationRentalSelected = false;
+          } });
+        }
+
+        if (petCareSelected) {
+          chips.push({ label: 'Pet care', onRemove: () => {
+            petCareSelected = false;
+          } });
+        }
+
+        if (adventureSportsSelected) {
+          chips.push({ label: 'Adventure sports', onRemove: () => {
+            adventureSportsSelected = false;
+          } });
+        }
+
+        if (cruiseSelected) {
+          chips.push({ label: 'Cruise', onRemove: () => {
+            cruiseSelected = false;
+          } });
+        }
+
+        if (selectedMedicalFilter !== 'all') {
+          const option = medicalFilterOptions.find((item) => item.value === selectedMedicalFilter);
+          chips.push({ label: 'Medical: ' + (option ? option.label : selectedMedicalFilter), onRemove: () => {
+            selectedMedicalFilter = 'all';
+          } });
+        }
+
+        if (selectedEvacuationFilter !== 'all') {
+          const option = evacuationFilterOptions.find((item) => item.value === selectedEvacuationFilter);
+          chips.push({ label: 'Evacuation: ' + (option ? option.label : selectedEvacuationFilter), onRemove: () => {
+            selectedEvacuationFilter = 'all';
+          } });
+        }
+
+        return chips;
+      }
+
+      function renderSelectedFilterChips(visiblePlansLength) {
+        if (!selectedFiltersNode) return;
+
+        const chips = buildSelectedFilterChips();
+        selectedFiltersNode.hidden = chips.length === 0 || visiblePlansLength > 5;
+        selectedFiltersNode.innerHTML = chips.map((chip, index) => (
+          '<button class="imt-selected-filter-chip" type="button" data-chip-index="' + index + '">' +
+            '<span>' + escapeHtml(chip.label) + '</span>' +
+            '<span aria-hidden="true">&times;</span>' +
+          '</button>'
+        )).join('');
+
+        selectedFiltersNode.querySelectorAll('.imt-selected-filter-chip').forEach((button) => {
+          button.addEventListener('click', () => {
+            const chipIndex = Number(button.getAttribute('data-chip-index'));
+            const chip = chips[chipIndex];
+            if (!chip) return;
+            chip.onRemove();
+            renderPlans();
+          });
         });
       }
 
@@ -1186,11 +1290,7 @@
           resetFiltersLink.hidden = visiblePlans.length >= totalPlans;
           resetFiltersLink.textContent = 'Reset Filters (Show all ' + totalPlans + ' Plans)';
         }
-        if (resultsResetLink) {
-          const showResultsReset = visiblePlans.length < totalPlans && visiblePlans.length <= 5;
-          resultsResetLink.hidden = !showResultsReset;
-          resultsResetLink.textContent = 'Reset Filters (Show all ' + totalPlans + ' Plans)';
-        }
+        renderSelectedFilterChips(visiblePlans.length);
         renderTripCancellationReasonFilters();
         renderRentalCarFilter();
         renderSimpleCoverageFilter({

@@ -634,6 +634,45 @@
   font: 700 16px/1.2 var(--font-body);
 }
 
+.imt-selected-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.imt-selected-filters--results {
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.imt-selected-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid #c2d3f3;
+  border-radius: 999px;
+  background: #f4f8ff;
+  color: #0354d6;
+  font: 700 14px/1 var(--font-body);
+  cursor: pointer;
+}
+
+.imt-selected-filter-chip span:last-child {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.imt-selected-filter-chip:hover {
+  background: #e8f0ff;
+}
+
+.imt-selected-filter-chip:focus-visible {
+  outline: 2px solid #0354d6;
+  outline-offset: 2px;
+}
+
 .imt-filter-heading {
   display: flex;
   align-items: center;
@@ -1095,19 +1134,6 @@
 .imt-plan-list {
   display: grid;
   gap: 10px;
-}
-
-.imt-results-reset {
-  display: flex;
-  justify-content: center;
-  margin-top: 14px;
-  color: #0354d6;
-  font: 700 16px/1.2 var(--font-body);
-  text-decoration: none;
-}
-
-.imt-results-reset:hover {
-  text-decoration: underline;
 }
 
 .imt-modal[hidden] {
