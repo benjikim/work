@@ -813,13 +813,6 @@
           });
         }
 
-        sections.push({
-          key: 'description',
-          title: 'Description',
-          kind: 'description',
-          description: getPlanDescription(plan),
-        });
-
         return sections;
       }
 
@@ -862,6 +855,7 @@
       function renderExpandedPlanDetails(plan) {
         const sections = getPlanDetailSections(plan);
         const planInfoItems = getPlanInfoItems(plan);
+        const planDescription = getPlanDescription(plan);
         return [
           '<div class="imt-plan-card__details">',
           '  <div class="imt-plan-card__details-main">',
@@ -875,6 +869,7 @@
               '<strong>' + escapeHtml(item.value) + '</strong>' +
             '</div>'
           )).join(''),
+          planDescription ? '<div class="imt-plan-detail__info-description">' + escapeHtml(planDescription) + '</div>' : '',
           '    <span class="imt-plan-detail__certificate">View Certificate</span>',
           '  </aside>',
           '</div>',
@@ -1529,7 +1524,8 @@
       const tripProtectionBlock = document.getElementById('imt-trip-protection-filter');
       const tripProtectionHeading = document.getElementById('imt-trip-protection-heading');
       let hasShownCoverageScoreModal = false;
-      let coverageScoreGraphicTimeout = null;
+      let coverageScoreGraphicTimers = [];
+      let coverageScoreGraphicLoopTimeout = null;
       const filterInfoCopy = {
         'Trip Protection': 'Trip protection highlights cancellation and delay benefits that matter most when your itinerary changes before departure or during the trip.',
         'Other Coverages': 'Other coverages help you surface plans that include add-on style protections such as rental car, vacation rental, or cruise-focused benefits.',
@@ -1978,9 +1974,11 @@
       }
 
       function resetCoverageScoreGraphic() {
-        if (coverageScoreGraphicTimeout) {
-          clearTimeout(coverageScoreGraphicTimeout);
-          coverageScoreGraphicTimeout = null;
+        coverageScoreGraphicTimers.forEach((timer) => clearTimeout(timer));
+        coverageScoreGraphicTimers = [];
+        if (coverageScoreGraphicLoopTimeout) {
+          clearTimeout(coverageScoreGraphicLoopTimeout);
+          coverageScoreGraphicLoopTimeout = null;
         }
         if (!coverageScoreGraphic) return;
         coverageScoreGraphic.querySelectorAll('.imt-modal__dot').forEach((dot) => {
@@ -1995,20 +1993,24 @@
         if (!coverageScoreGraphic) return;
         resetCoverageScoreGraphic();
         const dots = Array.from(coverageScoreGraphic.querySelectorAll('.imt-modal__dot'));
+        const stepDelay = 420;
+        const initialDelay = 320;
 
         dots.forEach((dot, index) => {
-          window.setTimeout(() => {
+          const timer = window.setTimeout(() => {
             dot.classList.add('is-filled');
             const stage = dot.getAttribute('data-coverage-stage');
             if (stage && coverageScoreGraphicLabel) {
               coverageScoreGraphicLabel.textContent = stage.charAt(0).toUpperCase() + stage.slice(1);
             }
-          }, 260 + (index * 260));
+          }, initialDelay + (index * stepDelay));
+          coverageScoreGraphicTimers.push(timer);
         });
 
-        coverageScoreGraphicTimeout = window.setTimeout(() => {
-          coverageScoreGraphicTimeout = null;
-        }, 260 + (dots.length * 260));
+        coverageScoreGraphicLoopTimeout = window.setTimeout(() => {
+          if (!coverageScoreModal || coverageScoreModal.hidden) return;
+          startCoverageScoreGraphicAnimation();
+        }, initialDelay + (dots.length * stepDelay) + 900);
       }
 
       function setFilterInfoModalContent(title) {

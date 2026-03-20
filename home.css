@@ -301,32 +301,12 @@ body.imt-home {
   justify-content: center;
   padding: 0;
   font: 700 10px/1 "Gamay", sans-serif;
-  cursor: help;
+  cursor: default;
   vertical-align: middle;
 }
 
 .imt-label-info::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 8px);
-  width: 220px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #173876;
-  color: #ffffff;
-  font: 400 12px/1.45 "Gamay", sans-serif;
-  text-align: left;
-  transform: translateX(-50%);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.18s ease;
-  z-index: 8;
-}
-
-.imt-label-info:hover::after,
-.imt-label-info:focus-visible::after {
-  opacity: 1;
+  content: none;
 }
 
 .imt-quote-form__label--stacked {
@@ -1151,70 +1131,77 @@ body.imt-home {
 
 .imt-why {
   align-items: flex-start;
-  gap: 80px;
+  gap: 96px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .imt-why__copy {
-  width: min(100%, 480px);
+  width: min(100%, 520px);
 }
 
 .imt-why__copy h2 {
-  margin: 0 0 28px;
+  margin: 0 0 24px;
   color: #2a2a2a;
-  font: 600 56px/1.12 "Gamay", sans-serif;
+  font: 600 58px/1.12 "Gamay", sans-serif;
   letter-spacing: 0;
+}
+
+.imt-why__lede {
+  margin: 0 0 36px;
+  color: #2a2a2a;
+  font: 600 25px/1.34 "Gamay", sans-serif;
 }
 
 .imt-why__copy p {
   margin: 0;
   color: #2a2a2a;
-  font: 400 20px/1.6 "Gamay", sans-serif;
+  font: 400 22px/1.46 "Gamay", sans-serif;
 }
 
 .imt-learn-more {
-  margin-top: 28px;
-  min-height: 64px;
-  padding: 0 32px;
+  margin-top: 46px;
+  min-height: 66px;
+  padding: 0 46px;
   background: #0354d6;
   color: #ffffff;
-  font: 700 16px/1 "Gamay", sans-serif;
+  font: 700 19px/1 "Gamay", sans-serif;
   letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .imt-why__cards {
-  width: min(100%, 676px);
+  width: min(100%, 760px);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px 20px;
+  gap: 22px;
 }
 
 .imt-flip-card {
-  min-height: 180px;
-  padding: 60px 46px;
-  border-radius: 12px;
-  background: #dbebf7;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  min-height: 274px;
+  padding: 112px 38px 34px;
+  border-radius: 18px;
+  background: #d9ecfb;
+  box-shadow: 0 8px 24px rgba(28, 54, 91, 0.16);
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .imt-flip-card span {
   color: #0c233c;
-  font: 400 29px/1.3 "Gamay", sans-serif;
+  font: 600 28px/1.28 "Gamay", sans-serif;
 }
 
 .imt-flip-card button {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 40px;
-  height: 40px;
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
   border: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.52);
+  background: rgba(255, 255, 255, 0.46);
   color: #0c233c;
   font: 700 28px/1 "Gamay", sans-serif;
   cursor: pointer;
