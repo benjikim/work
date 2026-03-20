@@ -315,6 +315,15 @@
         <p class="imt-modal__body" id="imt-filter-info-body"></p>
       </div>
     </div>
+    <div class="imt-modal" id="imt-covered-reason-modal" hidden>
+      <div class="imt-modal__backdrop" data-close-covered-reason-modal="true"></div>
+      <div class="imt-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="imt-covered-reason-title">
+        <button class="imt-modal__close" id="imt-covered-reason-close" type="button" aria-label="Close covered reason definition">Close</button>
+        <div class="imt-modal__eyebrow">Covered Reason</div>
+        <h2 class="imt-modal__title" id="imt-covered-reason-title">Definition</h2>
+        <p class="imt-modal__body" id="imt-covered-reason-body"></p>
+      </div>
+    </div>
     <script src="./plan-data.js"></script>
     <script>
       const metricDefinitions = [
@@ -837,10 +846,37 @@
         'Destination closure': 'Applies when your destination accommodations or access points close due to a covered event.',
       };
 
+      const coveredReasonLegalDefinitions = {
+        'Medical or death': 'This covered reason generally applies when you, a traveling companion, a family member, or a business partner suffers a sickness, injury, or death serious enough to make the trip medically inadvisable or impossible. Benefits are usually subject to physician documentation, policy timing rules, and exclusions for known or expected conditions unless a waiver specifically applies.',
+        'Family member illness': 'This covered reason generally applies when a family member experiences a covered sickness, injury, or medical event that requires your care or makes travel unreasonable to continue. Coverage is typically limited to unforeseen events that are medically documented and not otherwise excluded under the certificate.',
+        'Jury or legal duty': 'This covered reason generally applies when you are called to jury duty or required to appear in court after purchasing coverage, and the obligation cannot be postponed or waived. Policies often exclude routine legal matters, elective appearances, and obligations that were known before travel arrangements were made.',
+        'Mechanical failure': 'This covered reason generally applies when a documented mechanical breakdown of a common carrier or your personal vehicle causes a covered cancellation, delay, or interruption. Payment is normally limited to breakdowns that directly prevent travel and generally does not extend to maintenance issues or unsupported delays.',
+        'Supplier default': 'This covered reason generally applies when a travel supplier stops operating due to insolvency or financial default after the policy becomes effective. Many policies impose timing requirements, exclude suppliers already in distress, and limit benefits to suppliers specifically recognized by the plan certificate.',
+        'Weather': 'This covered reason generally applies when severe weather prevents departure, continued travel, or completion of the trip, or makes the destination inaccessible. Coverage usually depends on documented travel disruption and may not apply to forecasts alone, inconvenience, or conditions that do not materially affect scheduled travel services.',
+        'Natural disaster': 'This covered reason generally applies when a natural disaster makes your destination, residence, or route unsafe, inaccessible, or uninhabitable. Policies typically require the event to materially affect travel arrangements and may exclude general disruption that does not directly impact covered travel services.',
+        'Traffic accident': 'This covered reason generally applies when a documented traffic accident involving you or a traveling companion causes a delay or missed departure. Coverage is generally limited to accidents that are unforeseen, verifiable, and directly connected to the inability to continue travel as scheduled.',
+        'Travel advisory': 'This covered reason generally applies when a covered government travel advisory or warning affects the destination after coverage is purchased. Policies often limit how advisories qualify and may exclude broad warnings, pre-existing advisories, or changes that do not satisfy the policy threshold.',
+        'Job termination': 'This covered reason generally applies when you are involuntarily terminated or laid off after the policy is purchased and before departure. Coverage typically requires that the termination was not for cause, that a minimum employment tenure was met, and that employer documentation is supplied.',
+        'Work reasons': 'This covered reason generally applies when a specifically covered work event makes the trip impossible, such as a required attendance event defined by the policy. Plans usually define qualifying work reasons narrowly and exclude foreseeable scheduling changes, voluntary business choices, or ordinary job demands.',
+        'School year extension': 'This covered reason generally applies when a required school schedule change or extension prevents travel during the original trip dates. Coverage is usually limited to mandatory changes by the institution and may exclude elective programs or changes known before coverage was purchased.',
+        'Pregnancy complication': 'This covered reason generally applies when a covered pregnancy complication arises after purchase and makes travel medically inadvisable. Coverage is generally limited by the policy definition of complication and may exclude routine pregnancy, childbirth timing concerns, or conditions outside the covered medical criteria.',
+        'Military duty': 'This covered reason generally applies when you or a traveling companion is called to active duty, reassigned, or has approved leave revoked after coverage is purchased. Policies usually require official military orders and may exclude travel impacted by previously scheduled deployments or known duty obligations.',
+        'Terrorism': 'This covered reason generally applies when a covered terrorist incident occurs in or near your destination within the plan’s stated time frame and geographic limits. Coverage is generally subject to the policy definition of terrorism and may exclude incidents outside the specified window or beyond the covered radius.',
+        'Home uninhabitable': 'This covered reason generally applies when your primary residence becomes uninhabitable due to a covered event and your presence is required. Benefits typically depend on documented damage and may exclude temporary utility issues or conditions that do not materially affect habitability.',
+        'Felonious assault': 'This covered reason generally applies when you, a traveling companion, or a family member is the victim of a covered felonious assault that prevents travel. Coverage usually requires official documentation and may exclude incidents that do not meet the policy definition or do not directly affect the trip.',
+        'Host at destination': 'This covered reason generally applies when the person hosting you at the destination has a covered illness, injury, or death that materially affects the purpose of the trip. Policies generally require the host relationship and event to meet the certificate definition and may limit benefits to specified circumstances.',
+        'Hijacking': 'This covered reason generally applies when a hijacking event interrupts or prevents covered travel arrangements. Coverage is typically limited to documented incidents involving a common carrier or covered transport and may not extend to general security concerns or non-qualifying disruptions.',
+        'Quarantine': 'This covered reason generally applies when you, a traveling companion, or a family member is subject to a covered mandatory quarantine that prevents travel. Policies generally require the quarantine to be legally imposed or otherwise specifically recognized by the certificate and may exclude advisory or voluntary isolation.',
+        'Missed connection': 'This covered reason generally applies when a covered delay causes you to miss a required common-carrier connection and materially disrupts the trip. Benefits are usually limited by minimum delay requirements, route conditions, and proof of the original and replacement travel arrangements.',
+        'Strike': 'This covered reason generally applies when a covered labor strike disrupts transportation or destination arrangements after coverage is purchased. Policies often exclude strikes that were announced before purchase or disruptions that do not meet the policy’s timing and carrier requirements.',
+        'Passport or visa theft': 'This covered reason generally applies when theft of required travel documents directly causes a covered delay or interruption. Coverage typically requires prompt reporting to the appropriate authorities and may not apply to loss without theft, expired documents, or documentation issues outside the policy definition.',
+        'Destination closure': 'This covered reason generally applies when destination accommodations, attractions, or access points close due to a covered event and materially affect the trip. Policies generally require the closure to meet certificate conditions and may exclude partial closures or disruptions that do not prevent the trip from continuing.',
+      };
+
       function renderCoveredReasonList(reasons) {
         return '<ul class="imt-plan-detail__value-list imt-plan-detail__value-list--reasons">' + reasons.map((item) => {
           const description = coveredReasonDescriptions[item] || 'See policy details for how this covered reason is defined and when it applies.';
-          return '<li><strong>' + escapeHtml(item) + '</strong><span>' + escapeHtml(description) + '</span></li>';
+          return '<li><strong>' + escapeHtml(item) + '</strong><span>' + escapeHtml(description) + ' <button class="imt-covered-reason-link" type="button" data-covered-reason-definition="' + escapeHtml(item) + '">Full definition</button></span></li>';
         }).join('') + '</ul>';
       }
 
@@ -1548,6 +1584,10 @@
       const filterInfoClose = document.getElementById('imt-filter-info-close');
       const filterInfoTitle = document.getElementById('imt-filter-info-title');
       const filterInfoBody = document.getElementById('imt-filter-info-body');
+      const coveredReasonModal = document.getElementById('imt-covered-reason-modal');
+      const coveredReasonClose = document.getElementById('imt-covered-reason-close');
+      const coveredReasonTitle = document.getElementById('imt-covered-reason-title');
+      const coveredReasonBody = document.getElementById('imt-covered-reason-body');
       const utilityBarTrigger = document.getElementById('imt-utility-bar-trigger');
       const quoteFormModal = document.getElementById('imt-quote-form-modal');
       const quoteFormClose = document.getElementById('imt-quote-form-close');
@@ -1783,6 +1823,16 @@
             event.preventDefault();
             event.stopPropagation();
             showPrototypeMessage();
+          });
+        });
+
+        document.querySelectorAll('[data-covered-reason-definition]').forEach((button) => {
+          if (button.dataset.coveredReasonBound === 'true') return;
+          button.dataset.coveredReasonBound = 'true';
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            setCoveredReasonModalOpen(button.getAttribute('data-covered-reason-definition') || '');
           });
         });
 
@@ -2054,6 +2104,17 @@
         filterInfoModal.hidden = !isOpen;
       }
 
+      function setCoveredReasonModalOpen(reason) {
+        if (!coveredReasonModal || !coveredReasonTitle || !coveredReasonBody) return;
+        if (!reason) {
+          coveredReasonModal.hidden = true;
+          return;
+        }
+        coveredReasonTitle.textContent = reason;
+        coveredReasonBody.textContent = coveredReasonLegalDefinitions[reason] || 'See the certificate language for the full legal definition, limits, exclusions, and timing requirements that apply to this covered reason.';
+        coveredReasonModal.hidden = false;
+      }
+
       function setQuoteFormModalOpen(isOpen) {
         if (!quoteFormModal) return;
         const completeOpen = () => {
@@ -2119,6 +2180,7 @@
           if (event.key === 'Escape') {
             setCoverageScoreModalOpen(false);
             setFilterInfoModalOpen(false);
+            setCoveredReasonModalOpen('');
             setQuoteFormModalOpen(false);
           }
         });
@@ -2164,6 +2226,24 @@
             }
           });
         });
+      }
+
+      function attachCoveredReasonModalEvents() {
+        if (!coveredReasonModal || coveredReasonModal.dataset.bound === 'true') return;
+        coveredReasonModal.dataset.bound = 'true';
+
+        coveredReasonModal.addEventListener('click', (event) => {
+          const target = event.target;
+          if (target instanceof HTMLElement && target.dataset.closeCoveredReasonModal === 'true') {
+            setCoveredReasonModalOpen('');
+          }
+        });
+
+        if (coveredReasonClose) {
+          coveredReasonClose.addEventListener('click', () => {
+            setCoveredReasonModalOpen('');
+          });
+        }
       }
 
       function attachQuoteFormModalEvents() {
@@ -2289,6 +2369,7 @@
         renderEvacuationFilters();
         attachPlanCardEvents();
         attachDisabledFilterDoubleTapEvents();
+        attachCoveredReasonModalEvents();
         requestAnimationFrame(() => {
           updateExpandedPlanStickyShadow();
         });
