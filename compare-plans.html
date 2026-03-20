@@ -331,6 +331,14 @@
         <p class="imt-modal__body" id="imt-covered-reason-body"></p>
       </div>
     </div>
+    <section class="imt-compare-tray" id="imt-compare-tray" hidden aria-label="Compared plans">
+      <div class="imt-compare-tray__inner">
+        <div class="imt-compare-tray__list" id="imt-compare-tray-list"></div>
+        <div class="imt-compare-tray__actions">
+          <button class="imt-compare-tray__button" id="imt-compare-tray-action" type="button">Compare plans</button>
+        </div>
+      </div>
+    </section>
     <script src="./plan-data.js"></script>
     <script>
       const metricDefinitions = [
@@ -403,6 +411,7 @@
       let previousTripCancellationParentSelected = false;
       let tripProtectionCollapsed = false;
       let expandedPlanIndex = null;
+      let comparedPlanIndexes = [];
       const detailSectionState = {};
       let selectedMedicalFilter = 'all';
       let selectedEvacuationFilter = 'all';
@@ -880,6 +889,20 @@
         'Destination closure': 'This covered reason generally applies when destination accommodations, attractions, or access points close due to a covered event and materially affect the trip. Policies generally require the closure to meet certificate conditions and may exclude partial closures or disruptions that do not prevent the trip from continuing.',
       };
 
+      const coverageDetailDefinitions = {
+        'Medical limit': 'The maximum amount the plan may pay for covered emergency medical treatment and related eligible medical expenses during the trip, subject to policy terms, sublimits, and exclusions.',
+        'Trip interruption': 'The amount or percentage of prepaid, non-refundable trip cost the plan may reimburse if a covered event interrupts your trip after departure, subject to certificate terms and limitations.',
+        'Trip cancellation': 'The amount or percentage of prepaid, non-refundable trip cost the plan may reimburse if a covered reason forces you to cancel before departure, subject to policy definitions, timing rules, and exclusions.',
+        'Covered reasons': 'These are the events specifically named in the certificate that may trigger trip cancellation or interruption benefits. Coverage depends on the exact policy definition, documentation requirements, and any stated limitations.',
+        'Travel delay': 'This benefit may reimburse eligible additional expenses when a covered delay meets the minimum time requirement stated in the policy, subject to daily limits, maximums, and exclusions.',
+        'Baggage delay': 'This benefit may reimburse essential purchases when checked baggage is delayed for at least the minimum number of hours listed in the certificate, up to the plan maximum.',
+        'Baggage loss': 'This benefit may reimburse covered loss, theft, or damage to baggage and personal effects, subject to per-item limits, aggregate caps, and excluded property types.',
+        'Waiver': 'This reflects whether the plan includes a pre-existing condition waiver and under what timing requirements. The waiver only applies if all certificate conditions are met.',
+        'Lookback period': 'The lookback period is the amount of time the insurer reviews before the policy effective date when determining whether a condition may be considered pre-existing.',
+        'Evacuation': 'This benefit may pay for covered emergency medical transportation to an appropriate facility or other eligible destination, subject to medical necessity, coordination requirements, and plan limits.',
+        'Accidental death': 'This benefit may pay a stated amount for a covered accidental death or dismemberment loss during the trip, subject to the specific circumstances and exclusions listed in the policy.',
+      };
+
       function renderCoveredReasonList(reasons, plan) {
         return '<div class="imt-covered-reason-layout"><p class="imt-covered-reason-intro">For full details on plan restrictions and limitations, please click on the reason.</p><ul class="imt-plan-detail__value-list imt-plan-detail__value-list--reasons">' + reasons.map((item) => {
           return '<li><strong>' + escapeHtml(item) + '</strong><button class="imt-covered-reason-link" type="button" aria-label="Open full definition for ' + escapeHtml(item) + '" data-covered-reason-definition="' + escapeHtml(item) + '" data-covered-reason-plan-index="' + escapeHtml(String(plan.index)) + '"></button></li>';
@@ -890,7 +913,7 @@
         const isOpen = isDetailSectionOpen(plan.index, section.key);
         const caption = getCoverageLimitCaption(section);
         const rowsMarkup = (section.rows || []).map((row) => {
-          const tooltip = 'Coverage detail for ' + row.label.toLowerCase() + '.';
+          const tooltip = coverageDetailDefinitions[row.label] || ('Coverage detail for ' + row.label.toLowerCase() + '.');
           const valueMarkup = Array.isArray(row.list)
             ? (row.label === 'Covered reasons'
               ? renderCoveredReasonList(row.list, plan)
@@ -950,6 +973,9 @@
 
       function renderPlanCard(plan, showCoverageScores, scoreRange) {
         const isExpanded = expandedPlanIndex === plan.index;
+        const isCompared = comparedPlanIndexes.includes(plan.index);
+        const compareLimitReached = comparedPlanIndexes.length >= 5;
+        const isCompareDisabled = compareLimitReached && !isCompared;
         const cardClass = 'imt-plan-card' + (plan.barsVisible ? ' imt-plan-card--bars-visible' : '') + (plan.available ? '' : ' imt-plan-card--unavailable') + (plan.type === 'Evacuation' ? ' imt-plan-card--evacuation' : '') + (isExpanded ? ' imt-plan-card--expanded' : '');
         const note = plan.note ? '<p class="imt-plan-card__notice">' + escapeHtml(plan.note) + '</p>' : '';
         const coverageScore = getDisplayCoverageScore(plan, scoreRange);
@@ -964,10 +990,11 @@
         const providerBadge = plan.providerLogo
           ? '<div class="imt-plan-card__provider imt-plan-card__provider--img"><img src="' + escapeHtml(plan.providerLogo) + '" alt="' + escapeHtml(plan.provider) + '" loading="lazy" /></div>'
           : '<div class="imt-plan-card__provider">' + escapeHtml(plan.provider) + '</div>';
+        const rowTooltip = isExpanded ? '' : ' title="Click for plan details"';
 
         return [
-          '<article class="' + cardClass + '" data-plan-index="' + plan.index + '" title="Click for plan details">',
-          '  <div class="imt-plan-card__summary" title="Click for plan details">',
+          '<article class="' + cardClass + '" data-plan-index="' + plan.index + '"' + rowTooltip + '>',
+          '  <div class="imt-plan-card__summary"' + rowTooltip + '>',
           '    <div class="imt-plan-card__main">',
           '      <div class="imt-plan-card__brand-row">',
           '        ' + providerBadge,
@@ -991,7 +1018,7 @@
           '      <div class="imt-total-label">Total for all travelers</div>',
           '      ' + actionButton,
           '      <div class="imt-plan-card__actions">',
-          '        <button type="button" data-prototype-message="compare">Compare</button>',
+          '        <button type="button" class="imt-plan-card__compare-button' + (isCompared ? ' is-selected' : '') + (isCompareDisabled ? ' is-limit-disabled' : '') + '" data-compare-plan="' + plan.index + '" aria-pressed="' + isCompared + '"' + (isCompareDisabled ? ' aria-disabled="true" data-tooltip="You can compare up to 5 plans at a time"' : '') + '>Compare</button>',
           '        <button class="imt-plan-card__action-link imt-plan-card__details-toggle' + (isExpanded ? ' is-open' : '') + '" type="button" data-plan-details-toggle="' + plan.index + '" aria-expanded="' + isExpanded + '">Details</button>',
           '      </div>',
           '    </div>',
@@ -1578,6 +1605,9 @@
       const resultsExplainer = document.getElementById('imt-results-explainer');
       const visiblePlanCount = document.getElementById('imt-visible-plan-count');
       const resetFiltersLink = document.getElementById('imt-reset-filters');
+      const compareTray = document.getElementById('imt-compare-tray');
+      const compareTrayList = document.getElementById('imt-compare-tray-list');
+      const compareTrayAction = document.getElementById('imt-compare-tray-action');
       const selectedFiltersNode = document.getElementById('imt-selected-filters');
       const resultsLayout = document.querySelector('.imt-results-layout');
       const filtersColumn = document.querySelector('.imt-filters');
@@ -1615,6 +1645,39 @@
         'Insurance Providers': 'Insurance providers helps you narrow the list to carriers you already know or trust.',
         'Accidental Death': 'Accidental death compares plans that include a lump-sum benefit for severe covered travel accidents.',
       };
+
+      function renderCompareTray() {
+        if (!compareTray || !compareTrayList) return;
+        const plans = comparedPlanIndexes
+          .map((index) => getBasePlans().find((plan) => plan.index === index))
+          .filter(Boolean);
+
+        compareTray.hidden = plans.length === 0;
+        if (plans.length === 0) {
+          compareTrayList.innerHTML = '';
+          if (compareTrayAction) compareTrayAction.textContent = 'Compare plans';
+          return;
+        }
+
+        if (compareTrayAction) {
+          compareTrayAction.textContent = plans.length === 1
+            ? 'Select another plan to compare'
+            : 'Compare plans';
+        }
+
+        compareTrayList.innerHTML = plans.map((plan) => {
+          const logoMarkup = plan.providerLogo
+            ? '<img src="' + escapeHtml(plan.providerLogo) + '" alt="' + escapeHtml(plan.provider || plan.name) + '" loading="lazy" />'
+            : '<span>' + escapeHtml(plan.provider || '') + '</span>';
+          return [
+            '<article class="imt-compare-tray__card">',
+            '  <div class="imt-compare-tray__logo">' + logoMarkup + '</div>',
+            '  <h3>' + escapeHtml(plan.name) + '</h3>',
+            '  <button class="imt-compare-tray__remove" type="button" data-compare-remove="' + plan.index + '">Remove</button>',
+            '</article>',
+          ].join('');
+        }).join('');
+      }
 
       function setFilterBlockCollapsed(block, collapsed) {
         if (!block) return;
@@ -1832,6 +1895,22 @@
             event.preventDefault();
             event.stopPropagation();
             showPrototypeMessage();
+          });
+        });
+
+        document.querySelectorAll('[data-compare-plan]').forEach((button) => {
+          if (button.dataset.compareBound === 'true') return;
+          button.dataset.compareBound = 'true';
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (button.classList.contains('is-limit-disabled')) return;
+            const planIndex = Number(button.getAttribute('data-compare-plan'));
+            if (!Number.isFinite(planIndex)) return;
+            comparedPlanIndexes = comparedPlanIndexes.includes(planIndex)
+              ? comparedPlanIndexes.filter((value) => value !== planIndex)
+              : comparedPlanIndexes.concat(planIndex);
+            renderPlans();
           });
         });
 
@@ -2393,6 +2472,7 @@
         });
         renderMedicalFilters();
         renderEvacuationFilters();
+        renderCompareTray();
         attachPlanCardEvents();
         attachDisabledFilterDoubleTapEvents();
         attachCoveredReasonModalEvents();
@@ -2414,6 +2494,25 @@
           renderPlans();
         });
       }
+
+      if (compareTrayAction) {
+        compareTrayAction.addEventListener('click', (event) => {
+          event.preventDefault();
+          showPrototypeMessage();
+        });
+      }
+
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        const removeButton = target.closest('[data-compare-remove]');
+        if (!removeButton) return;
+        event.preventDefault();
+        const planIndex = Number(removeButton.getAttribute('data-compare-remove'));
+        if (!Number.isFinite(planIndex)) return;
+        comparedPlanIndexes = comparedPlanIndexes.filter((value) => value !== planIndex);
+        renderPlans();
+      });
 
       document.querySelectorAll('input[name="medical"]').forEach((input) => {
         input.addEventListener('change', (event) => {
