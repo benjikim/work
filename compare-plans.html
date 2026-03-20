@@ -327,6 +327,7 @@
         </div>
         <hr class="imt-covered-reason-modal__rule" />
         <h2 class="imt-modal__title" id="imt-covered-reason-title">Definition</h2>
+        <div class="imt-covered-reason-modal__note">Prototype note: this demo currently uses the Medical / Health legal definition for all covered reasons.</div>
         <p class="imt-modal__body" id="imt-covered-reason-body"></p>
       </div>
     </div>
@@ -853,7 +854,7 @@
       };
 
       const coveredReasonLegalDefinitions = {
-        'Medical or death': 'This covered reason generally applies when you, a traveling companion, a family member, or a business partner suffers a sickness, injury, or death serious enough to make the trip medically inadvisable or impossible. Benefits are usually subject to physician documentation, policy timing rules, and exclusions for known or expected conditions unless a waiver specifically applies.',
+        'Medical or death': 'Medical / Health\n(a) Any serious Injury, death, or Sickness;\n(1) Occurring to You or a Traveling Companion, a Family Member traveling with You, that is so disabling as to cause a reasonable person to cancel or interrupt their Trip or which results in medically imposed restrictions as certified by a Physician at the time of Loss preventing your continued participation in the Trip;\n(2) Occurring to a Family Member not traveling with the You that is considered life-threatening, as certified by a Physician or they require Your immediate care. Such disability must be so disabling as to reasonably cause a Trip to be canceled or interrupted and must be certified by a Physician;\n(3) Occurring to a Business Partner that is so disabling as to cause a reasonable person to cancel or interrupt their Trip to assume daily management of the business. Such disability must be certified by a Physician;\n(4) Sickness, Injury, death or hospitalization occurring to Your Host at Your Destination. A Physician must certify the Sickness or Injury;',
         'Family member illness': 'This covered reason generally applies when a family member experiences a covered sickness, injury, or medical event that requires your care or makes travel unreasonable to continue. Coverage is typically limited to unforeseen events that are medically documented and not otherwise excluded under the certificate.',
         'Jury or legal duty': 'This covered reason generally applies when you are called to jury duty or required to appear in court after purchasing coverage, and the obligation cannot be postponed or waived. Policies often exclude routine legal matters, elective appearances, and obligations that were known before travel arrangements were made.',
         'Mechanical failure': 'This covered reason generally applies when a documented mechanical breakdown of a common carrier or your personal vehicle causes a covered cancellation, delay, or interruption. Payment is normally limited to breakdowns that directly prevent travel and generally does not extend to maintenance issues or unsupported delays.',
@@ -2137,7 +2138,7 @@
           }
         }
         coveredReasonTitle.textContent = reason;
-        coveredReasonBody.textContent = coveredReasonLegalDefinitions[reason] || 'See the certificate language for the full legal definition, limits, exclusions, and timing requirements that apply to this covered reason.';
+        coveredReasonBody.textContent = coveredReasonLegalDefinitions['Medical or death'] || 'See the certificate language for the full legal definition, limits, exclusions, and timing requirements that apply to this covered reason.';
         coveredReasonModal.hidden = false;
       }
 

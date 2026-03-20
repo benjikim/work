@@ -2064,6 +2064,20 @@
   border-top: 1px solid #d9e2ea;
 }
 
+.imt-covered-reason-modal__note {
+  margin: 12px 0 0;
+  border-radius: 14px;
+  background: rgba(184, 41, 41, 0.96);
+  color: #fff;
+  padding: 10px 14px;
+  font: 600 13px/1.35 var(--font-body);
+  box-shadow: 0 8px 24px rgba(184, 41, 41, 0.18);
+}
+
+#imt-covered-reason-body {
+  white-space: pre-line;
+}
+
 .imt-plan-detail__list {
   margin: 0;
   padding: 14px 0 6px 22px;
