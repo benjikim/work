@@ -881,10 +881,9 @@
       };
 
       function renderCoveredReasonList(reasons, plan) {
-        return '<ul class="imt-plan-detail__value-list imt-plan-detail__value-list--reasons">' + reasons.map((item) => {
-          const description = coveredReasonDescriptions[item] || 'See policy details for how this covered reason is defined and when it applies.';
-          return '<li><strong>' + escapeHtml(item) + '</strong><span>' + escapeHtml(description) + ' <button class="imt-covered-reason-link" type="button" data-covered-reason-definition="' + escapeHtml(item) + '" data-covered-reason-plan-index="' + escapeHtml(String(plan.index)) + '">Full definition</button></span></li>';
-        }).join('') + '</ul>';
+        return '<div class="imt-covered-reason-layout"><p class="imt-covered-reason-intro">For full details on plan restrictions and limitations, please click on the reason.</p><ul class="imt-plan-detail__value-list imt-plan-detail__value-list--reasons">' + reasons.map((item) => {
+          return '<li><strong>' + escapeHtml(item) + '</strong><button class="imt-covered-reason-link" type="button" aria-label="Open full definition for ' + escapeHtml(item) + '" data-covered-reason-definition="' + escapeHtml(item) + '" data-covered-reason-plan-index="' + escapeHtml(String(plan.index)) + '"></button></li>';
+        }).join('') + '</ul></div>';
       }
 
       function renderPlanDetailSection(plan, section) {
