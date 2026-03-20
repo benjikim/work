@@ -2021,6 +2021,43 @@
   color: #023ea1;
 }
 
+.imt-covered-reason-modal__plan {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  padding-right: 56px;
+}
+
+.imt-covered-reason-modal__plan-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  max-width: 120px;
+}
+
+.imt-covered-reason-modal__plan-logo img {
+  display: block;
+  max-width: 100%;
+  max-height: 42px;
+  object-fit: contain;
+}
+
+.imt-covered-reason-modal__plan-logo span {
+  color: #08264d;
+  font: 700 14px/1.2 var(--font-body);
+}
+
+.imt-covered-reason-modal__plan-copy .imt-modal__eyebrow {
+  margin-bottom: 4px;
+}
+
+.imt-covered-reason-modal__plan-name {
+  color: #08264d;
+  font: 700 24px/1.12 var(--font-body);
+}
+
 .imt-plan-detail__list {
   margin: 0;
   padding: 14px 0 6px 22px;

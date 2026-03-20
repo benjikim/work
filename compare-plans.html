@@ -319,6 +319,13 @@
       <div class="imt-modal__backdrop" data-close-covered-reason-modal="true"></div>
       <div class="imt-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="imt-covered-reason-title">
         <button class="imt-modal__close" id="imt-covered-reason-close" type="button" aria-label="Close covered reason definition">Close</button>
+        <div class="imt-covered-reason-modal__plan" id="imt-covered-reason-plan-header" hidden>
+          <div class="imt-covered-reason-modal__plan-logo" id="imt-covered-reason-plan-logo"></div>
+          <div class="imt-covered-reason-modal__plan-copy">
+            <div class="imt-modal__eyebrow">Covered Reason</div>
+            <div class="imt-covered-reason-modal__plan-name" id="imt-covered-reason-plan-name"></div>
+          </div>
+        </div>
         <div class="imt-modal__eyebrow">Covered Reason</div>
         <h2 class="imt-modal__title" id="imt-covered-reason-title">Definition</h2>
         <p class="imt-modal__body" id="imt-covered-reason-body"></p>
@@ -873,10 +880,10 @@
         'Destination closure': 'This covered reason generally applies when destination accommodations, attractions, or access points close due to a covered event and materially affect the trip. Policies generally require the closure to meet certificate conditions and may exclude partial closures or disruptions that do not prevent the trip from continuing.',
       };
 
-      function renderCoveredReasonList(reasons) {
+      function renderCoveredReasonList(reasons, plan) {
         return '<ul class="imt-plan-detail__value-list imt-plan-detail__value-list--reasons">' + reasons.map((item) => {
           const description = coveredReasonDescriptions[item] || 'See policy details for how this covered reason is defined and when it applies.';
-          return '<li><strong>' + escapeHtml(item) + '</strong><span>' + escapeHtml(description) + ' <button class="imt-covered-reason-link" type="button" data-covered-reason-definition="' + escapeHtml(item) + '">Full definition</button></span></li>';
+          return '<li><strong>' + escapeHtml(item) + '</strong><span>' + escapeHtml(description) + ' <button class="imt-covered-reason-link" type="button" data-covered-reason-definition="' + escapeHtml(item) + '" data-covered-reason-plan-index="' + escapeHtml(String(plan.index)) + '">Full definition</button></span></li>';
         }).join('') + '</ul>';
       }
 
@@ -887,7 +894,7 @@
           const tooltip = 'Coverage detail for ' + row.label.toLowerCase() + '.';
           const valueMarkup = Array.isArray(row.list)
             ? (row.label === 'Covered reasons'
-              ? renderCoveredReasonList(row.list)
+              ? renderCoveredReasonList(row.list, plan)
               : '<ul class="imt-plan-detail__value-list">' + row.list.map((item) => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>')
             : '<div class="imt-plan-detail__value">' + escapeHtml(row.value) + '</div>';
           return '<div class="imt-plan-detail__row' + (row.label === 'Covered reasons' ? ' imt-plan-detail__row--covered-reasons' : '') + '">' +
@@ -1588,6 +1595,9 @@
       const coveredReasonClose = document.getElementById('imt-covered-reason-close');
       const coveredReasonTitle = document.getElementById('imt-covered-reason-title');
       const coveredReasonBody = document.getElementById('imt-covered-reason-body');
+      const coveredReasonPlanHeader = document.getElementById('imt-covered-reason-plan-header');
+      const coveredReasonPlanLogo = document.getElementById('imt-covered-reason-plan-logo');
+      const coveredReasonPlanName = document.getElementById('imt-covered-reason-plan-name');
       const utilityBarTrigger = document.getElementById('imt-utility-bar-trigger');
       const quoteFormModal = document.getElementById('imt-quote-form-modal');
       const quoteFormClose = document.getElementById('imt-quote-form-close');
@@ -1832,7 +1842,10 @@
           button.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
-            setCoveredReasonModalOpen(button.getAttribute('data-covered-reason-definition') || '');
+            setCoveredReasonModalOpen(
+              button.getAttribute('data-covered-reason-definition') || '',
+              button.getAttribute('data-covered-reason-plan-index') || ''
+            );
           });
         });
 
@@ -2104,11 +2117,25 @@
         filterInfoModal.hidden = !isOpen;
       }
 
-      function setCoveredReasonModalOpen(reason) {
+      function setCoveredReasonModalOpen(reason, planIndex) {
         if (!coveredReasonModal || !coveredReasonTitle || !coveredReasonBody) return;
         if (!reason) {
           coveredReasonModal.hidden = true;
           return;
+        }
+        const plan = getBasePlans().find((item) => item.index === Number(planIndex));
+        if (coveredReasonPlanHeader && coveredReasonPlanLogo && coveredReasonPlanName) {
+          if (plan) {
+            coveredReasonPlanHeader.hidden = false;
+            coveredReasonPlanName.textContent = plan.name || '';
+            coveredReasonPlanLogo.innerHTML = plan.providerLogo
+              ? '<img src="' + escapeHtml(plan.providerLogo) + '" alt="' + escapeHtml(plan.provider || plan.name || 'Plan logo') + '" loading="lazy" />'
+              : '<span>' + escapeHtml(plan.provider || '') + '</span>';
+          } else {
+            coveredReasonPlanHeader.hidden = true;
+            coveredReasonPlanName.textContent = '';
+            coveredReasonPlanLogo.innerHTML = '';
+          }
         }
         coveredReasonTitle.textContent = reason;
         coveredReasonBody.textContent = coveredReasonLegalDefinitions[reason] || 'See the certificate language for the full legal definition, limits, exclusions, and timing requirements that apply to this covered reason.';
