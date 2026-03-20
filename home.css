@@ -287,22 +287,7 @@ body.imt-home {
 }
 
 .imt-label-info {
-  position: relative;
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  flex: none;
-  border: 1px solid #7a8ba0;
-  border-radius: 999px;
-  background: #ffffff;
-  color: #4b6078;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  font: 700 10px/1 "Gamay", sans-serif;
-  cursor: default;
-  vertical-align: middle;
+  display: none;
 }
 
 .imt-label-info::after {
@@ -657,12 +642,12 @@ body.imt-home {
 }
 
 .imt-form-toggle-button__icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   display: inline-block;
   background-color: currentColor;
-  -webkit-mask: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="white"/></svg>') center / contain no-repeat;
-  mask: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 18H21V16H3V18ZM3 13H21V11H3V13ZM3 6V8H21V6H3Z" fill="white"/></svg>') center / contain no-repeat;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H11" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M15 7H20" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="13" cy="7" r="2.3" stroke="white" stroke-width="2.2"/><path d="M4 17H9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M13 17H20" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="11" cy="17" r="2.3" stroke="white" stroke-width="2.2"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H11" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M15 7H20" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="13" cy="7" r="2.3" stroke="white" stroke-width="2.2"/><path d="M4 17H9" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M13 17H20" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="11" cy="17" r="2.3" stroke="white" stroke-width="2.2"/></svg>') center / contain no-repeat;
 }
 
 .imt-form-toggle-button:focus-visible {

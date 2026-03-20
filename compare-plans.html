@@ -23,11 +23,16 @@
       </div>
     </header>
 
-    <div class="imt-utility-bar" id="imt-utility-bar-trigger" role="button" tabindex="0" aria-label="Edit quote details">
+    <div class="imt-utility-bar" id="imt-utility-bar-trigger" role="button" tabindex="0" aria-label="Edit quote details" aria-expanded="false">
       <div class="imt-utility-bar__inner">
-        <span>Italy</span>
+        <span>Edit Trip Details: Italy</span>
         <span>Jul 22, 2024 - Jul 31, 2024</span>
         <span>1 Traveler</span>
+      </div>
+    </div>
+    <div class="imt-utility-drawer" id="imt-quote-form-modal" hidden>
+      <div class="imt-utility-drawer__inner">
+        <iframe class="imt-utility-drawer__frame" src="./quote-form-embed.html" title="Travel insurance quote form"></iframe>
       </div>
     </div>
 
@@ -308,14 +313,6 @@
         <div class="imt-modal__eyebrow">Filter Info</div>
         <h2 class="imt-modal__title" id="imt-filter-info-title">Filter details</h2>
         <p class="imt-modal__body" id="imt-filter-info-body"></p>
-      </div>
-    </div>
-    <div class="imt-modal" id="imt-quote-form-modal" hidden>
-      <div class="imt-modal__backdrop" data-close-quote-modal="true"></div>
-      <div class="imt-modal__dialog imt-modal__dialog--quote" role="dialog" aria-modal="true" aria-labelledby="imt-quote-modal-title">
-        <div class="imt-quote-modal__frame-wrap">
-          <iframe class="imt-quote-modal__frame" src="./quote-form-embed.html" title="Travel insurance quote form"></iframe>
-        </div>
       </div>
     </div>
     <script src="./plan-data.js"></script>
@@ -816,13 +813,49 @@
         return sections;
       }
 
+      const coveredReasonDescriptions = {
+        'Medical or death': 'Applies when you, a traveling companion, or a family member becomes seriously ill, injured, or dies before or during the trip.',
+        'Family member illness': 'Applies when a family member has a covered illness or injury that affects your ability to travel as planned.',
+        'Jury or legal duty': 'Applies when you are required to appear for jury service, court, or another covered legal obligation that conflicts with your trip.',
+        'Mechanical failure': 'Applies when a mechanical problem causes a covered delay or disruption to your planned departure.',
+        'Supplier default': 'Applies when a covered travel supplier stops providing paid services because of financial default.',
+        'Weather': 'Applies when severe weather prevents you from departing, continuing, or completing your trip.',
+        'Natural disaster': 'Applies when a natural disaster makes your destination, home, or travel route unsafe or inaccessible.',
+        'Traffic accident': 'Applies when a covered traffic accident causes a delay that prevents you from traveling on time.',
+        'Travel advisory': 'Applies when a covered government travel advisory affects your destination after you purchase the plan.',
+        'Job termination': 'Applies when you are involuntarily terminated or laid off after the plan purchase, subject to policy terms.',
+        'Work reasons': 'Applies when a covered work-related event requires you to cancel, delay, or interrupt your trip.',
+        'School year extension': 'Applies when a required school schedule change prevents travel during the original trip dates.',
+        'Pregnancy complication': 'Applies when a covered pregnancy complication makes travel medically inadvisable.',
+        'Military duty': 'Applies when you or a traveling companion is called to active military duty or a leave is revoked.',
+        'Terrorism': 'Applies when a covered terrorist incident occurs in or near your destination within the policy time frame.',
+        'Home uninhabitable': 'Applies when your home is made uninhabitable by a covered event and your presence is required.',
+        'Felonious assault': 'Applies when you, a traveling companion, or a family member is the victim of a covered felonious assault.',
+        'Host at destination': 'Applies when the person hosting you at your destination has a covered illness, injury, or death.',
+        'Hijacking': 'Applies when a hijacking event causes a covered trip disruption.',
+        'Quarantine': 'Applies when you, a companion, or a family member is subject to a covered mandatory quarantine.',
+        'Missed connection': 'Applies when a covered delay causes you to miss a common carrier connection needed for the trip.',
+        'Strike': 'Applies when a covered strike disrupts your transportation or destination arrangements.',
+        'Passport or visa theft': 'Applies when theft of required travel documents causes a covered delay or interruption.',
+        'Destination closure': 'Applies when your destination accommodations or access points close due to a covered event.',
+      };
+
+      function renderCoveredReasonList(reasons) {
+        return '<ul class="imt-plan-detail__value-list imt-plan-detail__value-list--reasons">' + reasons.map((item) => {
+          const description = coveredReasonDescriptions[item] || 'See policy details for how this covered reason is defined and when it applies.';
+          return '<li><strong>' + escapeHtml(item) + '</strong><span>' + escapeHtml(description) + '</span></li>';
+        }).join('') + '</ul>';
+      }
+
       function renderPlanDetailSection(plan, section) {
         const isOpen = isDetailSectionOpen(plan.index, section.key);
         const caption = getCoverageLimitCaption(section);
         const rowsMarkup = (section.rows || []).map((row) => {
           const tooltip = 'Coverage detail for ' + row.label.toLowerCase() + '.';
           const valueMarkup = Array.isArray(row.list)
-            ? '<ul class="imt-plan-detail__value-list">' + row.list.map((item) => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>'
+            ? (row.label === 'Covered reasons'
+              ? renderCoveredReasonList(row.list)
+              : '<ul class="imt-plan-detail__value-list">' + row.list.map((item) => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>')
             : '<div class="imt-plan-detail__value">' + escapeHtml(row.value) + '</div>';
           return '<div class="imt-plan-detail__row">' +
             '<div class="imt-plan-detail__label"><span class="imt-plan-detail__label-text" data-tooltip="' + escapeHtml(tooltip) + '" title="' + escapeHtml(tooltip) + '">' + escapeHtml(row.label) + '</span></div>' +
@@ -2026,7 +2059,46 @@
 
       function setQuoteFormModalOpen(isOpen) {
         if (!quoteFormModal) return;
-        quoteFormModal.hidden = !isOpen;
+        const completeOpen = () => {
+          if (quoteFormModal.classList.contains('is-open')) {
+            quoteFormModal.style.maxHeight = 'none';
+          }
+        };
+
+        const completeClose = () => {
+          if (!quoteFormModal.classList.contains('is-open')) {
+            quoteFormModal.hidden = true;
+            quoteFormModal.style.maxHeight = '';
+          }
+        };
+
+        quoteFormModal.removeEventListener('transitionend', quoteFormModal._imtTransitionHandler);
+
+        if (isOpen) {
+          quoteFormModal.hidden = false;
+          quoteFormModal.classList.remove('is-open');
+          quoteFormModal.style.maxHeight = '0px';
+          quoteFormModal._imtTransitionHandler = completeOpen;
+          quoteFormModal.addEventListener('transitionend', quoteFormModal._imtTransitionHandler, { once: true });
+          requestAnimationFrame(() => {
+            const drawerHeight = quoteFormModal.scrollHeight;
+            quoteFormModal.classList.add('is-open');
+            quoteFormModal.style.maxHeight = drawerHeight + 'px';
+          });
+        } else {
+          const drawerHeight = quoteFormModal.scrollHeight;
+          quoteFormModal.style.maxHeight = drawerHeight + 'px';
+          quoteFormModal._imtTransitionHandler = completeClose;
+          quoteFormModal.addEventListener('transitionend', quoteFormModal._imtTransitionHandler, { once: true });
+          requestAnimationFrame(() => {
+            quoteFormModal.classList.remove('is-open');
+            quoteFormModal.style.maxHeight = '0px';
+          });
+        }
+
+        if (utilityBarTrigger) {
+          utilityBarTrigger.setAttribute('aria-expanded', String(isOpen));
+        }
       }
 
       function attachCoverageScoreModalEvents() {
@@ -2102,22 +2174,15 @@
         quoteFormModal.dataset.bound = 'true';
 
         if (utilityBarTrigger) {
-          const openModal = () => setQuoteFormModalOpen(true);
-          utilityBarTrigger.addEventListener('click', openModal);
+          const toggleDrawer = () => setQuoteFormModalOpen(quoteFormModal.hidden);
+          utilityBarTrigger.addEventListener('click', toggleDrawer);
           utilityBarTrigger.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault();
-              openModal();
+              toggleDrawer();
             }
           });
         }
-
-        quoteFormModal.addEventListener('click', (event) => {
-          const target = event.target;
-          if (target instanceof HTMLElement && target.dataset.closeQuoteModal === 'true') {
-            setQuoteFormModalOpen(false);
-          }
-        });
 
         window.addEventListener('message', (event) => {
           if (event.origin !== window.location.origin) return;
