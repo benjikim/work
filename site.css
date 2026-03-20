@@ -2058,6 +2058,12 @@
   font: 700 24px/1.12 var(--font-body);
 }
 
+.imt-covered-reason-modal__rule {
+  margin: 0 0 16px;
+  border: 0;
+  border-top: 1px solid #d9e2ea;
+}
+
 .imt-plan-detail__list {
   margin: 0;
   padding: 14px 0 6px 22px;
