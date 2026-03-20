@@ -1914,6 +1914,19 @@
   border-top: 1px solid #d9d9d9;
 }
 
+.imt-plan-detail__row--covered-reasons {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.imt-plan-detail__row--covered-reasons .imt-plan-detail__label {
+  padding-left: 30px;
+}
+
+.imt-plan-detail__row--covered-reasons .imt-plan-detail__value-list--reasons {
+  padding-left: 30px;
+}
+
 .imt-plan-detail__label {
   display: flex;
   align-items: center;

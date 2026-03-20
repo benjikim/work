@@ -857,7 +857,7 @@
               ? renderCoveredReasonList(row.list)
               : '<ul class="imt-plan-detail__value-list">' + row.list.map((item) => '<li>' + escapeHtml(item) + '</li>').join('') + '</ul>')
             : '<div class="imt-plan-detail__value">' + escapeHtml(row.value) + '</div>';
-          return '<div class="imt-plan-detail__row">' +
+          return '<div class="imt-plan-detail__row' + (row.label === 'Covered reasons' ? ' imt-plan-detail__row--covered-reasons' : '') + '">' +
             '<div class="imt-plan-detail__label"><span class="imt-plan-detail__label-text" data-tooltip="' + escapeHtml(tooltip) + '" title="' + escapeHtml(tooltip) + '">' + escapeHtml(row.label) + '</span></div>' +
             valueMarkup +
           '</div>';
