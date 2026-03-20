@@ -727,14 +727,11 @@
         }
 
         const tripProtectionRows = [];
-        if (hasMetric(plan, 'tripInterruption')) tripProtectionRows.push({ label: 'Trip interruption', value: getMetricText(plan, 'tripInterruption') });
+        if (hasMetric(plan, 'tripInterruption')) tripProtectionRows.push({ label: 'Trip interruption', value: getMetricText(plan, 'tripInterruption') + ' of trip cost' });
         if (hasMetric(plan, 'tripCancellation')) {
-          const tripCancellationCount = (plan.tripCancellationReasons || []).length;
           tripProtectionRows.push({
             label: 'Trip cancellation',
-            value: tripCancellationCount
-              ? tripCancellationCount + ' reason' + (tripCancellationCount === 1 ? '' : 's')
-              : getMetricText(plan, 'tripCancellation'),
+            value: '100% of trip cost',
           });
         }
         if ((plan.tripCancellationReasons || []).length) tripProtectionRows.push({ label: 'Covered reasons', list: plan.tripCancellationReasons || [] });
