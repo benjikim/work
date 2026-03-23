@@ -2,7 +2,7 @@ body.imt-home {
   margin: 0;
   background: #ffffff;
   color: #0c233c;
-  font-family: "Gamay", sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 .imt-nav-shell {
@@ -43,7 +43,7 @@ body.imt-home {
 
 .imt-nav-utility a {
   color: #f3f6f9;
-  font: 400 12px/1.4 "Gamay", sans-serif;
+  font: 400 12px/1.4 "Open Sans", sans-serif;
   letter-spacing: 0;
   text-decoration: none;
   text-transform: uppercase;
@@ -77,7 +77,7 @@ body.imt-home {
 
 .imt-nav-links a {
   color: #ffffff;
-  font: 700 18px/1.3 "Gamay", sans-serif;
+  font: 700 18px/1.3 "Open Sans", sans-serif;
   text-decoration: none;
 }
 
@@ -113,7 +113,7 @@ body.imt-home {
   padding: 0 26px;
   background: #7bb832;
   color: #ffffff;
-  font: 600 16px/1 "Gamay", sans-serif;
+  font: 600 16px/1 "Open Sans", sans-serif;
   letter-spacing: 0;
 }
 
@@ -157,14 +157,14 @@ body.imt-home {
 
 .imt-hero__copy h1 {
   margin: 0 0 18px;
-  font: 600 42px/1.18 "Gamay", sans-serif;
+  font: 600 42px/1.18 "Open Sans", sans-serif;
   letter-spacing: 0;
 }
 
 .imt-hero__copy p {
   margin: 0;
   max-width: 540px;
-  font: 400 25px/1.42 "Gamay", sans-serif;
+  font: 400 25px/1.42 "Open Sans", sans-serif;
 }
 
 .imt-quote-card {
@@ -180,7 +180,7 @@ body.imt-home {
 .imt-quote-card h2 {
   margin: 0;
   color: #808080;
-  font: 400 17px/1.3 "Gamay", sans-serif;
+  font: 400 17px/1.3 "Open Sans", sans-serif;
   text-align: center;
 }
 
@@ -190,7 +190,7 @@ body.imt-home {
   padding: 0;
   background: transparent;
   color: #203444;
-  font: 700 22px/1.25 "Gamay", sans-serif;
+  font: 700 22px/1.25 "Open Sans", sans-serif;
   text-align: left;
   cursor: pointer;
 }
@@ -215,7 +215,7 @@ body.imt-home {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font: 400 14px/1 "Gamay", sans-serif;
+  font: 400 14px/1 "Open Sans", sans-serif;
   cursor: pointer;
 }
 
@@ -277,7 +277,7 @@ body.imt-home {
   display: grid;
   gap: 5px;
   color: #212629;
-  font: 400 13px/1.4 "Gamay", sans-serif;
+  font: 400 13px/1.4 "Open Sans", sans-serif;
 }
 
 .imt-label-text {
@@ -322,7 +322,7 @@ body.imt-home {
   border: 2px solid #d4d9de;
   border-radius: 10px;
   color: #333333;
-  font: 400 14px/1.4 "Gamay", sans-serif;
+  font: 400 14px/1.4 "Open Sans", sans-serif;
 }
 
 .imt-combobox,
@@ -348,7 +348,7 @@ body.imt-home {
   outline: 0;
   background: transparent;
   color: #333333;
-  font: 400 14px/1.4 "Gamay", sans-serif;
+  font: 400 14px/1.4 "Open Sans", sans-serif;
 }
 
 .imt-text-input,
@@ -421,7 +421,7 @@ body.imt-home {
   color: #212629;
   padding: 10px 12px;
   border-radius: 8px;
-  font: 400 14px/1.4 "Gamay", sans-serif;
+  font: 400 14px/1.4 "Open Sans", sans-serif;
   text-align: left;
   cursor: pointer;
 }
@@ -488,7 +488,7 @@ body.imt-home {
   border-radius: 6px;
   background: #0354d6;
   color: #ffffff;
-  font: 700 12px/1 "Gamay", sans-serif;
+  font: 700 12px/1 "Open Sans", sans-serif;
   letter-spacing: 0;
   text-transform: uppercase;
   cursor: pointer;
@@ -519,7 +519,7 @@ body.imt-home {
 
 .imt-calendar__title {
   color: #3b4d67;
-  font: 700 20px/1.2 "Gamay", sans-serif;
+  font: 700 20px/1.2 "Open Sans", sans-serif;
   text-align: center;
 }
 
@@ -537,7 +537,7 @@ body.imt-home {
   border: 0;
   background: transparent;
   color: #65758d;
-  font: 400 36px/1 "Gamay", sans-serif;
+  font: 400 36px/1 "Open Sans", sans-serif;
   cursor: pointer;
 }
 
@@ -553,7 +553,7 @@ body.imt-home {
 
 .imt-calendar__weekdays span {
   color: #41526a;
-  font: 700 18px/1.1 "Gamay", sans-serif;
+  font: 700 18px/1.1 "Open Sans", sans-serif;
   text-align: center;
 }
 
@@ -569,7 +569,7 @@ body.imt-home {
   border-radius: 999px;
   background: transparent;
   color: #3d4e67;
-  font: 600 18px/1 "Gamay", sans-serif;
+  font: 600 18px/1 "Open Sans", sans-serif;
   cursor: pointer;
   position: relative;
 }
@@ -607,7 +607,7 @@ body.imt-home {
   background: #0280a7;
   border-radius: 4px;
   color: #ffffff;
-  font: 700 10px/1 "Gamay", sans-serif;
+  font: 700 10px/1 "Open Sans", sans-serif;
   letter-spacing: 0;
   transition: background-color 0.18s ease, transform 0.18s ease;
 }
@@ -665,7 +665,7 @@ body.imt-home {
   justify-content: center;
   text-decoration: none;
   text-transform: uppercase;
-  font: 700 13px/1 "Gamay", sans-serif;
+  font: 700 13px/1 "Open Sans", sans-serif;
   letter-spacing: 0;
 }
 
@@ -674,7 +674,7 @@ body.imt-home {
   display: grid;
   align-items: center;
   gap: 12px;
-  font: 400 16px/1.35 "Gamay", sans-serif;
+  font: 400 16px/1.35 "Open Sans", sans-serif;
 }
 
 .imt-check-row--inline {
@@ -685,7 +685,7 @@ body.imt-home {
 .imt-check-row--inline > span:last-child {
   white-space: normal;
   color: #0c233c;
-  font: 400 14px/1.45 "Gamay", sans-serif;
+  font: 400 14px/1.45 "Open Sans", sans-serif;
 }
 
 .imt-check-row--inline a {
@@ -738,7 +738,7 @@ body.imt-home {
 .imt-quote-form__help {
   margin: 0;
   color: #0c233c;
-  font: 400 14px/1.4 "Gamay", sans-serif;
+  font: 400 14px/1.4 "Open Sans", sans-serif;
 }
 
 .imt-quote-form__help a {
@@ -802,7 +802,7 @@ body.imt-home {
   padding: 0;
   background: transparent;
   color: #5f6c76;
-  font: 700 11px/1 "Gamay", sans-serif;
+  font: 700 11px/1 "Open Sans", sans-serif;
   letter-spacing: 0;
   text-transform: uppercase;
   cursor: pointer;
@@ -811,13 +811,13 @@ body.imt-home {
 .imt-info-modal__panel h3 {
   margin: 0 0 16px;
   color: #08264d;
-  font: 700 28px/1.15 "Gamay", sans-serif;
+  font: 700 28px/1.15 "Open Sans", sans-serif;
 }
 
 .imt-info-modal__panel p {
   margin: 0 0 14px;
   color: #203444;
-  font: 400 16px/1.6 "Gamay", sans-serif;
+  font: 400 16px/1.6 "Open Sans", sans-serif;
 }
 
 .imt-section {
@@ -841,7 +841,7 @@ body.imt-home {
 .imt-section-title {
   margin: 0 0 24px;
   color: #000000;
-  font: 600 42px/1.12 "Gamay", sans-serif;
+  font: 600 42px/1.12 "Open Sans", sans-serif;
   letter-spacing: 0;
   text-align: center;
 }
@@ -865,6 +865,14 @@ body.imt-home {
   justify-items: center;
   align-content: start;
   gap: 10px;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
+}
+
+.imt-coverage-card:hover {
+  border-color: #7eb6f1;
+  background: #f8fbff;
+  box-shadow: 0 10px 24px rgba(8, 38, 77, 0.12);
+  transform: translateY(-3px);
 }
 
 .imt-coverage-card img {
@@ -876,14 +884,14 @@ body.imt-home {
 .imt-coverage-card h3 {
   margin: 0;
   color: #0354d6;
-  font: 600 17px/1.3 "Gamay", sans-serif;
+  font: 600 17px/1.3 "Open Sans", sans-serif;
   text-align: center;
 }
 
 .imt-coverage-card p {
   margin: 0;
   color: #000000;
-  font: 400 14px/1.48 "Gamay", sans-serif;
+  font: 400 14px/1.48 "Open Sans", sans-serif;
   text-align: center;
 }
 
@@ -927,7 +935,7 @@ body.imt-home {
   height: 122px;
   background: #1a179e;
   color: #ffffff;
-  font: 400 38px/1 "Gamay", sans-serif;
+  font: 400 38px/1 "Open Sans", sans-serif;
   font-style: italic;
   position: relative;
 }
@@ -945,29 +953,29 @@ body.imt-home {
 
 .imt-provider-brand--bhtp strong {
   color: #193968;
-  font: 600 62px/0.95 "Gamay", sans-serif;
+  font: 600 62px/0.95 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--bhtp span {
   border-top: 2px solid #8ab0df;
   padding-top: 6px;
   color: #193968;
-  font: 600 19px/1.1 "Gamay", sans-serif;
+  font: 600 19px/1.1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--bcbs strong {
   color: #117fd0;
-  font: 700 20px/1 "Gamay", sans-serif;
+  font: 700 20px/1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--bcbs span {
   color: #222222;
-  font: 400 18px/1.1 "Gamay", sans-serif;
+  font: 400 18px/1.1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--travelinsured strong {
   color: #173876;
-  font: 600 26px/0.92 "Gamay", sans-serif;
+  font: 600 26px/0.92 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--travelinsured strong span {
@@ -976,7 +984,7 @@ body.imt-home {
 
 .imt-provider-brand--travelinsured em {
   color: #173876;
-  font: 700 12px/1 "Gamay", sans-serif;
+  font: 700 12px/1 "Open Sans", sans-serif;
   font-style: normal;
   letter-spacing: 0;
 }
@@ -988,7 +996,7 @@ body.imt-home {
 
 .imt-provider-brand--generali span {
   color: #d72d24;
-  font: 400 11px/1.1 "Gamay", sans-serif;
+  font: 400 11px/1.1 "Open Sans", sans-serif;
   letter-spacing: 0;
 }
 
@@ -1000,33 +1008,33 @@ body.imt-home {
 
 .imt-provider-brand--hth strong {
   color: #111111;
-  font: 600 28px/1 "Gamay", sans-serif;
+  font: 600 28px/1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--hth span {
   color: #1a78c9;
-  font: 400 27px/1 "Gamay", sans-serif;
+  font: 400 27px/1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--img strong {
   color: #173876;
-  font: 600 62px/1 "Gamay", sans-serif;
+  font: 600 62px/1 "Open Sans", sans-serif;
   letter-spacing: 0;
 }
 
 .imt-provider-brand--isos strong {
   color: #2f3285;
-  font: 600 26px/1 "Gamay", sans-serif;
+  font: 600 26px/1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--isos span {
   color: #2f3285;
-  font: 700 10px/1.1 "Gamay", sans-serif;
+  font: 700 10px/1.1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--intrip strong {
   color: #2e83ca;
-  font: 300 82px/0.95 "Gamay", sans-serif;
+  font: 300 82px/0.95 "Open Sans", sans-serif;
   letter-spacing: 0;
 }
 
@@ -1038,7 +1046,7 @@ body.imt-home {
 
 .imt-provider-brand--johnhancock span {
   color: #111111;
-  font: 700 16px/1.1 "Gamay", sans-serif;
+  font: 700 16px/1.1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--medjet strong {
@@ -1053,33 +1061,33 @@ body.imt-home {
 
 .imt-provider-brand--nationwide strong {
   color: #212629;
-  font: 700 34px/1 "Gamay", sans-serif;
+  font: 700 34px/1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--travelguard strong {
   color: #114d89;
-  font: 700 30px/1 "Gamay", sans-serif;
+  font: 700 30px/1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--travelex strong {
   color: #4363ba;
-  font: italic 600 34px/1 "Gamay", sans-serif;
+  font: italic 600 34px/1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--travelex span {
   color: #4363ba;
-  font: 400 12px/1.2 "Gamay", sans-serif;
+  font: 400 12px/1.2 "Open Sans", sans-serif;
   letter-spacing: 0;
 }
 
 .imt-provider-brand--trawick strong {
   color: #18256d;
-  font: 600 34px/1 "Gamay", sans-serif;
+  font: 600 34px/1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--trawick span {
   color: #18256d;
-  font: 400 16px/1.1 "Gamay", sans-serif;
+  font: 400 16px/1.1 "Open Sans", sans-serif;
 }
 
 .imt-provider-brand--worldtrips strong {
@@ -1128,20 +1136,20 @@ body.imt-home {
 .imt-why__copy h2 {
   margin: 0 0 24px;
   color: #2a2a2a;
-  font: 600 58px/1.12 "Gamay", sans-serif;
+  font: 600 58px/1.12 "Open Sans", sans-serif;
   letter-spacing: 0;
 }
 
 .imt-why__lede {
   margin: 0 0 36px;
   color: #2a2a2a;
-  font: 600 25px/1.34 "Gamay", sans-serif;
+  font: 600 25px/1.34 "Open Sans", sans-serif;
 }
 
 .imt-why__copy p {
   margin: 0;
   color: #2a2a2a;
-  font: 400 22px/1.46 "Gamay", sans-serif;
+  font: 400 22px/1.46 "Open Sans", sans-serif;
 }
 
 .imt-learn-more {
@@ -1150,7 +1158,7 @@ body.imt-home {
   padding: 0 46px;
   background: #0354d6;
   color: #ffffff;
-  font: 700 19px/1 "Gamay", sans-serif;
+  font: 700 19px/1 "Open Sans", sans-serif;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -1175,7 +1183,7 @@ body.imt-home {
 
 .imt-flip-card span {
   color: #0c233c;
-  font: 600 28px/1.28 "Gamay", sans-serif;
+  font: 600 28px/1.28 "Open Sans", sans-serif;
 }
 
 .imt-flip-card button {
@@ -1188,7 +1196,7 @@ body.imt-home {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.46);
   color: #0c233c;
-  font: 700 28px/1 "Gamay", sans-serif;
+  font: 700 28px/1 "Open Sans", sans-serif;
   cursor: pointer;
 }
 

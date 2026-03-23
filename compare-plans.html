@@ -247,7 +247,7 @@
                 </p>
                 <div class="imt-assist-logo">
                   <img src="./imt-assist-logo.svg" alt="IMT Assist" loading="lazy" />
-                  <a href="./get-support.html">Learn More</a>
+                  <span>Learn More</span>
                 </div>
               </div>
             </div>
@@ -665,12 +665,14 @@
         return String(planIndex) + ':' + String(sectionKey);
       }
 
+      const defaultOpenDetailSections = new Set(['medical', 'trip-protection']);
+
       function isDetailSectionOpen(planIndex, sectionKey) {
         const stateKey = getDetailSectionStateKey(planIndex, sectionKey);
         if (Object.prototype.hasOwnProperty.call(detailSectionState, stateKey)) {
           return detailSectionState[stateKey];
         }
-        return sectionKey === 'medical' || sectionKey === 'trip-protection';
+        return defaultOpenDetailSections.has(sectionKey);
       }
 
       function getCoverageLimitCaption(section) {
