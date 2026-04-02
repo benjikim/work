@@ -1,0 +1,335 @@
+variables:
+  PURCHASE_MODULE_PATH: purchase
+  PURCHASE_MODULE_RELEASE_TAG_PREFIX: "RELEASE-PURCHASE"
+
+.set_app_version: &set_app_version |
+  APP_VERSION=$(cat package.json | jq -r '.version')
+
+purchase_lint:
+  image: ${NODE_IMAGE}
+  stage: lint
+  before_script:
+    - cd ${PURCHASE_MODULE_PATH}
+  tags:
+    - docker
+  script:
+    - npm ci
+    - npm run lint
+  only:
+    changes:
+      - ${PURCHASE_MODULE_PATH}/**/*
+    refs:
+      - merge_requests
+
+.new-purchase-process-regression-tests:
+  stage: regression
+  variables:
+    GIT_STRATEGY: fetch
+  trigger:
+    project: qa/imt-purchase-flow-end-to-end
+    strategy: depend
+
+.qa2-us-auto-test-rules: &qa2-us-auto-test-rules
+  rules:
+    - if: $AWS_ENV_QUOTE == "qa2" && $DEPLOY_REGION == "US" && $CI_PIPELINE_SOURCE == 'pipeline'
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+
+.qa-us-auto-test-rules: &qa-us-auto-test-rules
+  rules:
+    - if: $AWS_ENV_QUOTE == "qa" && $DEPLOY_REGION == "US" && $CI_PIPELINE_SOURCE == 'pipeline'
+      when: manual
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+
+.stage-us-auto-test-rules: &stage-us-auto-test-rules
+  rules:
+    - if: $AWS_ENV_QUOTE == "stage" && $DEPLOY_REGION == "US" && $CI_PIPELINE_SOURCE == 'pipeline'
+      when: manual
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_PIPELINE_SOURCE == 'push' || $CI_PIPELINE_SOURCE == 'web')
+      when: manual
+
+new-purchase-process-regression-test-qa-us:
+  extends: .new-purchase-process-regression-tests
+  needs:
+    - job: purchase_deploy_qa
+      optional: true
+  variables:
+    AWS_ENV: 'qa'
+  <<: *qa-us-auto-test-rules
+
+new-purchase-process-regression-test-qa2-us:
+  extends: .new-purchase-process-regression-tests
+  needs:
+    - job: purchase_deploy_qa2
+      optional: true
+  variables:
+    AWS_ENV: 'qa2'
+  <<: *qa2-us-auto-test-rules
+
+new-purchase-process-regression-test-stage-us:
+  extends: .new-purchase-process-regression-tests
+  needs:
+    - job: purchase_deploy_stage
+      optional: true
+  variables:
+    AWS_ENV: 'stage'
+  <<: *stage-us-auto-test-rules
+
+.impact-purchase-process-regression-tests:
+  stage: regression
+  variables:
+    GIT_STRATEGY: fetch
+  trigger:
+    project: qa/automation-tools/impact-test-automation
+    strategy: depend
+
+impact-purchase-process-regression-test-qa-us:
+  extends: .impact-purchase-process-regression-tests
+  needs:
+    - job: purchase_deploy_qa
+      optional: true
+  variables:
+    AWS_ENV: 'qa'
+  <<: *qa-us-auto-test-rules
+
+impact-purchase-process-regression-test-qa2-us:
+  extends: .impact-purchase-process-regression-tests
+  needs:
+    - job: purchase_deploy_qa2
+      optional: true
+  variables:
+    AWS_ENV: 'qa2'
+  <<: *qa2-us-auto-test-rules
+
+impact-purchase-process-regression-test-stage-us:
+  extends: .impact-purchase-process-regression-tests
+  needs:
+    - job: purchase_deploy_stage
+      optional: true
+  variables:
+    AWS_ENV: 'stage'
+  <<: *stage-us-auto-test-rules
+
+purchase_test:
+  image: ${CYPRESS_IMAGE}
+  stage: regression
+  before_script:
+    - cd ${PURCHASE_MODULE_PATH}
+  tags:
+    - docker
+  script:
+    - npm ci
+    - npm run test:unit
+  only:
+    changes:
+      - ${PURCHASE_MODULE_PATH}/**/*
+    refs:
+      - merge_requests
+  allow_failure: true
+
+purchase_tag_release:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  stage: tag
+  before_script:
+    - cd ${PURCHASE_MODULE_PATH}
+    - apk add jq
+    - *set_app_version
+  script:
+    - echo "Creating RELEASE tag with application version."
+    - echo ${APP_VERSION}
+  release:
+    # We cannot reference env vars in release, thus we explicitly run the code below.
+    tag_name: ${PURCHASE_MODULE_RELEASE_TAG_PREFIX}-$(cat ${PURCHASE_MODULE_PATH}/package.json | jq -r '.version')
+    description: $CI_COMMIT_TITLE
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+
+.build_purchase_dist:
+  image: ${GITLAB_AWS_BASE_IMAGE}
+  stage: build
+  tags:
+    - docker
+  before_script:
+    - cd ${PURCHASE_MODULE_PATH}
+  artifacts:
+    paths:
+      - ${PURCHASE_MODULE_PATH}/dist/
+    expire_in: 1 hour
+
+purchase_build_qa:
+  extends: .build_purchase_dist
+  environment:
+    name: qa-us
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+  script:
+    - export APP_BASE_URL=$(aws ssm get-parameter --name /imt-us/${AWS_ENVIRONMENT_NAME}/us-east-2/insuremytrip-apps-bucket-url --query Parameter.Value --output text)/${PURCHASE_MODULE_PATH}
+    - echo $APP_BASE_URL
+    - npm ci
+    - npm run build:qa
+
+purchase_build_qa2:
+  extends: .build_purchase_dist
+  environment:
+    name: qa2-us
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+  script:
+    - export APP_BASE_URL=$(aws ssm get-parameter --name /imt-us/${AWS_ENVIRONMENT_NAME}/us-east-2/insuremytrip-apps-bucket-url --query Parameter.Value --output text)/${PURCHASE_MODULE_PATH}
+    - echo $APP_BASE_URL
+    - npm ci
+    - npm run build:qa2
+
+purchase_build_qa_gantry:
+  extends: .build_purchase_dist
+  environment:
+    name: qa-us
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+  script:
+    - export APP_BASE_URL=$(aws ssm get-parameter --name /imt-us/${CI_ENVIRONMENT_NAME}/us-east-2/insuremytrip-apps-bucket-url --query Parameter.Value --output text)/${PURCHASE_MODULE_PATH}-gantry
+    - echo $APP_BASE_URL
+    - npm ci
+    - npm run build:qa-gantry
+
+purchase_build_stage:
+  extends: .build_purchase_dist
+  environment:
+    name: stage-us
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+  script:
+    - export APP_BASE_URL=$(aws ssm get-parameter --name /imt-us/${AWS_ENVIRONMENT_NAME}/us-east-2/insuremytrip-apps-bucket-url --query Parameter.Value --output text)/${PURCHASE_MODULE_PATH}
+    - echo $APP_BASE_URL
+    - npm ci
+    - npm run build:staging
+
+purchase_build_prod:
+  extends: .build_purchase_dist
+  environment:
+    name: prod-us
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+  script:
+    - export APP_BASE_URL=$(aws ssm get-parameter --name /imt-us/${AWS_ENVIRONMENT_NAME}/us-east-2/insuremytrip-apps-bucket-url --query Parameter.Value --output text)/${PURCHASE_MODULE_PATH}
+    - echo $APP_BASE_URL
+    - npm ci
+    - npm run build
+
+.deploy_purchase:
+  image: ${GITLAB_AWS_BASE_IMAGE}
+  tags:
+    - docker
+  before_script:
+    - cd ${PURCHASE_MODULE_PATH}
+    - *set_app_version
+    - export S3_PATH=s3://insuremytrip-apps-${AWS_ENVIRONMENT_NAME}-us-east-2/${PURCHASE_MODULE_PATH}/${APP_VERSION}
+    - export DISTRIBUTION_ID=$(aws ssm get-parameter --name /imt-us/${AWS_ENVIRONMENT_NAME}/us-east-2/insuremytrip-apps-cloudfront-id --query Parameter.Value --output text)
+    - export PATHS=/${PURCHASE_MODULE_PATH}/${APP_VERSION}/*
+    - export DD_API_KEY=$(aws ssm get-parameter --name /imt-us/$AWS_ENVIRONMENT_NAME/us-east-2/datadog/api_key --query Parameter.Value --with-decryption --output text)
+    - npm ci
+  script:
+    - aws s3 sync dist/ ${S3_PATH}
+    - aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths ${PATHS}
+    - npx @datadog/datadog-ci sourcemaps upload dist/assets --service purchase --minified-path-prefix ${S3_PATH}/assets/ --release-version ${APP_VERSION}
+
+purchase_deploy_qa:
+  extends: .deploy_purchase
+  stage: deploy
+  needs: ['purchase_build_qa']
+  environment:
+    name: qa-us
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "${PURCHASE_MODULE_PATH}/**/*"
+      when: manual
+      allow_failure: true
+
+purchase_deploy_qa2:
+  extends: .deploy_purchase
+  stage: deploy
+  needs: ['purchase_build_qa2']
+  environment:
+    name: qa2-us
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "${PURCHASE_MODULE_PATH}/**/*"
+      when: manual
+
+purchase_deploy_qa_gantry:
+  environment:
+    name: qa-us
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - "${PURCHASE_MODULE_PATH}/**/*"
+      when: manual
+    - when: never
+  image: ${GITLAB_AWS_BASE_IMAGE}
+  stage: deploy
+  tags:
+    - docker
+  before_script:
+    - cd ${PURCHASE_MODULE_PATH}
+    - *set_app_version
+    - export S3_PATH=s3://insuremytrip-apps-${AWS_ENVIRONMENT_NAME}-us-east-2/${PURCHASE_MODULE_PATH}-gantry/${APP_VERSION}
+    - export DISTRIBUTION_ID=$(aws ssm get-parameter --name /imt-us/$AWS_ENVIRONMENT_NAME/us-east-2/insuremytrip-apps-cloudfront-id --query Parameter.Value --output text)
+    - export PATHS=/${PURCHASE_MODULE_PATH}-gantry/${APP_VERSION}/*
+  script:
+    - aws s3 sync dist/ ${S3_PATH}
+    - aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths ${PATHS}
+  needs: ['purchase_build_qa_gantry']
+
+purchase_deploy_stage:
+  extends: .deploy_purchase
+  stage: deploy
+  needs: ['purchase_build_stage']
+  environment:
+    name: stage-us
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual
+
+purchase_deploy_prod:
+  extends: .deploy_purchase
+  stage: deploy
+  needs: ['purchase_build_prod']
+  environment:
+    name: prod-us
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - ${PURCHASE_MODULE_PATH}/**/*
+      when: manual

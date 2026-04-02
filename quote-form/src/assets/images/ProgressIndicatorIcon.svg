@@ -1,0 +1,28 @@
+<svg
+  width="22"
+  height="22"
+  viewBox="0 0 22 22"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <rect
+    x="0.5"
+    y="0.5"
+    width="21"
+    height="21"
+    rx="10.5"
+    fill="none"
+  />
+  <rect
+    x="0.5"
+    y="0.5"
+    width="21"
+    height="21"
+    rx="10.5"
+    stroke="var(--progress-indicator-check, #77BB33)"
+  />
+  <path
+    d="M8.44912 14.4676L5.13019 10.736L4 11.9978L8.44912 17L18 6.26174L16.8778 5L8.44912 14.4676Z"
+    fill="var(--progress-indicator-check, #77BB33)"
+  />
+</svg>

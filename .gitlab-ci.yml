@@ -1,0 +1,19 @@
+variables:
+  GIT_SSL_NO_VERIFY: 'true'
+  NODE_IMAGE: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/node:24.14.0
+  CYPRESS_IMAGE: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/cypress/base:18.16.0
+  GITLAB_AWS_BASE_IMAGE: gitlab.imtdevops.us:4999/iac/terraform-deployments/build-environment-images:cloud-deploy-latest
+  SENTRY_REPOSITORY_PATH: "InsureMyTrip / US / imt-com-apps"
+
+stages:
+  - lint
+  - test
+  - tag
+  - build
+  - deploy
+  - regression
+
+include:
+  - local: 'purchase/.gitlab-ci.yml'
+  - local: 'quote-results/.gitlab-ci.yml'
+  - local: 'quote-form/.gitlab-ci.yml'

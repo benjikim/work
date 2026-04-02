@@ -1,0 +1,30 @@
+// These selectors are for the quote form v2 when it's embedded in the quote results page
+.qf-v2-in-qr {
+  #quote-form-v2 {
+    min-width: 29rem;
+    padding: 10px;
+    @media screen and (min-width: 750px) {
+      padding: 1em;
+    }
+    .traveler-age-component {
+      width: auto;
+    }
+    @media screen and (max-width: 768px) {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+
+  // These are for primevue components   
+  .p-autocomplete-option {
+    font-size: 1rem;
+  }
+
+  .p-datepicker-day-cell {
+    padding: var(--p-datepicker-date-padding);
+    font-size: small;
+    border-bottom: none;
+    height: 2rem;
+    width: 2rem;
+  }
+}

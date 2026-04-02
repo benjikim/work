@@ -1,0 +1,33 @@
+// Colors
+$imt-black: #000;
+$imt-blue: #0280a7;
+$imt-green: #77bb33;
+$imt-grey: #757575;
+$imt-purple: #624ea0;
+$imt-red: #d60000;
+$imt-yellow: #f4b649;
+$imt-label-color: #585858;
+$imt-light-grey: #e0e0e0;
+
+$imt-font-color-main: #333333;
+$imt-font-color-light: #585859;
+$imt-font-color-success: #149a44;
+
+$imt-border-color-default: #bdbdbd;
+$imt-border-color-light: #e6e6e6;
+$imt-border-color-dark: #9e9e9e;
+$imt-border-color-red: #f5c6cb;
+
+$imt-input-color-default: #fff;
+$imt-overlay-bg-color: rgba(97, 97, 97, 0.9);
+
+// Add ability to map for primary theme colors
+$themeColors: (
+  'blue': $imt-blue,
+  'green': $imt-green,
+  'grey': $imt-grey,
+  'purple': $imt-purple,
+  'red': $imt-red,
+  'yellow': $imt-yellow,
+  'success': $imt-font-color-success,
+);

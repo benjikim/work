@@ -1,0 +1,90 @@
+/* Order */
+@layer tailwind-base, primeui, tailwind-utilities;
+
+@import "tailwindcss";
+@import "tailwindcss-primeui";
+
+html, body, .quote-form-container {
+  font-size: 16px;
+}
+
+.quote-form-container .p-inputtext {
+  border-width: 2px;
+}
+
+.input-with-left-icon {
+  position: relative;
+}
+
+/* Icon itself */
+.input-with-left-icon .left-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Default: no extra padding */
+.input-with-left-icon input,
+.input-with-left-icon .p-inputtext {
+  padding-left: 0.75rem;
+}
+
+/* Only when icon is visible */
+.input-with-left-icon.with-icon input,
+.input-with-left-icon.with-icon .p-inputtext {
+  padding-left: 2.45rem;
+}
+.input-with-left-icon.with-icon .p-select-label {
+  padding-left: 2.45rem;
+}
+
+.p-inputnumber-input {
+  width: 70px;
+  padding-left: 0.75rem;
+}
+
+/* Ensure InputNumber components can wrap in flex containers */
+.quote-form-container .flex.flex-wrap .p-inputnumber {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.quote-form-submit:disabled {
+  background-color: var(--submit-btn-disabled);
+  opacity: initial;
+  border-color: var(--submit-btn-disabled);
+  cursor: not-allowed;
+}
+
+.quote-form-submit:hover:not(:disabled) {
+    border-color: var(--submit-btn-hover);
+}
+
+.quote-form-submit:active:not(:disabled) {
+  background-color: var(--brand-primary);
+}
+
+.p-button-label {
+  font-weight: bold;
+}
+
+.p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
+  border-color: #94a3b8;
+  background-color: white;
+}
+
+.p-checkbox-checked .p-checkbox-box {
+  background-color: white;
+  border-color: #94a3b8;
+}
+
+.p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-icon {
+  color: black;
+}
+
+.p-checkbox-checked .p-checkbox-icon {
+  color: black;
+}

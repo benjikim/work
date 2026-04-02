@@ -1,0 +1,40 @@
+#purchase-app {
+  font-size: $base-font-size;
+  margin-top: 16px;
+  margin-bottom: 5rem;
+  @media (max-width: 1023px) {
+    grid-template-columns: none;
+    margin-bottom: 50px;
+  }
+  a {
+    color: $imt-blue;
+  }
+
+  label {
+    white-space: wrap;
+  }
+}
+
+.wrapper {
+  background-color: #efefef;
+}
+
+.wrapper main {
+  display: grid;
+  grid-template-columns: subgrid;
+  @media (max-width: 1023px) {
+    grid-template-columns: none;
+  }
+}
+
+:root {
+  background-color: #efefef;
+}
+
+.display-none {
+  display: none;
+}
+
+.footer-dark {
+  display: none;
+}

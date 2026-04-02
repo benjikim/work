@@ -1,0 +1,134 @@
+// Same as above but will be true for all sizes smaller than this rule as well.
+// @media @md-max{} will effect all screen sizes less then md-max.
+//
+//  Do everything in your power to NOT use these -- they are anti-mobile first
+@xs-max: ~'(max-width: 479px)';
+@sm-max: ~'(max-width: 767px)';
+@md-max: ~'(max-width: 1199px)';
+@lg-max: ~'(max-width: 1200px)';
+
+// use these if at all possible
+//
+// for screen <size> and up
+@xs-min: ~'(min-width: 320px)';
+@sm-min: ~'(min-width: 480px)'; // 768px and up
+@md-min: ~'(min-width: 768px)'; // 992px and up
+@lg-min: ~'(min-width: 1200px)'; // 1200px and up
+@lg-min-height: ~'(min-height: 850px)';
+
+.insuremytrip {
+  --brand-primary: #77BB33;
+  --brand-primary-tint-1: #C9E3AD;
+  --brand-primary-tint-2: #EBF5E0;
+  --brand-primary-tint-3: #F3F9EC;
+  --brand-primary-secondary: #0C233C;
+  --brand-primary-secondary-tint-1: #788F9C;
+  --brand-primary-secondary-tint-2: #D4D9DE;
+  --brand-primary-secondary-tint-3: #F4F5F7;
+  --brand-secondary: #0354D6;
+  --brand-secondary-tint-1: #A8CCF0;
+  --brand-secondary-tint-2: #DBEBF7;
+  --brand-secondary-tint-3: #F6FAFD;
+  --brand-error: #CC1414;
+  --brand-error-tint: #F7966F;
+  --brand-shadow: #212629;
+  --brand-shadow-tint-1: #8A8C8C;
+  --brand-shadow-tint-2: #DEDEDE;
+  --brand-shadow-tint-3: #EBEBEB;
+  --brand-misc-color-1: #6633CC;
+  --brand-misc-color-tint-1: #B8A1E8;
+  --brand-misc-color-tint-2: #D9CCF2;
+  --brand-misc-color-tint-3: #F5F2FC;
+  --brand-misc-color-2: #F7B024;
+  --brand-misc-color-2-tint-1: #FCDB9C;
+  --brand-misc-color-2-tint-2: #FFF2DE;
+  --brand-misc-color-2-tint-3: #FFF8EE;
+
+  --quote-form-outline: 1px solid #000;
+  --quote-form-title-color: var(--brand-secondary);
+  --quote-form-font-color: var(--brand-shadow);
+  --submit-btn: var(--brand-primary);
+  --submit-btn-hover: var(--brand-primary-tint-1);
+  --submit-btn-disabled: var(--brand-shadow-tint-2);
+  --textfield-outline-focus: var(--brand-secondary);
+  --progress-indicator-check: var(--brand-primary);
+  --default-background-color: #efefef;
+}
+
+.soventure {
+  --brand-primary: #F78403;
+  --brand-primary-tint-1: #F9A342;
+  --brand-primary-tint-2: #FCD4A7;
+  --brand-primary-tint-3: #FDE6CD;
+  --brand-primary-secondary-tint-1: #526975;
+  --brand-primary-secondary-tint-2: #93A1A8;
+  --brand-primary-secondary-tint-3: #D4DADC;
+  --brand-secondary: #0270C0;
+  --brand-secondary-tint-1: #358DCD;
+  --brand-secondary-tint-2: #9AC6E6;
+  --brand-secondary-tint-3: #D4DADC;
+  --brand-secondary-2: #039097;
+  --brand-secondary-2-tint-1: #33A6AC;
+  --brand-secondary-2-tint-2: #7FC7CB;
+  --brand-secondary-2-tint-3: #CCE9EA;
+  --brand-primary-secondary: #274452;
+  --brand-error: #CC1414;
+  --brand-error-tint: #F7966F;
+  --brand-shadow: #212629;
+  --brand-shadow-tint-1: #8A8C8C;
+  --brand-shadow-tint-2: #DEDEDE;
+  --brand-shadow-tint-3: #EBEBEB;
+  --brand-misc-color-1: #F0C914;
+  --brand-misc-color-tint-1: #F9DD55;
+  --brand-misc-color-tint-2: #FBE686;
+  --brand-misc-color-tint-3: #FDF5CE;
+  --brand-misc-color-2: #A51F96;
+  --brand-misc-color-2-tint-1: #B74CAB;
+  --brand-misc-color-2-tint-2: #D28FCA;
+  --brand-misc-color-2-tint-3: #EDD2EA;
+
+  --quote-form-outline: 1px solid #000;
+  --quote-form-title-color: var(--brand-secondary);
+  --quote-form-font-color: var(--brand-shadow);
+  --submit-btn: var(--brand-primary);
+  --submit-btn-hover: var(--brand-primary-tint-1);
+  --submit-btn-disabled: var(--brand-shadow-tint-2);
+  --textfield-outline-focus: var(--brand-secondary);
+  --progress-indicator-check: var(--brand-primary);
+  --default-background-color: #efefef;
+}
+
+body.minimal-quote-app {
+    --default-background-color: unset;
+}
+
+@layer base {
+  :root {
+    --color-base-bg-color: #f6f6f6;
+    --color-primary-btn: #77bb33;
+    --color-text-secondary: #F4B649;
+    --color-text-info: #77BB33;
+    --color-text-excluded: #DF1642;
+    --action-primary: #0354D6;
+    --action-alt-primary: #0354D6;
+  }
+  :root[class='soventure'] {
+    --color-base-bg-color: #ebebeb;
+    --color-primary-btn: #0270C0;
+    --color-text-secondary: #F4B649;
+    --color-text-info: #0270C0;
+    --color-text-excluded: #DF1642;
+    --brand-primary: #F78403;
+    --brand-secondary: #F9A342;
+    --brand-tertiary: #FCD4A7;
+    --brand-muted: #FDE6CD;
+    --action-primary: #0270C0;
+    --action-secondary: #358DCD;
+    --action-tertiary: #9AC6E6;
+    --action-muted: #E0EEF7;
+    --action-alt-primary: #039097;
+    --action-alt-secondary: #33A6AC;
+    --action-alt-tertiary: #7FC7CB;
+    --action-alt-muted: #CCE9EA;
+  }
+}

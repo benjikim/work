@@ -1,0 +1,107 @@
+#quote-results-app {
+  font-size: $base-font-size;
+  // We removed default font as wordpress will set our font to Gamay SemiBold
+  a {
+    color: $imt-blue;
+  }
+
+  label {
+    white-space: wrap;
+  }
+
+  .daisy-tooltip::before {
+    z-index: 15;
+  }
+
+  // Wordpress has some CSS that overrides daisy table styles
+  .daisy-table {
+    td,
+    th {
+      border-bottom: none;
+    }
+
+    td {
+      text-align: left;
+    }
+  }
+
+  .btn-primary {
+    background-color: var(--color-primary-btn);
+    :hover {
+      background-color: var(--color-primary-btn);
+    }
+  }
+
+  .qr-text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .qr-text-info {
+    color: var(--color-text-info);
+  }
+
+  .qr-text-excluded {
+    color: var(--color-text-excluded);
+  }
+
+  .daisy-tooltip {
+    --tooltip-text-color: #fff;
+  }
+  
+  // WP Editor image center class
+  img.aligncenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .acs_rating_bar.acs_stars[data-unitsize=large] {
+    font-size: 15px ;
+    line-height: 15px ;
+  }
+
+  .provider-content p {
+	  margin-bottom: 1rem;
+  }
+
+}
+
+html {
+  font-size: $base-font-size; // it had to be done.
+}
+
+body {
+  background-color: #fff;
+}
+
+// for wordpress... Wordpress has main element with id of main
+// going to use that to change the background color for this app
+#main {
+  background-color: #fff;
+}
+
+.main {
+  height: auto;
+  overflow: visible;
+}
+
+.wrapper {
+  overflow: visible;
+  padding-top: 0;
+}
+
+.header {
+  top: 0 !important;
+  position: relative;
+}
+
+.display-none {
+  display: none;
+}
+
+@media (max-width: 370px) {
+  .reviews {
+    display: flex;
+    flex-direction: column;
+  }
+}

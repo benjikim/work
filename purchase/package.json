@@ -1,0 +1,53 @@
+{
+  "name": "purchase",
+  "private": true,
+  "version": "3.8.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:qa": "vite build --mode qa",
+    "build:qa2": "vite build --mode qa2",
+    "build:qa-gantry": "vite build --mode qa-gantry",
+    "build:staging": "vite build --mode staging",
+    "build": "vite build",
+    "build-local": "vite build --mode wordpress",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "test:unit": "cypress run --component",
+    "test:ui": "npx cypress open",
+    "build-local-send": "npm run build-local && mc cp ./dist/assets/index.js local/purchase/local/assets/ && mc cp ./dist/assets/index.js.map local/purchase/local/assets/ && mc cp ./dist/assets/index.css local/purchase/local/assets/ && echo 'Deployed!'"
+  },
+  "dependencies": {
+    "@datadog/browser-rum": "^6.24.1",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
+    "@vueuse/core": "^14.0.0",
+    "axios": "^1.13.1",
+    "card-validator": "^10.0.3",
+    "configcat-js": "^9.6.1",
+    "dayjs": "^1.11.19",
+    "maska": "^3.2.0",
+    "pinia": "^3.0.3",
+    "vue": "^3.5.22",
+    "vue-gtag": "^3.6.3",
+    "vue-material-design-icons": "^5.3.1",
+    "vue-router": "^4.6.3",
+    "vue3-popper": "^1.5.0"
+  },
+  "devDependencies": {
+    "@datadog/datadog-ci": "^5.4.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "autoprefixer": "^10.4.21",
+    "cypress": "^14.5.4",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-cypress": "^2.13.3",
+    "eslint-plugin-vue": "^10.5.1",
+    "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
+    "sass": "^1.93.3",
+    "tailwindcss": "^3.4.18",
+    "vite": "^7.1.12",
+    "vue-eslint-parser": "^10.2.0"
+  }
+}
