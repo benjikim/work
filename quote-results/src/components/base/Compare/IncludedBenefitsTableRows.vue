@@ -22,7 +22,7 @@
     v-for="benefit in plan.includedBenefits"
     :key="`${planCode}-${benefit.details.value}-${benefit.details.description}`"
   >
-    <div class="pl-2 text-sm snap-center">
+    <div class="pl-2 text-left text-sm snap-center">
       • {{ `${benefit.details.value} ${benefit.details.description}` }}
       <Secondary
         v-if="benefit.secondary"

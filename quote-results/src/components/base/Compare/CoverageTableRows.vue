@@ -100,10 +100,10 @@
   });
 </script>
 <template>
-  <div class="text-center text-xs snap-center grid justify-center">
+  <div class="text-left text-xs snap-center grid justify-start">
     <span
       v-if="optionLocation !== 'detailsModal' && isMobile"
-      class="font-bold text-[#878787] uppercase text-xs table-cell relative right-2"
+      class="font-normal text-[#878787] uppercase text-xs table-cell"
     >
       {{ coverage.label }}
     </span>
@@ -177,10 +177,10 @@
         plan.type === 'Comprehensive'
       "
     >
-      <div class="flex">
+      <div class="flex justify-start">
         <UtilityHTMLRenderer
           is="span"
-          class="utility-html-renderer inline"
+          class="utility-html-renderer inline text-left"
           :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
           :content="displayTripInterruptionAndTripCancellation(coverage.key)"
         ></UtilityHTMLRenderer>
@@ -188,10 +188,10 @@
     </template>
 
     <template v-else-if="plan && isCoverageAvailable(planCode, coverage.key)">
-      <div class="flex">
+      <div class="flex justify-start">
         <UtilityHTMLRenderer
           is="span"
-          class="utility-html-renderer inline"
+          class="utility-html-renderer inline text-left"
           :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
           :content="getCompareCoverageData(plan, coverage.key)"
         ></UtilityHTMLRenderer>
@@ -226,6 +226,7 @@
     <span
       :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
       v-else
+      class="text-left"
     >
       N/A
     </span>

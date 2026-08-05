@@ -1,11 +1,14 @@
 <script setup lang="ts">
-  import { computed } from 'vue';
-  import { useUserSessionStore } from '@/store/userSession';
+  import { XMarkIcon } from '@heroicons/vue/24/outline';
   import { useContentStore } from '@/store/content';
   import { useApiStore } from '@/store/api';
   import PlanActions from '@/components/shared/PlanActions.vue';
 
-  defineProps({
+  defineEmits<{
+    remove: [planCode: string];
+  }>();
+
+  const props = defineProps({
     planCode: {
       type: String,
       required: true,
@@ -16,11 +19,9 @@
     },
   });
 
-  const userSessionStore = useUserSessionStore();
   const contentStore = useContentStore();
   const apiStore = useApiStore();
 
-  const planCodes = computed(() => userSessionStore.getSelectedPlansForCompare);
   const getPlan = (planCode: string) => {
     return apiStore.getPlanByPlanCode(planCode);
   };
@@ -29,16 +30,23 @@
   };
 </script>
 <template>
-  <div
-    class="pb-1 md:pb-2"
-    :class="planCodes.length === 1 ? 'md:w-96 md:mx-auto' : ''"
-  >
+  <div class="pb-1 md:pb-2 mx-auto w-[190px] md:w-[311px]">
     <div v-if="getPlan(planCode)" class="flex flex-col items-center">
+      <div class="w-full flex justify-end pb-1">
+        <button
+          class="flex h-7 w-7 items-center justify-center rounded-full text-[#878787] transition-colors duration-200 hover:bg-[#f1f1f1] hover:text-imt-black"
+          :aria-label="`Remove ${getPlan(planCode)?.name} from comparison`"
+          @click="$emit('remove', props.planCode)"
+        >
+          <XMarkIcon class="h-4 w-4 stroke-[2.25]" />
+        </button>
+      </div>
+
       <!-- Plan Logo -->
       <img
         class="w-16 h-8 mb-0 md:my-3"
         :src="getPlanLogo(planCode)"
-         :alt="`${getPlan(planCode)?.provider.name} Logo`"
+        :alt="`${getPlan(planCode)?.provider.name} Logo`"
       />
 
       <!-- Plan Name -->
@@ -54,6 +62,9 @@
       </div>
     </div>
     <div class="flex flex-col items-center" v-else>
+      <div class="w-full flex justify-end pb-1">
+        <div class="h-7 w-7 rounded-full bg-imt-grey animate-pulse"></div>
+      </div>
       <div class="w-32 bg-imt-grey h-10 rounded-md animate-pulse mb-3"></div>
       <div class="w-52 bg-imt-grey h-8 rounded-md animate-pulse mb-3"></div>
       <div class="w-28 bg-imt-grey h-4 rounded-md animate-pulse"></div>

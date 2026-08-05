@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue';
+  import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
   import { event } from 'vue-gtag';
   import { useUserSessionStore } from '@/store/userSession';
   import { useThemeStore } from '@/store/theme';
@@ -86,6 +86,9 @@
   const sessionStore = useUserSessionStore();
 
   const isScrolledToRight = ref(false);
+  const showRating = ref(true);
+  const hasStickyHeaderShadow = ref(false);
+  const pendingScrollRestore = ref<{ top: number; left: number } | null>(null);
 
   const handleBodyScroll = () => {
     const bodyEl = bodyScrollRef.value;
@@ -115,6 +118,37 @@
     }
   };
 
+  const toggleRating = () => {
+    showRating.value = !showRating.value;
+  };
+
+  const updateStickyHeaderShadow = () => {
+    const headerEl = headerScrollRef.value;
+    const bodyEl = bodyScrollRef.value;
+
+    if (!headerEl || !bodyEl) {
+      hasStickyHeaderShadow.value = false;
+      return;
+    }
+
+    const headerRect = headerEl.getBoundingClientRect();
+    const bodyRect = bodyEl.getBoundingClientRect();
+    hasStickyHeaderShadow.value = bodyRect.top < headerRect.bottom - 1;
+  };
+
+  onMounted(() => {
+    window.addEventListener('scroll', updateStickyHeaderShadow, {
+      passive: true,
+    });
+    window.addEventListener('resize', updateStickyHeaderShadow);
+    updateStickyHeaderShadow();
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('scroll', updateStickyHeaderShadow);
+    window.removeEventListener('resize', updateStickyHeaderShadow);
+  });
+
   const trackCertificateClick = (planCode: string) => {
     event('plan_action_plan_details_modal', {
       hierarchical_layer_1: 'View Certificate Clicked',
@@ -124,8 +158,39 @@
   };
 
   const handleRemoveButtonSelection = (planCode: string) => {
+    pendingScrollRestore.value = {
+      top: window.scrollY,
+      left: bodyScrollRef.value?.scrollLeft ?? 0,
+    };
     sessionStore.removePlanFromCompare(planCode);
   };
+
+  watch(
+    planCodes,
+    async () => {
+      if (!pendingScrollRestore.value) return;
+
+      const target = pendingScrollRestore.value;
+      pendingScrollRestore.value = null;
+      await nextTick();
+
+      window.scrollTo({
+        top: target.top,
+        behavior: 'auto',
+      });
+
+      if (bodyScrollRef.value) {
+        bodyScrollRef.value.scrollLeft = target.left;
+      }
+
+      if (headerScrollRef.value) {
+        headerScrollRef.value.scrollLeft = target.left;
+      }
+
+      updateStickyHeaderShadow();
+    },
+    { flush: 'post' }
+  );
 </script>
 
 <template>
@@ -135,17 +200,17 @@
     <div
       ref="headerScrollRef"
       class="sticky top-0 z-30 bg-white w-full overflow-x-auto md:pt-[6%] lg:pt-[4%]"
-      :class="isMobile ? 'no-scrollbar' : ''"
+      :class="[
+        isMobile ? 'no-scrollbar' : '',
+        hasStickyHeaderShadow ? 'compare-sticky-header--shadow' : '',
+      ]"
       @scroll="handleHeaderScroll"
     >
       <table
-        class="daisy-table table-fixed border-separate w-full mb-0 border-b border-black"
+        class="daisy-table table-fixed border-separate w-max min-w-max mx-auto mb-0"
       >
         <colgroup>
-          <col
-            v-if="!isMobile"
-            :class="`${planCodes.length > 3 ? 'md:w-[280px]' : 'md:w-[211px]'}`"
-          />
+          <col v-if="!isMobile" class="md:w-[211px]" />
           <template
             v-for="(_planCode, _idx) in planCodes"
             :key="'header-col-' + _idx"
@@ -156,15 +221,18 @@
         <thead class="sticky top-[56px] z-20 bg-white">
           <tr>
             <th
-              class="display-none md:table-cell snap-center p-0 bg-white min-w-[280px]"
-              :class="planCodes.length === 1 ? 'md:w-72' : ''"
+              class="display-none md:table-cell snap-center p-0 bg-white md:w-[211px]"
             ></th>
             <th
               v-for="(planCode, index) in planCodes"
               :key="'header-' + index"
-              class="p-0 min-w-[230px] md:w-auto md:min-w-auto snap-center bg-white"
+              class="p-0 min-w-[190px] md:w-[311px] snap-center bg-white"
             >
-              <PlanTableHeader :plan-code="planCode" :is-mobile="isMobile" />
+              <PlanTableHeader
+                :plan-code="planCode"
+                :is-mobile="isMobile"
+                @remove="handleRemoveButtonSelection"
+              />
             </th>
           </tr>
         </thead>
@@ -179,13 +247,10 @@
       ></div>
 
       <table
-        class="daisy-table table-fixed border-separate pb-[90px] border-spacing-0 plans-table"
+        class="daisy-table table-fixed border-separate pb-[90px] border-spacing-0 plans-table w-max min-w-max mx-auto"
       >
         <colgroup>
-          <col
-            v-if="!isMobile"
-            :class="`${planCodes.length > 3 ? 'md:w-[280px]' : 'md:w-[211px]'}`"
-          />
+          <col v-if="!isMobile" class="md:w-[211px]" />
           <template
             v-for="(_planCode, _idx) in planCodes"
             :key="'body-col-' + _idx"
@@ -195,66 +260,98 @@
         </colgroup>
 
         <tbody>
-          <tr v-if="isMobile" class="align-top">
-            <td
-              v-for="planCode in planCodes"
-              :key="'plan-actions-' + planCode"
-              class="min-w-fit snap-center align-top !text-center pl-[8px] pr-[8px] pt-0 pb-0"
-            >
-              <div class="grid grid-cols-12 gap-2">
-                <button
-                  class="md:mb-2 w-full bg-[white] border-2 rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-action-alt-primary mr-2 h-9 col-span-6"
-                  @click="handleRemoveButtonSelection(planCode)"
-                >
-                  <span
-                    class="uppercase bg-[white] text-action-alt-primary font-bold text-[0.625rem]"
-                    >Remove</span
-                  >
-                </button>
-                <div
-                  class="md:mb-2 w-full bg-[white] border-2 rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-action-alt-primary mr-2 h-9 col-span-6"
-                >
-                  <CertificateLink
-                    :plan-code="planCode"
-                    :is-compare-page="true"
-                    :data-cy="`plan-action__certificate__link-details-${planCode}`"
-                    class="uppercase bg-[white] text-action-alt-primary font-bold text-[0.625rem]"
-                    :track-certificate-click="
-                      () => trackCertificateClick(planCode)
-                    "
-                  />
-                </div>
-              </div>
-            </td>
-          </tr>
-          <!-- NOTICE ROW (own row spanning all columns;) -->
-          <tr v-if="isMobile" class="align-top">
+          <tr
+            class="compare-section-header w-full cursor-pointer transition-colors duration-200 hover:bg-[rgba(135,135,135,0.2)]"
+            @click="toggleRating"
+          >
             <th
-              :colspan="planCodes.length"
-              class="text-center text-sm py-1 font-normal md:table-cell align-top"
+              v-for="(_, j) in userSessionStore.isMobileView ? planCodes : [null]"
+              :key="`rating-header-${j}`"
+              :colspan="1"
+              class="py-3"
             >
-              Coverage Limits Are Per-Person Unless Otherwise Noted
+              <div class="flex items-center justify-center gap-2">
+                <p class="text-imt-black text-center text-xs md:text-sm uppercase tracking-[0.08em]">
+                  Plan Summary
+                </p>
+                <ChevronUpIcon
+                  v-if="showRating"
+                  class="size-5 stroke-[#878787] fill-[#878787]"
+                />
+                <ChevronDownIcon
+                  v-else
+                  class="size-5 stroke-[#878787] fill-[#878787]"
+                />
+              </div>
             </th>
+            <th
+              v-if="!userSessionStore.isMobileView"
+              :colspan="planCodes.length"
+              class="py-3"
+            ></th>
           </tr>
 
-          <tr class="align-top text-center">
-            <th
-              scope="row"
-              v-if="!isMobile"
-              class="text-xs text-center md:table-cell align-top"
-            >
-              <span class="font-bold text-[#878787] uppercase pr-1">
-                Rating
-              </span>
-            </th>
-            <td
-              v-for="planCode in planCodes"
-              :key="'rating-' + planCode"
-              class="snap-center align-top !text-center"
-            >
-              <BaseReview class="inline-block" :plan-code="planCode" />
-            </td>
-          </tr>
+          <Transition
+            enter-active-class="transition-none"
+            enter-from-class="max-h-0 opacity-0"
+            enter-to-class="max-h-[200px] opacity-100"
+            leave-active-class="transition-none"
+            leave-from-class="max-h-[200px] opacity-100"
+            leave-to-class="max-h-0 opacity-0"
+          >
+            <tr v-if="showRating" class="align-top text-center">
+              <th
+                scope="row"
+                v-if="!isMobile"
+                class="text-xs text-left md:table-cell align-top"
+              >
+                <span class="font-normal text-[#878787] uppercase pr-1">
+                  Overall Rating
+                </span>
+              </th>
+              <td
+                v-for="planCode in planCodes"
+                :key="'rating-' + planCode"
+                class="snap-center align-top !text-left"
+              >
+                <BaseReview class="inline-block" :plan-code="planCode" />
+              </td>
+            </tr>
+          </Transition>
+
+          <Transition
+            enter-active-class="transition-none"
+            enter-from-class="max-h-0 opacity-0"
+            enter-to-class="max-h-[200px] opacity-100"
+            leave-active-class="transition-none"
+            leave-from-class="max-h-[200px] opacity-100"
+            leave-to-class="max-h-0 opacity-0"
+          >
+            <tr v-if="showRating" class="align-top text-center">
+              <th
+                scope="row"
+                v-if="!isMobile"
+                class="text-xs text-left md:table-cell align-top"
+              >
+                <span class="font-normal text-[#878787] uppercase pr-1">
+                  View Certificate
+                </span>
+              </th>
+              <td
+                v-for="planCode in planCodes"
+                :key="'certificate-' + planCode"
+                class="snap-center align-top !text-left"
+              >
+                <CertificateLink
+                  :plan-code="planCode"
+                  :is-compare-page="true"
+                  :data-cy="`plan-action__certificate__link-details-${planCode}`"
+                  class="text-xs font-bold text-action-alt-primary"
+                  :track-certificate-click="() => trackCertificateClick(planCode)"
+                />
+              </td>
+            </tr>
+          </Transition>
 
           <template
             v-for="(section, i) in coverageLimitMap"
@@ -263,7 +360,7 @@
             <!-- Section title row -->
             <tr
               v-if="section.header.toLowerCase() !== 'plan info'"
-              class="w-full bg-[#878787] cursor-pointer"
+              class="compare-section-header w-full cursor-pointer transition-colors duration-200 hover:bg-[rgba(135,135,135,0.2)]"
               @click="handleAccordion(i)"
             >
               <!-- first cell -->
@@ -273,19 +370,21 @@
                   : [null]"
                 :key="j"
                 :colspan="1"
-                class="h-7 py-1"
+                class="py-3"
               >
-                <div class="flex justify-center w-full h-7 items-center">
-                  <p class="text-white text-center text-xs md:text-sm pr-3">
+                <div class="flex justify-center w-full items-center gap-2">
+                  <p
+                    class="text-imt-black text-center text-xs md:text-sm uppercase tracking-[0.08em]"
+                  >
                     {{ section.header }}
                   </p>
                   <ChevronUpIcon
                     v-if="show[i]"
-                    class="size-6 stroke-white fill-white cursor-pointer"
+                    class="size-5 stroke-[#878787] fill-[#878787] cursor-pointer"
                   />
                   <ChevronDownIcon
                     v-else
-                    class="size-6 stroke-white fill-white cursor-pointer"
+                    class="size-5 stroke-[#878787] fill-[#878787] cursor-pointer"
                   />
                 </div>
               </th>
@@ -303,10 +402,10 @@
               v-if="isEvacPlanIncluded && section.header === 'Evacuation'"
               v-for="evacCoverage in evacuationSpecificSection"
               :key="evacCoverage.key"
-              enter-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              enter-active-class="transition-none"
               enter-from-class="max-h-0 opacity-0"
               enter-to-class="max-h-[200px] opacity-100"
-              leave-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              leave-active-class="transition-none"
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
@@ -314,20 +413,23 @@
                 <th
                   scope="row"
                   v-if="!isMobile"
-                  class="text-xs text-center md:table-cell align-top"
+                  class="text-xs text-left md:table-cell align-top"
                 >
-                  <span class="font-bold text-[#878787] uppercase pr-1">
-                    {{ evacCoverage.label }}
-                  </span>
                   <CoverageLabelToolTip
                     :tool-tip-text="evacCoverage.toolTipText"
-                  />
+                    tool-tip-position="right"
+                    underline-label
+                  >
+                    <span class="font-normal text-[#878787] uppercase pr-1">
+                      {{ evacCoverage.label }}
+                    </span>
+                  </CoverageLabelToolTip>
                 </th>
 
                 <td
                   v-for="planCode in planCodes"
                   :key="`${planCode}-${evacCoverage.key}`"
-                  class="snap-center align-top !text-center"
+                  class="snap-center align-top !text-left"
                 >
                   <CoverageTableRows
                     :plan-code="planCode"
@@ -347,10 +449,10 @@
               "
               v-for="preExCoverage in medicalSpecificSection"
               :key="preExCoverage.key"
-              enter-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              enter-active-class="transition-none"
               enter-from-class="max-h-0 opacity-0"
               enter-to-class="max-h-[200px] opacity-100"
-              leave-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              leave-active-class="transition-none"
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
@@ -358,20 +460,23 @@
                 <th
                   scope="row"
                   v-if="!isMobile"
-                  class="text-xs text-center md:table-cell align-top"
+                  class="text-xs text-left md:table-cell align-top"
                 >
-                  <span class="font-bold text-[#878787] uppercase pr-1">
-                    {{ preExCoverage.label }}
-                  </span>
                   <CoverageLabelToolTip
                     :tool-tip-text="preExCoverage.toolTipText"
-                  />
+                    tool-tip-position="right"
+                    underline-label
+                  >
+                    <span class="font-normal text-[#878787] uppercase pr-1">
+                      {{ preExCoverage.label }}
+                    </span>
+                  </CoverageLabelToolTip>
                 </th>
 
                 <td
                   v-for="planCode in planCodes"
                   :key="`${planCode}-${preExCoverage.key}`"
-                  class="snap-center align-top !text-center"
+                  class="snap-center align-top !text-left"
                 >
                   <CoverageTableRows
                     :plan-code="planCode"
@@ -388,10 +493,10 @@
               v-else-if="section.coverages.length > 0"
               v-for="coverage in section.coverages"
               :key="coverage.key"
-              enter-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              enter-active-class="transition-none"
               enter-from-class="max-h-0 opacity-0"
               enter-to-class="max-h-[200px] opacity-100"
-              leave-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              leave-active-class="transition-none"
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
@@ -399,18 +504,23 @@
                 <th
                   scope="row"
                   v-if="!isMobile"
-                  class="text-xs text-center md:table-cell align-top"
+                  class="text-xs text-left md:table-cell align-top"
                 >
-                  <span class="font-bold text-[#878787] uppercase pr-1">
-                    {{ coverage.label }}
-                  </span>
-                  <CoverageLabelToolTip :tool-tip-text="coverage.toolTipText" />
+                  <CoverageLabelToolTip
+                    :tool-tip-text="coverage.toolTipText"
+                    tool-tip-position="right"
+                    underline-label
+                  >
+                    <span class="font-normal text-[#878787] uppercase pr-1">
+                      {{ coverage.label }}
+                    </span>
+                  </CoverageLabelToolTip>
                 </th>
 
                 <td
                   v-for="planCode in planCodes"
                   :key="`${planCode}-${coverage.key}`"
-                  class="snap-center align-top !text-center"
+                  class="snap-center align-top !text-left"
                 >
                   <CoverageTableRows
                     :plan-code="planCode"
@@ -424,10 +534,10 @@
             <!-- Optional Coverages -->
             <Transition
               v-else-if="section.header === 'Optional Coverages'"
-              enter-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              enter-active-class="transition-none"
               enter-from-class="max-h-0 opacity-0"
               enter-to-class="max-h-[200px] opacity-100"
-              leave-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              leave-active-class="transition-none"
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
@@ -436,7 +546,7 @@
                 <td
                   v-for="planCode in planCodes"
                   :key="`${planCode}-optional-coverages`"
-                  class="text-xs snap-center align-top !text-center"
+                  class="text-xs snap-center align-top !text-left"
                 >
                   <AdditionalOptions
                     :plan-code="planCode"
@@ -449,10 +559,10 @@
             <!-- Included Benefits -->
             <Transition
               v-else-if="section.header === 'Included Benefits'"
-              enter-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              enter-active-class="transition-none"
               enter-from-class="max-h-0 opacity-0"
               enter-to-class="max-h-[200px] opacity-100"
-              leave-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              leave-active-class="transition-none"
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
@@ -461,7 +571,7 @@
                 <td
                   v-for="planCode in planCodes"
                   :key="`${planCode}-includedBenefits`"
-                  class="align-top text-xs snap-center text-center"
+                  class="align-top text-xs snap-center text-left"
                   :class="{
                     'font-bold': !isComparePage,
                   }"
@@ -474,10 +584,10 @@
             <!-- Covered Activities -->
             <Transition
               v-else-if="section.header === 'Covered Activities'"
-              enter-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              enter-active-class="transition-none"
               enter-from-class="max-h-0 opacity-0"
               enter-to-class="max-h-[200px] opacity-100"
-              leave-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
+              leave-active-class="transition-none"
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
@@ -486,7 +596,7 @@
                 <td
                   v-for="planCode in planCodes"
                   :key="`${planCode}-coveredActivities`"
-                  class="align-top font-bold text-xs snap-center text-center"
+                  class="align-top font-bold text-xs snap-center text-left"
                 >
                   <CoveredActivitiesTableRow
                     :plan-code="planCode"
@@ -551,9 +661,22 @@
     td {
       border-collapse: separate;
       border-bottom: 1px solid #e0e0e0;
+      vertical-align: top;
+      padding-top: 0.875rem;
+      padding-bottom: 0.875rem;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
     }
     .utility-html-renderer strong {
       font-weight: 400;
     }
+  }
+
+  .compare-section-header {
+    background-color: #f7f7f7;
+  }
+
+  .compare-sticky-header--shadow {
+    box-shadow: 0 12px 20px -18px rgba(15, 23, 42, 0.35);
   }
 </style>

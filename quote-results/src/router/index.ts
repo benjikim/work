@@ -22,14 +22,22 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(function(_to, from, next) {
+router.beforeEach(function(to, from, next) {
   const sessionStore = useUserSessionStore();
-  window.scrollTo(0, 0);
+  const isCompareQueryUpdate =
+    from?.name === 'Compare' && to?.name === 'Compare';
+
+  if (!isCompareQueryUpdate) {
+    window.scrollTo(0, 0);
+  }
+
   previousRoute.value = from;
-  if (from?.name === 'Compare') {
+
+  if (from?.name === 'Compare' && to?.name !== 'Compare') {
     sessionStore.clearPlansToCompare();
   }
+
   next();
-})
+});
 
 export default router;

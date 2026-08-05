@@ -201,9 +201,6 @@
     sessionStore.isPlanSelectedForCompare(props.plan.code)
   );
 
-  const handleRemoveButtonSelection = (planCode: string) => {
-    sessionStore.removePlanFromCompare(planCode);
-  };
 </script>
 
 <template>
@@ -315,17 +312,7 @@
       SELECT
     </button>
     <button
-      v-if="isComparePage && !isMobile"
-      class="md:mb-2 w-full bg-[white] border-2 rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-action-alt-primary mr-2 h-9 col-span-6"
-      @click="handleRemoveButtonSelection(plan.code)"
-    >
-      <span
-        class="uppercase bg-[white] text-action-alt-primary font-bold text-[0.625rem]"
-        >Remove</span
-      >
-    </button>
-    <button
-      v-else-if="
+      v-if="
         !modal &&
         !isModeEdu &&
         isBuyButtonAndCompareButtonHidden &&
@@ -370,18 +357,6 @@
       class="col-span-12 text-action-primary text-sm display-none md:block pt-3"
       :track-certificate-click="() => trackCertificateClick(plan.code)"
     />
-    <div
-      v-if="isComparePage && !isMobile"
-      class="md:mb-2 w-full bg-[white] border-2 rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-action-alt-primary mr-2 h-9 col-span-6"
-    >
-      <CertificateLink
-        :plan-code="plan.code"
-        :is-compare-page="true"
-        :data-cy="`plan-action__certificate__link-details-${plan.code}`"
-        class="uppercase bg-[white] text-action-alt-primary font-bold text-[0.625rem]"
-        :track-certificate-click="() => trackCertificateClick(plan.code)"
-      />
-    </div>
     <button
       v-else-if="!isComparePage && !modal"
       class="md:mb-2 w-full bg-[white] border-2 rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-action-alt-primary h-9 col-span-3"
