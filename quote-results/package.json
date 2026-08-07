@@ -1,0 +1,51 @@
+{
+  "name": "quote-results",
+  "private": true,
+  "version": "4.13.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:qa": "vue-tsc && vite build --mode qa",
+    "build:qa2": "vue-tsc && vite build --mode qa2",
+    "build:qa-gantry": "vue-tsc && vite build --mode qa-gantry",
+    "build:staging": "vue-tsc && vite build --mode staging",
+    "build": "vue-tsc && vite build",
+    "build-local": "vite build --mode wordpress",
+    "preview": "vite preview",
+    "build-local-send": "npm run build-local && mc cp ./dist/assets/quote-results-app.js local/quote-results/local/assets/ && mc cp ./dist/assets/quote-results-app.js.map local/quote-results/local/assets/ && mc cp ./dist/assets/quote-results-app.css local/quote-results/local/assets/ && echo 'Deployed!'"
+  },
+  "dependencies": {
+    "@datadog/browser-rum": "^6.24.1",
+    "@heroicons/vue": "^2.1.4",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
+    "@vuepic/vue-datepicker": "^9.0.3",
+    "axios": "^1.7.1",
+    "configcat-js": "^9.5.1",
+    "lottie-web": "^5.12.2",
+    "pinia": "^2.1.7",
+    "vue": "^3.4.21",
+    "vue-gtag": "^2.0.1",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@datadog/datadog-ci": "^5.4.0",
+    "@types/node": "^20.12.7",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "autoprefixer": "^10.4.19",
+    "cypress": "^13.8.1",
+    "daisyui": "^4.11.1",
+    "eslint": "^9.2.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-vue": "^9.26.0",
+    "postcss": "^8.4.38",
+    "prettier": "^3.2.5",
+    "prettier-plugin-vue": "^1.1.6",
+    "sass": "^1.75.0",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.11",
+    "vite-plugin-vue-devtools": "^7.4.4",
+    "vue-tsc": "^2.0.6"
+  }
+}
