@@ -14,6 +14,9 @@ declare global {
   }
 }
 
+const getRequestedThemeApp = (): string =>
+  (import.meta.env.VITE_THEME_APP || '').toLowerCase();
+
 interface State {
   currentTheme: {
     name: ThemeName;
@@ -76,10 +79,7 @@ export const useThemeStore = defineStore('theme', {
      * @returns {boolean}
      */
     isLocalThemeSoventure(): boolean {
-      return (
-        import.meta.env.MODE === 'development' &&
-        import.meta.env.VITE_THEME_APP === 'soventure'
-      );
+      return getRequestedThemeApp() === 'soventure';
     },
     /**
      * Checks to see if hostname is a qaBox[XX] and if
@@ -112,8 +112,7 @@ export const useThemeStore = defineStore('theme', {
 
       if (
         window.location.hostname.includes('soventure') ||
-        (import.meta.env.MODE === 'development' &&
-          import.meta.env.VITE_THEME_APP === 'soventure')
+        getRequestedThemeApp() === 'soventure'
       ) {
         this.setSoventureTheme();
       } else {

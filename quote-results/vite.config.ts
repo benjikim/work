@@ -3,9 +3,31 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import vueDevTools from 'vite-plugin-vue-devtools';
 
+const normalizeBasePath = (value?: string): string | undefined => {
+  if (!value) return undefined;
+
+  if (/^https?:\/\//.test(value)) {
+    return value.endsWith('/') ? value : `${value}/`;
+  }
+
+  if (value === '.' || value === './') {
+    return './';
+  }
+
+  const withLeadingSlash = value.startsWith('/') ? value : `/${value}`;
+  return withLeadingSlash.endsWith('/')
+    ? withLeadingSlash
+    : `${withLeadingSlash}/`;
+};
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
+  const publicBasePath =
+    normalizeBasePath(env.VITE_PUBLIC_BASE_PATH) ||
+    (process.env.APP_BASE_URL
+      ? `https://${process.env.APP_BASE_URL}/${process.env.npm_package_version}/`
+      : './');
 
   let wpJsonProxyTarget = null;
   if (process.env.NODE_ENV === 'development' && env.VITE_THEME_APP) {
@@ -17,9 +39,7 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
-    base: process.env.APP_BASE_URL
-      ? `https://${process.env.APP_BASE_URL}/${process.env.npm_package_version}/`
-      : './',
+    base: publicBasePath,
     // We shall proxy our requests to QA environment for local development
     ...(process.env.NODE_ENV === 'development' && {
       server: {

@@ -26,6 +26,10 @@ export enum QUOTE_RESULT_API_SETTING {
 /**
  * @module API_ENDPOINTS
  */
+const CMS_BASE_URL = (
+  import.meta.env.VITE_CMS_BASE_URL || `https://${window.location.hostname}`
+).replace(/\/$/, '');
+
 export const API_ENDPOINTS =
   import.meta.env.MODE === 'development'
     ? {
@@ -101,15 +105,14 @@ export const API_ENDPOINTS =
         },
         cms: {
           getQuoteResultsContent: () =>
-            `https://${window.location.hostname}/wp-json/imt-blocks/v1/quote-results-content`,
-          getPlanContent: () =>
-            `https://${window.location.hostname}/wp-json/plans/v1/content`,
+            `${CMS_BASE_URL}/wp-json/imt-blocks/v1/quote-results-content`,
+          getPlanContent: () => `${CMS_BASE_URL}/wp-json/plans/v1/content`,
           getProviderContent: () =>
-            `https://${window.location.hostname}/wp-json/providers/v1/content`,
+            `${CMS_BASE_URL}/wp-json/providers/v1/content`,
           getQuoteShortCode: () =>
-            `https://${window.location.hostname}/wp-json/quote-reference/v1/generate-code`,
+            `${CMS_BASE_URL}/wp-json/quote-reference/v1/generate-code`,
           getLoaderData: (key: string) =>
-            `https://${window.location.hostname}/wp-json/imt-blocks/v1/loader?key=${key}`,
+            `${CMS_BASE_URL}/wp-json/imt-blocks/v1/loader?key=${key}`,
         },
       };
 

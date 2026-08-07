@@ -16,9 +16,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(
-    import.meta.env.DEV ? '/' : '/travel-insurance/quote/results'
-  ),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 

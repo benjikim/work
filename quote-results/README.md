@@ -36,6 +36,53 @@ npm run test:ui
 ## :globe_with_meridians: Environment Variables
 Vite supports environment variables out of the box. Included in this project are files for local development and production, however more can be added as needed. More information on Vite and environment variables can be reviewed [in the official documentation](https://vitejs.dev/guide/env-and-mode.html).
 
+### Deployable hosting notes
+
+This app can be deployed as a static SPA, but it needs explicit environment
+configuration when it is not running behind the local Vite proxy.
+
+Important deploy env vars:
+
+- `VITE_PUBLIC_BASE_PATH`: router/build base path. Use `/` for Vercel, and `/<repo-name>/` for GitHub Pages.
+- `VITE_QUOTE_API_BASE_URL`: quote API base URL.
+- `VITE_ORDER_API_BASE_URL`: order API base URL.
+- `VITE_MODULES_API_BASE_URL`: modules API base URL.
+- `VITE_CMS_BASE_URL`: WordPress/CMS host used for `/wp-json/...` content.
+- `VITE_THEME_APP`: optional theme override, for example `insuremytrip` or `soventure`.
+
+Example deploy env file:
+
+```bash
+cp .env.deploy.example .env.local
+```
+
+### Vercel
+
+`vercel.json` is included for SPA route fallback. Set the project root to
+`quote-results` in Vercel, then configure the environment variables above in
+the Vercel project settings.
+
+Recommended values:
+
+- `VITE_PUBLIC_BASE_PATH=/`
+- `VITE_CMS_BASE_URL=https://www.insuremytrip.com`
+- `VITE_THEME_APP=insuremytrip`
+
+### GitHub Pages
+
+A GitHub Actions workflow is included at
+`/.github/workflows/deploy-quote-results-pages.yml`.
+
+It:
+
+- builds from `quote-results/`
+- sets `VITE_PUBLIC_BASE_PATH` automatically to `/<repo-name>/`
+- copies `dist/index.html` to `dist/404.html` for SPA routing
+- deploys the built `dist/` folder to GitHub Pages
+
+GitHub Pages can host the static app, but the remote APIs must allow requests
+from your Pages domain for the app to work fully in the browser.
+
 ## Local Development: Vite Proxy Configuration
 
 When running the project in local development mode, Vite is configured to proxy certain API requests to our QA environment. This allows you to work locally while still interacting with real backend services, without needing to run the backend locally.
