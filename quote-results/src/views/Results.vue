@@ -5,6 +5,7 @@
   import SectionMain from '@/components/section/SectionMain.vue';
   import SectionSidebar from '@/components/section/SectionSidebar.vue';
   import HeaderContainer from '@/components/header/HeaderContainer.vue';
+  import ComparePageHeader from '@/components/base/Compare/ComparePageHeader.vue';
   import { useApiStore } from '@/store/api';
   import Loader from '@/components/shared/Loader.vue';
   import { initResellerRatings } from '@/utility';
@@ -62,6 +63,7 @@
 
 <template>
   <HeaderContainer v-if="isMobile"></HeaderContainer>
+  <ComparePageHeader v-if="!isMobile" />
   <div
     class="quote-results-container grid md:grid-cols-10 gap-3 sm:gap-0 lg:gap-14"
   >
