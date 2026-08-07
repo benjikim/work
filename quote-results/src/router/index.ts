@@ -14,6 +14,11 @@ const routes = [
     component: () => import('@/views/Results.vue'),
   },
   {
+    path: '/QRPlanDetailsPOC',
+    name: 'ResultsPlanDetailsPOC',
+    component: () => import('@/views/Results.vue'),
+  },
+  {
     path: '/compare',
     name: 'Compare',
     component: () => import('@/views/Compare.vue'),

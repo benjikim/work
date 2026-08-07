@@ -40,6 +40,8 @@ import {
 import * as configcat from 'configcat-js';
 
 const STATIC_DEMO_QID = '1f192837-2b7a-66d0-b302-2f0757b9b2cb';
+const isPlanDetailsPocRoute = () =>
+  window.location.pathname.includes('/QRPlanDetailsPOC');
 const isStaticDemoMode = () =>
   import.meta.env.VITE_STATIC_DEMO === 'true' ||
   window.location.hostname.endsWith('github.io');
@@ -62,7 +64,8 @@ const getStaticDemoFFValues = (): FFValues => ({
   cms_20250915_plans_without_trip_cost_us_release: '',
   sb_20250818_annual_plans_release_us: '',
   web_20251113_qr_number_of_compare: 5,
-  website_20260121_enable_new_plan_row_details_us_release: false,
+  website_20260121_enable_new_plan_row_details_us_release:
+    isPlanDetailsPocRoute(),
   imt_20260121_pbm_clickthrough_buy_modal: false,
 });
 
