@@ -9,6 +9,11 @@ const routes = [
     component: () => import('@/views/Results.vue'),
   },
   {
+    path: '/QRPOC',
+    name: 'ResultsPOC',
+    component: () => import('@/views/Results.vue'),
+  },
+  {
     path: '/compare',
     name: 'Compare',
     component: () => import('@/views/Compare.vue'),
