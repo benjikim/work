@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-base-bg-color: #f6f6f6;
+    --color-primary-btn: #77bb33;
+    --color-text-secondary: #F4B649;
+    --color-text-info: #77BB33;
+    --color-text-excluded: #DF1642;
+    --action-primary: #0354D6;
+    --action-alt-primary: #0354D6;
+  }
+  :root[class='soventure'] {
+    --color-base-bg-color: #ebebeb;
+    --color-primary-btn: #0270C0;
+    --color-text-secondary: #F4B649;
+    --color-text-info: #0270C0;
+    --color-text-excluded: #DF1642;
+    --brand-primary: #F78403;
+    --brand-secondary: #F9A342;
+    --brand-tertiary: #FCD4A7;
+    --brand-muted: #FDE6CD;
+    --action-primary: #0270C0;
+    --action-secondary: #358DCD;
+    --action-tertiary: #9AC6E6;
+    --action-muted: #E0EEF7;
+    --action-alt-primary: #039097;
+    --action-alt-secondary: #33A6AC;
+    --action-alt-tertiary: #7FC7CB;
+    --action-alt-muted: #CCE9EA;
+  }
+}
