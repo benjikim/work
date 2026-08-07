@@ -10,6 +10,7 @@
   import { initResellerRatings } from '@/utility';
   import CompareFooter from '@/components/base/Compare/CompareFooter.vue';
   import CompareHeader from '@/components/base/Compare/CompareHeader.vue';
+  import ComparePageHeader from '@/components/base/Compare/ComparePageHeader.vue';
   import { useThemeStore } from '@/store/theme';
 
   const route = useRoute();
@@ -96,8 +97,9 @@
 </script>
 
 <template>
-  <div class="quote-results-container md:pt-[20px]">
-    <HeaderContainer :is-compare="true" />
+  <div class="quote-results-container compare-page-shell">
+    <ComparePageHeader v-if="!isMobile" />
+    <HeaderContainer v-if="isMobile" :is-compare="true" />
     <CompareHeader v-if="!isMobile" />
     <PlansTable v-if="planCodes.length > 0" />
     <Loader v-if="displayLoader && determinedTheme" />
@@ -109,5 +111,9 @@
   .quote-results-container {
     max-width: $base-content-max-width;
     margin: 0 auto;
+  }
+
+  .compare-page-shell {
+    padding-top: 0;
   }
 </style>
