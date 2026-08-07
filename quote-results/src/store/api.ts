@@ -39,6 +39,33 @@ import {
 } from '@/utility';
 import * as configcat from 'configcat-js';
 
+const STATIC_DEMO_QID = '1f192837-2b7a-66d0-b302-2f0757b9b2cb';
+const isStaticDemoMode = () =>
+  import.meta.env.VITE_STATIC_DEMO === 'true' ||
+  window.location.hostname.endsWith('github.io');
+
+const getStaticDemoUrl = (filename: string) =>
+  `${import.meta.env.BASE_URL}${filename}`;
+
+const getStaticDemoFFValues = (): FFValues => ({
+  cms_20250303_soventure_theme_us_release: false,
+  cms_20250314_soventure_plans_to_quote_us_release: '',
+  cms_20250325_soventure_plans_hide_plan_tag: '',
+  cms_20250522_soventure_covered_activities: false,
+  cms_20250609_soventure_share_results: false,
+  crm_20250806_enable_imt_wordpress_content: false,
+  sb_20250805_insuremytrip_luxury_plan_codes_us_release: '',
+  sb_20250805_insuremytrip_enable_luxury_ab_test_us_release: false,
+  sb_20250808_insuremytrip_luxury_banner_text_us_release: '',
+  sb_20250826_insuremytrip_epic_luxury_banner_text_us_release: '',
+  cms_20250812_imt_edu_plans_to_quote_us_release: '',
+  cms_20250915_plans_without_trip_cost_us_release: '',
+  sb_20250818_annual_plans_release_us: '',
+  web_20251113_qr_number_of_compare: 5,
+  website_20260121_enable_new_plan_row_details_us_release: false,
+  imt_20260121_pbm_clickthrough_buy_modal: false,
+});
+
 interface State {
   quote: {
     dataLoaded: boolean;
@@ -520,19 +547,28 @@ export const useApiStore = defineStore('api-store', {
     async init(): Promise<void> {
       const urlParams = new URLSearchParams(window.location.search);
       const quoteId = urlParams.get('_qid');
+      const staticDemoMode = isStaticDemoMode();
       const sessionStore = useUserSessionStore();
       determineMode();
 
       try {
         // This gets called in multiple places (results/compare)
         // So we want to reset the data whenever it gets called.
-        await this.retrieveFFValues();
         this.resetQuoteResultsData();
-        await retrieveLoaderData([LOADER_KEYS.QR_INIT]);
-        sessionStore.setLoaderKey(LOADER_KEYS.QR_INIT);
+        if (staticDemoMode) {
+          this.setFFValues(getStaticDemoFFValues());
+        } else {
+          await this.retrieveFFValues();
+          await retrieveLoaderData([LOADER_KEYS.QR_INIT]);
+          sessionStore.setLoaderKey(LOADER_KEYS.QR_INIT);
+        }
+
         await determineTheme();
 
-        if (quoteId) {
+        if (staticDemoMode) {
+          this.setQuoteId(quoteId || STATIC_DEMO_QID);
+          await this.loadStaticDemoData();
+        } else if (quoteId) {
           console.info('Setting quote ID from query params: ', quoteId);
           this.setQuoteId(quoteId);
           await Promise.all([
@@ -557,8 +593,59 @@ export const useApiStore = defineStore('api-store', {
       } finally {
         const localJsonStorage = await import('@/store/local.json');
         this.setCMSPlans(localJsonStorage?.plans);
-        retrieveLoaderData([LOADER_KEYS.QR_UPDATE, LOADER_KEYS.QR_TO_BUY]);
+        if (!staticDemoMode) {
+          retrieveLoaderData([LOADER_KEYS.QR_UPDATE, LOADER_KEYS.QR_TO_BUY]);
+        }
       }
+    },
+
+    async loadStaticDemoData(): Promise<void> {
+      const sessionStore = useUserSessionStore();
+      const themeStore = useThemeStore();
+      const localJsonStorage = await import('@/store/local.json');
+
+      this.setLoaderState(true);
+      this.setCMSProvider(
+        (localJsonStorage?.providers || []).map((provider: any) => ({
+          name: provider.name,
+          code: provider.companyCode,
+        }))
+      );
+      this.setCMSPlans(localJsonStorage?.plans || []);
+
+      const [detailsResponse, resultsResponse, destinationsResponse] =
+        await Promise.all([
+          fetch(getStaticDemoUrl('demo-quote-details.json')),
+          fetch(getStaticDemoUrl('demo-quote-results.json')),
+          fetch(getStaticDemoUrl('demo-destinations.json')),
+        ]);
+
+      const [detailsData, resultsData, destinationsData] = await Promise.all([
+        detailsResponse.json(),
+        resultsResponse.json(),
+        destinationsResponse.json(),
+      ]);
+
+      this.setQuoteDetails({
+        ...detailsData,
+        metadata: detailsData.metadata || { partners_api_id: null },
+      } as State['quote']['details']);
+      this.quote.details.requestStatus = HTTP_REQUEST_STATES.COMPLETE;
+      this.destinationList = destinationsData;
+      this.hideMarketing = false;
+      this.setQuoteResults(resultsData);
+
+      if (themeStore.isThemeSoventure) {
+        this.setSoventureFilterResults();
+      } else if (!sessionStore.isMobileView || themeStore.isModeEdu) {
+        this.setFilterResults();
+      }
+
+      sessionStore.setPlans(JSON.parse(JSON.stringify(resultsData.products)));
+      sessionStore.invokeFilterOptionUpdates();
+      this.quote.results.requestStatus = HTTP_REQUEST_STATES.COMPLETE;
+      this.quote.dataLoaded = true;
+      this.setLoaderState(false);
     },
 
     async retrieveFFValues(): Promise<void> {

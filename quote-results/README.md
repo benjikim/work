@@ -67,6 +67,7 @@ Recommended values:
 - `VITE_PUBLIC_BASE_PATH=/`
 - `VITE_CMS_BASE_URL=https://www.insuremytrip.com`
 - `VITE_THEME_APP=insuremytrip`
+- `VITE_STATIC_DEMO=false`
 
 ### GitHub Pages
 
@@ -77,6 +78,7 @@ It:
 
 - builds from `quote-results/`
 - sets `VITE_PUBLIC_BASE_PATH` automatically to `/<repo-name>/`
+- sets `VITE_STATIC_DEMO=true` so GitHub Pages uses bundled demo quote data
 - copies `dist/index.html` to `dist/404.html` for SPA routing
 - deploys the built `dist/` folder to GitHub Pages
 
