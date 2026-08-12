@@ -3,21 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Updated Filter System POC</title>
+    <title>Quote Results Filter POC</title>
     <style>
       :root {
         color-scheme: light;
         --navy: #0c233c;
-        --blue: #0354d6;
-        --blue-soft: #edf4ff;
+        --navy-soft: #203444;
+        --blue: #0b67e3;
         --green: #7bb832;
-        --green-soft: #eef7df;
+        --green-dark: #6ba12c;
         --text: #203444;
-        --muted: #65758d;
-        --border: #d7e1ea;
+        --muted: #66768a;
+        --border: #d6dee7;
+        --border-strong: #bec8d2;
         --surface: #ffffff;
-        --page: #f5f8fb;
-        --shadow: 0 18px 42px rgba(12, 35, 60, 0.08);
+        --surface-soft: #f6f8fb;
+        --page: #f3f6fa;
+        --shadow: 0 18px 38px rgba(12, 35, 60, 0.08);
       }
 
       * {
@@ -31,506 +33,1111 @@
         font-family: "Open Sans", Arial, sans-serif;
       }
 
-      .shell {
-        width: min(100%, 1380px);
+      a {
+        color: inherit;
+      }
+
+      .topbar {
+        background: var(--navy);
+        color: #fff;
+      }
+
+      .topbar__utility,
+      .topbar__main {
+        width: min(100%, 1240px);
         margin: 0 auto;
-        padding: 40px 24px 72px;
+        padding: 0 24px;
       }
 
-      .hero {
-        display: grid;
-        gap: 16px;
-        margin-bottom: 28px;
+      .topbar__utility {
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       }
 
-      .eyebrow {
-        margin: 0;
-        color: var(--blue);
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
+      .topbar__utility a {
+        color: #f3f6f9;
+        font-size: 12px;
+        text-decoration: none;
         text-transform: uppercase;
       }
 
-      h1 {
-        margin: 0;
-        color: var(--navy);
-        font-size: clamp(34px, 4vw, 52px);
-        line-height: 1.02;
-      }
-
-      .hero p {
-        margin: 0;
-        max-width: 860px;
-        color: var(--muted);
-        font-size: 18px;
-        line-height: 1.65;
-      }
-
-      .actions {
+      .topbar__main {
+        min-height: 76px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
+        align-items: center;
+        gap: 28px;
       }
 
-      .button {
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      .brand img {
+        width: 198px;
+        max-width: 100%;
+        display: block;
+        filter: brightness(0) invert(1);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 40px;
+        flex: 1;
+      }
+
+      .nav-links a {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.3;
+        text-decoration: none;
+      }
+
+      .start-quote {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 48px;
-        padding: 0 18px;
+        min-height: 58px;
+        padding: 0 26px;
+        background: var(--green);
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .page {
+        width: min(100%, 1420px);
+        margin: 0 auto;
+        padding: 28px 24px 72px;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.95fr);
+        gap: 28px;
+        margin-bottom: 28px;
+      }
+
+      .summary-card,
+      .destination-card,
+      .filters,
+      .results {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+      }
+
+      .summary-card {
+        padding: 30px 32px;
+      }
+
+      .summary-card h1 {
+        margin: 0 0 22px;
+        color: var(--navy);
+        font-size: 48px;
+        line-height: 1.02;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .summary-item {
+        padding-right: 18px;
+        border-right: 1px solid var(--border-strong);
+      }
+
+      .summary-item:last-child {
+        border-right: 0;
+        padding-right: 0;
+      }
+
+      .summary-item strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--navy);
+        font-size: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .summary-item a,
+      .summary-item span {
+        color: var(--blue);
+        font-size: 16px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .destination-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 164px;
+        overflow: hidden;
+      }
+
+      .destination-copy {
+        padding: 28px 28px 24px;
+      }
+
+      .destination-copy h2 {
+        margin: 0 0 10px;
+        color: var(--navy);
+        font-size: 24px;
+      }
+
+      .destination-copy p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.65;
+      }
+
+      .destination-media {
+        background:
+          linear-gradient(180deg, rgba(12, 35, 60, 0.05), rgba(12, 35, 60, 0.18)),
+          url("https://images.unsplash.com/photo-1431274172761-fca41d930114?auto=format&fit=crop&w=600&q=80")
+            center/cover no-repeat;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(300px, 350px) minmax(0, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+
+      .filters {
+        padding: 22px 22px 28px;
+        position: sticky;
+        top: 20px;
+      }
+
+      .filters-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .filters-header h2 {
+        margin: 0;
+        color: var(--navy);
+        font-size: 28px;
+      }
+
+      .filters-header span {
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .filter-group + .filter-group {
+        margin-top: 22px;
+      }
+
+      .filter-group__heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border-strong);
+      }
+
+      .filter-group__title {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .chevron {
+        width: 16px;
+        height: 16px;
+        border-right: 3px solid var(--blue);
+        border-bottom: 3px solid var(--blue);
+        transform: rotate(45deg);
+        margin-top: -4px;
+        flex: none;
+      }
+
+      .chevron--up {
+        transform: rotate(225deg);
+        margin-top: 4px;
+      }
+
+      .filter-group__title h3 {
+        margin: 0;
+        color: var(--navy);
+        font-size: 19px;
+        line-height: 1.2;
+      }
+
+      .info {
+        width: 22px;
+        height: 22px;
+        border: 2px solid var(--blue);
         border-radius: 999px;
+        color: var(--blue);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex: none;
+      }
+
+      .filter-list {
+        display: grid;
+        gap: 10px;
+        padding-top: 16px;
+      }
+
+      .filter-divider {
+        height: 1px;
+        margin: 10px 0 4px;
+        background: var(--border-strong);
+      }
+
+      .filter-row {
+        display: grid;
+        grid-template-columns: 30px minmax(0, 1fr);
+        align-items: center;
+        gap: 14px;
+        min-height: 34px;
+      }
+
+      .checkbox,
+      .radio {
+        width: 26px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+
+      .checkbox::before {
+        content: "";
+        width: 22px;
+        height: 22px;
+        border: 2px solid #9eaab7;
+        border-radius: 3px;
+        background: #fff;
+      }
+
+      .radio::before {
+        content: "";
+        width: 22px;
+        height: 22px;
+        border: 2px solid #9eaab7;
+        border-radius: 999px;
+        background: #fff;
+      }
+
+      .radio.is-active::before {
+        border-color: var(--blue);
+        box-shadow: inset 0 0 0 5px #fff, inset 0 0 0 999px var(--blue);
+      }
+
+      .checkbox.is-disabled::before,
+      .radio.is-disabled::before {
+        border-color: #d6dde5;
+        background: #fafbfc;
+      }
+
+      .filter-row__label {
+        color: var(--navy-soft);
+        font-size: 17px;
+        line-height: 1.35;
+      }
+
+      .filter-row__label strong {
+        font-weight: 700;
+      }
+
+      .filter-row__label.is-disabled {
+        color: #adb7c2;
+      }
+
+      .filter-row__count {
+        color: #1f2e40;
+        font-size: 15px;
+      }
+
+      .filter-row__count.is-disabled {
+        color: #adb7c2;
+      }
+
+      .results {
+        padding: 22px 22px 28px;
+      }
+
+      .results-topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      .results-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .pill-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--blue);
         font-size: 15px;
         font-weight: 700;
         text-decoration: none;
       }
 
-      .button--primary {
-        background: var(--green);
-        color: #fff;
-      }
-
-      .button--secondary {
-        border: 1px solid var(--border);
-        background: #fff;
-        color: var(--navy);
-      }
-
-      .layout {
-        display: grid;
-        gap: 24px;
-      }
-
-      .panel,
-      .results {
-        border: 1px solid var(--border);
-        border-radius: 22px;
-        background: var(--surface);
-        box-shadow: var(--shadow);
-      }
-
-      .panel {
-        padding: 24px;
-      }
-
-      .panel h2,
-      .results h2 {
-        margin: 0;
-        color: var(--navy);
-        font-size: 24px;
-        line-height: 1.1;
-      }
-
-      .panel-header,
-      .results-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-      }
-
-      .subtext {
-        margin: 8px 0 0;
-        color: var(--muted);
-        font-size: 15px;
-        line-height: 1.55;
-      }
-
-      .filter-stack {
-        display: grid;
-        gap: 18px;
-        margin-top: 22px;
-      }
-
-      .filter-card {
-        padding: 18px;
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        background: #fbfdff;
-      }
-
-      .filter-card h3 {
-        margin: 0 0 12px;
-        color: var(--navy);
-        font-size: 17px;
-      }
-
-      .chip-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-
-      .chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        min-height: 40px;
-        padding: 0 14px;
-        border: 1px solid var(--border);
-        border-radius: 999px;
-        background: #fff;
-        color: var(--text);
-        font-size: 14px;
-        font-weight: 700;
-      }
-
-      .chip.is-active {
-        border-color: #b7d58f;
-        background: var(--green-soft);
-      }
-
-      .chip.is-info {
-        border-color: #c9dbff;
-        background: var(--blue-soft);
-        color: var(--blue);
-      }
-
-      .count {
-        color: var(--muted);
-        font-weight: 600;
-      }
-
-      .range {
-        display: grid;
-        gap: 12px;
-      }
-
-      .bar {
-        position: relative;
-        height: 10px;
-        border-radius: 999px;
-        background: #e4ebf1;
-        overflow: hidden;
-      }
-
-      .bar::before {
-        content: "";
-        position: absolute;
-        left: 14%;
-        right: 18%;
-        top: 0;
-        bottom: 0;
-        border-radius: 999px;
-        background: linear-gradient(90deg, #9dc85c 0%, #6ea73e 100%);
-      }
-
-      .range-labels {
-        display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        color: var(--muted);
-        font-size: 13px;
-        font-weight: 700;
-      }
-
-      .summary-bar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 18px;
-        padding-top: 18px;
-        border-top: 1px solid var(--border);
-      }
-
-      .results {
-        padding: 24px;
-      }
-
-      .plan-grid {
-        display: grid;
-        gap: 16px;
-        margin-top: 20px;
-      }
-
-      .plan {
-        padding: 20px;
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        background: linear-gradient(180deg, #fff 0%, #fbfdff 100%);
-      }
-
-      .plan-top {
-        display: flex;
-        align-items: start;
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 14px;
-      }
-
-      .plan-meta {
-        display: grid;
-        gap: 6px;
-      }
-
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        min-height: 28px;
-        padding: 0 10px;
-        border-radius: 999px;
-        background: var(--blue-soft);
-        color: var(--blue);
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
-
-      .plan h3 {
-        margin: 0;
-        color: var(--navy);
-        font-size: 22px;
-      }
-
-      .plan p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 15px;
-        line-height: 1.5;
-      }
-
-      .price {
-        color: var(--navy);
-        font-size: 34px;
-        font-weight: 800;
-        white-space: nowrap;
-      }
-
-      .coverage-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .coverage {
-        padding: 12px 14px;
-        border-radius: 14px;
-        background: #f6f9fc;
-      }
-
-      .coverage strong {
-        display: block;
-        margin-bottom: 4px;
-        color: var(--navy);
-        font-size: 13px;
-        text-transform: uppercase;
-      }
-
-      .coverage span {
-        color: var(--text);
-        font-size: 15px;
-        font-weight: 700;
-      }
-
       .results-note {
-        margin-top: 20px;
         color: var(--muted);
         font-size: 14px;
         line-height: 1.6;
       }
 
-      @media (min-width: 980px) {
-        .layout {
-          grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
-          align-items: start;
-        }
-
-        .panel {
-          position: sticky;
-          top: 24px;
-        }
+      .plan-list {
+        display: grid;
+        gap: 18px;
       }
 
-      @media (max-width: 720px) {
-        .coverage-grid {
+      .plan-card {
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: linear-gradient(180deg, #fff 0%, #fbfdff 100%);
+        overflow: hidden;
+      }
+
+      .plan-card__inner {
+        display: grid;
+        grid-template-columns: 170px minmax(0, 1fr) 210px;
+        gap: 24px;
+        padding: 22px 24px;
+        align-items: center;
+      }
+
+      .plan-brand {
+        display: grid;
+        gap: 8px;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .plan-brand__logo {
+        width: 108px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f4f7fa;
+        color: var(--navy);
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .plan-brand__name {
+        color: var(--navy);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .plan-body {
+        display: grid;
+        gap: 14px;
+      }
+
+      .plan-body h2 {
+        margin: 0;
+        color: var(--navy);
+        font-size: 30px;
+        line-height: 1.08;
+      }
+
+      .rating {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #ff9d2f;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .rating span {
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .coverage-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .coverage-tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: var(--surface-soft);
+        color: var(--navy);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .plan-price {
+        display: grid;
+        gap: 12px;
+        justify-items: end;
+      }
+
+      .plan-price__amount {
+        color: #111;
+        font-size: 54px;
+        font-weight: 800;
+        line-height: 0.95;
+      }
+
+      .plan-price__total {
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .select {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        min-width: 164px;
+        padding: 0 18px;
+        border-radius: 6px;
+        background: var(--green);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 800;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .plan-footer {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0;
+        border-top: 1px solid var(--border);
+        background: #fcfdff;
+      }
+
+      .metric {
+        padding: 16px 18px;
+        border-right: 1px solid var(--border);
+      }
+
+      .metric:last-child {
+        border-right: 0;
+      }
+
+      .metric strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .metric span {
+        color: var(--navy);
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 1180px) {
+        .summary {
           grid-template-columns: 1fr;
         }
 
-        .plan-top {
-          flex-direction: column;
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .filters {
+          position: static;
+        }
+      }
+
+      @media (max-width: 980px) {
+        .summary-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .destination-card {
+          grid-template-columns: 1fr;
+        }
+
+        .destination-media {
+          min-height: 180px;
+        }
+
+        .plan-card__inner {
+          grid-template-columns: 1fr;
+          justify-items: start;
+        }
+
+        .plan-price {
+          justify-items: start;
+        }
+
+        .plan-footer {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .topbar__main,
+        .nav-links {
+          display: grid;
+          gap: 16px;
+        }
+
+        .topbar__main {
+          padding-top: 18px;
+          padding-bottom: 18px;
+        }
+
+        .nav-links {
+          justify-content: start;
+        }
+
+        .summary-card h1 {
+          font-size: 36px;
+        }
+
+        .summary-grid,
+        .plan-footer {
+          grid-template-columns: 1fr;
+        }
+
+        .summary-item {
+          border-right: 0;
+          padding-right: 0;
+          padding-bottom: 14px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .summary-item:last-child {
+          border-bottom: 0;
+          padding-bottom: 0;
         }
       }
     </style>
   </head>
   <body>
-    <main class="shell">
-      <section class="hero">
-        <p class="eyebrow">Standalone POC</p>
-        <h1>Updated Filter System</h1>
-        <p>
-          This concept separates high-intent filters into grouped cards, keeps
-          active selections visible as chips, and surfaces plan impact counts
-          earlier so users can understand tradeoffs before changing the result set.
-        </p>
-        <div class="actions">
-          <a class="button button--primary" href="/work/version-index/">Back to Version Index</a>
-          <a class="button button--secondary" href="/work/QRPOC?_qid=1f192837-2b7a-66d0-b302-2f0757b9b2cb">Open Current POC</a>
-        </div>
+    <header class="topbar">
+      <div class="topbar__utility">
+        <a href="/work/version-index/">Version Index</a>
+      </div>
+      <div class="topbar__main">
+        <a class="brand" href="/work/version-index/" aria-label="InsureMyTrip">
+          <img
+            src="/work/assets/logo.svg"
+            alt="InsureMyTrip"
+          />
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#">Plans</a>
+          <a href="#">Reviews &amp; FAQs</a>
+          <a href="#">Resources</a>
+          <a href="#">Get Support</a>
+        </nav>
+        <a class="start-quote" href="/work/QRPOC?_qid=1f192837-2b7a-66d0-b302-2f0757b9b2cb">
+          Start a Quote
+        </a>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="summary">
+        <article class="summary-card">
+          <h1>Your Quote Results</h1>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <strong>Destination:</strong>
+              <a href="#">France</a>
+            </div>
+            <div class="summary-item">
+              <strong>Travel Dates:</strong>
+              <span>10/15/2026 - 10/25/2026</span>
+            </div>
+            <div class="summary-item">
+              <strong>Traveler Ages:</strong>
+              <span>36</span>
+            </div>
+            <div class="summary-item">
+              <strong>Total Trip Cost:</strong>
+              <span>$2500 on 08/05/2026</span>
+            </div>
+          </div>
+        </article>
+
+        <aside class="destination-card">
+          <div class="destination-copy">
+            <h2>France</h2>
+            <p>
+              France offers endless excitement, but experienced travelers know
+              the value of travel insurance. Comprehensive plans cover medical
+              needs, baggage, and trip cancellations, saving you time and money.
+            </p>
+          </div>
+          <div class="destination-media" aria-hidden="true"></div>
+        </aside>
       </section>
 
-      <section class="layout" aria-label="Updated filter system demo">
-        <aside class="panel">
-          <div class="panel-header">
-            <div>
-              <h2>Filters</h2>
-              <p class="subtext">Organized by decision type instead of one long list.</p>
+      <section class="layout">
+        <aside class="filters" aria-label="Updated filters">
+          <div class="filters-header">
+            <h2>Filters</h2>
+            <span>Matching screenshot layout</span>
+          </div>
+
+          <section class="filter-group">
+            <div class="filter-group__heading">
+              <div class="filter-group__title">
+                <span class="chevron" aria-hidden="true"></span>
+                <h3>Trip Interruption &amp; Cancellation</h3>
+              </div>
+              <span class="info">i</span>
             </div>
-            <span class="badge">12 plans shown</span>
-          </div>
-
-          <div class="filter-stack">
-            <section class="filter-card">
-              <h3>Trip Protection Focus</h3>
-              <div class="chip-row">
-                <span class="chip is-active">Trip Cancellation <span class="count">12</span></span>
-                <span class="chip">Medical-Only <span class="count">4</span></span>
-                <span class="chip">Cruise <span class="count">7</span></span>
+            <div class="filter-list">
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>100% of trip cost</strong> <span class="filter-row__count">· 2 plans</span></div>
               </div>
-            </section>
-
-            <section class="filter-card">
-              <h3>Medical Coverage Range</h3>
-              <div class="range">
-                <div class="bar" aria-hidden="true"></div>
-                <div class="range-labels">
-                  <span>$50K</span>
-                  <span>$250K</span>
-                  <span>$500K+</span>
-                </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>125% of trip cost</strong> <span class="filter-row__count">· 3 plans</span></div>
               </div>
-            </section>
-
-            <section class="filter-card">
-              <h3>Special Coverage Add-Ons</h3>
-              <div class="chip-row">
-                <span class="chip is-active">Adventure Sports <span class="count">5</span></span>
-                <span class="chip">Rental Car <span class="count">8</span></span>
-                <span class="chip">Pet Care <span class="count">3</span></span>
-                <span class="chip">Vacation Rental <span class="count">4</span></span>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>150% of trip cost</strong> <span class="filter-row__count">· 13 plans</span></div>
               </div>
-            </section>
-
-            <section class="filter-card">
-              <h3>Price Sensitivity</h3>
-              <div class="chip-row">
-                <span class="chip is-info">Best Value</span>
-                <span class="chip">$0–$99 <span class="count">2</span></span>
-                <span class="chip is-active">$100–$149 <span class="count">6</span></span>
-                <span class="chip">$150+ <span class="count">4</span></span>
+              <div class="filter-divider"></div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Cancel for Any Reason (CFAR)</strong> <span class="filter-row__count">12 plans</span></div>
               </div>
-            </section>
-          </div>
+            </div>
+          </section>
 
-          <div class="summary-bar">
-            <span class="chip is-active">Trip Cancellation</span>
-            <span class="chip is-active">Adventure Sports</span>
-            <span class="chip is-active">$100–$149</span>
-          </div>
+          <section class="filter-group">
+            <div class="filter-group__heading">
+              <div class="filter-group__title">
+                <span class="chevron" aria-hidden="true"></span>
+                <h3>Medical Coverage</h3>
+              </div>
+              <span class="info">i</span>
+            </div>
+            <div class="filter-list">
+              <div class="filter-row">
+                <span class="radio is-active"></span>
+                <div class="filter-row__label"><strong>All Amounts</strong></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio"></span>
+                <div class="filter-row__label"><strong>Minimum — up to $50,000</strong> <span class="filter-row__count">5 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio"></span>
+                <div class="filter-row__label"><strong>Basic — $50,000 and up</strong> <span class="filter-row__count">17 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio"></span>
+                <div class="filter-row__label"><strong>Recommended — $100,000+</strong> <span class="filter-row__count">13 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio"></span>
+                <div class="filter-row__label"><strong>Maximum — $250,000 and up</strong> <span class="filter-row__count">9 plans</span></div>
+              </div>
+              <div class="filter-divider"></div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Primary Only</strong> <span class="filter-row__count">16 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>PRE-EX Waivers</strong> <span class="filter-row__count">16 plans</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="filter-group">
+            <div class="filter-group__heading">
+              <div class="filter-group__title">
+                <span class="chevron" aria-hidden="true"></span>
+                <h3>Emergency Evacuation</h3>
+              </div>
+              <span class="info">i</span>
+            </div>
+            <div class="filter-list">
+              <div class="filter-row">
+                <span class="radio is-active"></span>
+                <div class="filter-row__label"><strong>All Amounts</strong></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio"></span>
+                <div class="filter-row__label"><strong>up to $150,000</strong> <span class="filter-row__count">1 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio"></span>
+                <div class="filter-row__label"><strong>$250,000</strong> <span class="filter-row__count">3 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio"></span>
+                <div class="filter-row__label"><strong>$500,000</strong> <span class="filter-row__count">6 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio"></span>
+                <div class="filter-row__label"><strong>$1,000,000</strong> <span class="filter-row__count">7 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="radio is-disabled"></span>
+                <div class="filter-row__label is-disabled"><strong>Unlimited</strong> <span class="filter-row__count is-disabled">0 plans</span></div>
+              </div>
+              <div class="filter-divider"></div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Primary Only</strong> <span class="filter-row__count">18 plans</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="filter-group">
+            <div class="filter-group__heading">
+              <div class="filter-group__title">
+                <span class="chevron" aria-hidden="true"></span>
+                <h3>Baggage + Delay Coverage</h3>
+              </div>
+              <span class="info">i</span>
+            </div>
+            <div class="filter-list">
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Travel Delay</strong></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Baggage Delay</strong></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Baggage Loss up to $750 total</strong> <span class="filter-row__count">3 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Baggage Loss $1000 total</strong> <span class="filter-row__count">4 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Baggage Loss $1500 to $2000 total</strong> <span class="filter-row__count">4 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Baggage Loss $2,500 total and more</strong> <span class="filter-row__count">7 plans</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="filter-group">
+            <div class="filter-group__heading">
+              <div class="filter-group__title">
+                <span class="chevron" aria-hidden="true"></span>
+                <h3>Other Coverages</h3>
+              </div>
+              <span class="info">i</span>
+            </div>
+            <div class="filter-list">
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Rental Car</strong> <span class="filter-row__count">16 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Vacation</strong> <span class="filter-row__count">2 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Cruise</strong> <span class="filter-row__count">4 plans</span></div>
+              </div>
+              <div class="filter-row">
+                <span class="checkbox"></span>
+                <div class="filter-row__label"><strong>Accidental Death</strong></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="filter-group">
+            <div class="filter-group__heading">
+              <div class="filter-group__title">
+                <span class="chevron chevron--up" aria-hidden="true"></span>
+                <h3>Insurance Providers</h3>
+              </div>
+              <span class="info">i</span>
+            </div>
+          </section>
         </aside>
 
         <section class="results">
-          <div class="results-header">
+          <div class="results-topbar">
             <div>
-              <h2>Filtered Results Preview</h2>
-              <p class="subtext">Example result cards showing how the updated filter system could respond.</p>
+              <strong style="display:block;color:var(--navy);font-size:24px;margin-bottom:6px;">Showing 5 Plans</strong>
+              <div class="results-note">Quote Results POC content with the updated filter style applied to the left rail.</div>
             </div>
-            <span class="badge">Updated UX</span>
+            <div class="results-actions">
+              <a class="pill-button" href="/work/version-index/">Back to Index</a>
+              <a class="pill-button" href="/work/QRPOC?_qid=1f192837-2b7a-66d0-b302-2f0757b9b2cb">Open Current POC</a>
+            </div>
           </div>
 
-          <div class="plan-grid">
-            <article class="plan">
-              <div class="plan-top">
-                <div class="plan-meta">
-                  <span class="badge">Best Match</span>
-                  <h3>Ultimate Explorer</h3>
-                  <p>Strong trip cancellation plus higher emergency medical coverage for active trips.</p>
+          <div class="plan-list">
+            <article class="plan-card">
+              <div class="plan-card__inner">
+                <div class="plan-brand">
+                  <div class="plan-brand__logo">Travelex</div>
+                  <div class="plan-brand__name">Insurance Services</div>
                 </div>
-                <div class="price">$129</div>
+                <div class="plan-body">
+                  <h2>Advantage</h2>
+                  <div class="rating">★★★★★ <span>(4540)</span></div>
+                  <div class="coverage-tags">
+                    <span class="coverage-tag">Medical $50,000</span>
+                    <span class="coverage-tag">Trip Cancellation 100%</span>
+                    <span class="coverage-tag">Baggage $750</span>
+                    <span class="coverage-tag">Travel Delay Included</span>
+                  </div>
+                </div>
+                <div class="plan-price">
+                  <div class="plan-price__amount">$109</div>
+                  <div class="plan-price__total">Total</div>
+                  <a class="select" href="#">Select</a>
+                </div>
               </div>
-              <div class="coverage-grid">
-                <div class="coverage">
+              <div class="plan-footer">
+                <div class="metric">
                   <strong>Medical</strong>
+                  <span>$50,000</span>
+                </div>
+                <div class="metric">
+                  <strong>Evacuation</strong>
                   <span>$250,000</span>
                 </div>
-                <div class="coverage">
-                  <strong>Trip Cancellation</strong>
-                  <span>100% Trip Cost</span>
+                <div class="metric">
+                  <strong>Trip Interruption</strong>
+                  <span>150%</span>
                 </div>
-                <div class="coverage">
-                  <strong>Adventure Sports</strong>
-                  <span>Included</span>
-                </div>
-                <div class="coverage">
-                  <strong>Rental Car</strong>
-                  <span>Optional</span>
+                <div class="metric">
+                  <strong>Baggage</strong>
+                  <span>$750</span>
                 </div>
               </div>
             </article>
 
-            <article class="plan">
-              <div class="plan-top">
-                <div class="plan-meta">
-                  <span class="badge">Best Value</span>
-                  <h3>Choice Plus</h3>
-                  <p>Balanced protection with a lower price point and solid delay coverage.</p>
+            <article class="plan-card">
+              <div class="plan-card__inner">
+                <div class="plan-brand">
+                  <div class="plan-brand__logo">Travelex</div>
+                  <div class="plan-brand__name">Insurance Services</div>
                 </div>
-                <div class="price">$112</div>
+                <div class="plan-body">
+                  <h2>Ultimate</h2>
+                  <div class="rating">★★★★★ <span>(4540)</span></div>
+                  <div class="coverage-tags">
+                    <span class="coverage-tag">Medical $250,000</span>
+                    <span class="coverage-tag">Trip Cancellation 150%</span>
+                    <span class="coverage-tag">CFAR Available</span>
+                    <span class="coverage-tag">Rental Car Optional</span>
+                  </div>
+                </div>
+                <div class="plan-price">
+                  <div class="plan-price__amount">$179</div>
+                  <div class="plan-price__total">Total</div>
+                  <a class="select" href="#">Select</a>
+                </div>
               </div>
-              <div class="coverage-grid">
-                <div class="coverage">
+              <div class="plan-footer">
+                <div class="metric">
+                  <strong>Medical</strong>
+                  <span>$250,000</span>
+                </div>
+                <div class="metric">
+                  <strong>Evacuation</strong>
+                  <span>$1,000,000</span>
+                </div>
+                <div class="metric">
+                  <strong>Trip Interruption</strong>
+                  <span>150%</span>
+                </div>
+                <div class="metric">
+                  <strong>Baggage</strong>
+                  <span>$2,500</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="plan-card">
+              <div class="plan-card__inner">
+                <div class="plan-brand">
+                  <div class="plan-brand__logo">IMG</div>
+                  <div class="plan-brand__name">Travel Insurance</div>
+                </div>
+                <div class="plan-body">
+                  <h2>iTravelInsured Choice</h2>
+                  <div class="rating">★★★★☆ <span>(4418)</span></div>
+                  <div class="coverage-tags">
+                    <span class="coverage-tag">Medical $100,000</span>
+                    <span class="coverage-tag">Trip Cancellation 100%</span>
+                    <span class="coverage-tag">PRE-EX Waiver</span>
+                    <span class="coverage-tag">Baggage Delay</span>
+                  </div>
+                </div>
+                <div class="plan-price">
+                  <div class="plan-price__amount">$79.84</div>
+                  <div class="plan-price__total">Total</div>
+                  <a class="select" href="#">Select</a>
+                </div>
+              </div>
+              <div class="plan-footer">
+                <div class="metric">
                   <strong>Medical</strong>
                   <span>$100,000</span>
                 </div>
-                <div class="coverage">
-                  <strong>Trip Cancellation</strong>
-                  <span>100% Trip Cost</span>
+                <div class="metric">
+                  <strong>Evacuation</strong>
+                  <span>$500,000</span>
                 </div>
-                <div class="coverage">
-                  <strong>Adventure Sports</strong>
-                  <span>Upgrade</span>
+                <div class="metric">
+                  <strong>Trip Interruption</strong>
+                  <span>150%</span>
                 </div>
-                <div class="coverage">
-                  <strong>Travel Delay</strong>
+                <div class="metric">
+                  <strong>Baggage</strong>
+                  <span>$1,500</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="plan-card">
+              <div class="plan-card__inner">
+                <div class="plan-brand">
+                  <div class="plan-brand__logo">Worldwide</div>
+                  <div class="plan-brand__name">Trip Protector</div>
+                </div>
+                <div class="plan-body">
+                  <h2>Worldwide Trip Protector</h2>
+                  <div class="rating">★★★★☆ <span>(2867)</span></div>
+                  <div class="coverage-tags">
+                    <span class="coverage-tag">Medical $250,000</span>
+                    <span class="coverage-tag">Cruise Friendly</span>
+                    <span class="coverage-tag">Rental Car</span>
+                    <span class="coverage-tag">Baggage $2,000</span>
+                  </div>
+                </div>
+                <div class="plan-price">
+                  <div class="plan-price__amount">$123</div>
+                  <div class="plan-price__total">Total</div>
+                  <a class="select" href="#">Select</a>
+                </div>
+              </div>
+              <div class="plan-footer">
+                <div class="metric">
+                  <strong>Medical</strong>
+                  <span>$250,000</span>
+                </div>
+                <div class="metric">
+                  <strong>Evacuation</strong>
+                  <span>$500,000</span>
+                </div>
+                <div class="metric">
+                  <strong>Trip Interruption</strong>
+                  <span>125%</span>
+                </div>
+                <div class="metric">
+                  <strong>Baggage</strong>
                   <span>$2,000</span>
                 </div>
               </div>
             </article>
 
-            <article class="plan">
-              <div class="plan-top">
-                <div class="plan-meta">
-                  <span class="badge">Premium Coverage</span>
-                  <h3>Voyager Elite</h3>
-                  <p>Higher medical ceilings and richer interruption benefits for larger itineraries.</p>
+            <article class="plan-card">
+              <div class="plan-card__inner">
+                <div class="plan-brand">
+                  <div class="plan-brand__logo">Trawick</div>
+                  <div class="plan-brand__name">International</div>
                 </div>
-                <div class="price">$147</div>
+                <div class="plan-body">
+                  <h2>Safe Travels Voyager</h2>
+                  <div class="rating">★★★★☆ <span>(3180)</span></div>
+                  <div class="coverage-tags">
+                    <span class="coverage-tag">Medical $500,000</span>
+                    <span class="coverage-tag">Adventure Sports</span>
+                    <span class="coverage-tag">Travel Delay</span>
+                    <span class="coverage-tag">Baggage $2,500+</span>
+                  </div>
+                </div>
+                <div class="plan-price">
+                  <div class="plan-price__amount">$142</div>
+                  <div class="plan-price__total">Total</div>
+                  <a class="select" href="#">Select</a>
+                </div>
               </div>
-              <div class="coverage-grid">
-                <div class="coverage">
+              <div class="plan-footer">
+                <div class="metric">
                   <strong>Medical</strong>
                   <span>$500,000</span>
                 </div>
-                <div class="coverage">
-                  <strong>Trip Cancellation</strong>
-                  <span>125% Trip Cost</span>
+                <div class="metric">
+                  <strong>Evacuation</strong>
+                  <span>$1,000,000</span>
                 </div>
-                <div class="coverage">
-                  <strong>Adventure Sports</strong>
-                  <span>Included</span>
+                <div class="metric">
+                  <strong>Trip Interruption</strong>
+                  <span>150%</span>
                 </div>
-                <div class="coverage">
-                  <strong>Pet Care</strong>
-                  <span>Included</span>
+                <div class="metric">
+                  <strong>Baggage</strong>
+                  <span>$2,500+</span>
                 </div>
               </div>
             </article>
           </div>
-
-          <p class="results-note">
-            This project is intentionally static and focused on filter UX exploration.
-            It is separate from the live quote-results application routes so you can share
-            and discuss filter-direction work independently.
-          </p>
         </section>
       </section>
     </main>
