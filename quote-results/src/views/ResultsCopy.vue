@@ -3,7 +3,7 @@
   import { useUserSessionStore } from '@/store/userSession';
   import { useContentStore } from '@/store/content';
   import SectionMain from '@/components/section/SectionMain.vue';
-  import SectionSidebar from '@/components/section/SectionSidebar.vue';
+  import SectionSidebarCopy from '@/components/section/SectionSidebarCopy.vue';
   import HeaderContainer from '@/components/header/HeaderContainer.vue';
   import ComparePageHeader from '@/components/base/Compare/ComparePageHeader.vue';
   import { useApiStore } from '@/store/api';
@@ -64,7 +64,7 @@
     class="quote-results-container grid md:grid-cols-10 gap-3 sm:gap-0 lg:gap-14"
   >
     <HeaderContainer v-if="!isMobile"></HeaderContainer>
-    <SectionSidebar></SectionSidebar>
+    <SectionSidebarCopy></SectionSidebarCopy>
     <SectionMain></SectionMain>
     <Loader v-if="displayLoader && determinedTheme" />
   </div>
