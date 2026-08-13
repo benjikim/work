@@ -37,11 +37,11 @@
   });
 
   const providerLabels = computed(() =>
-    apiStore.getCMSProvider.map((provider) => provider.name)
+    apiStore.cms.providers.map((provider) => provider.name)
   );
 
   const providerKeys = computed(() =>
-    apiStore.getCMSProvider.map((_, index) => `provider-${index}`)
+    apiStore.cms.providers.map((_, index) => `provider-${index}`)
   );
 
   const resetDefaultFilters = () => {
