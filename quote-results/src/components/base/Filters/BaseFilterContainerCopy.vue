@@ -66,6 +66,7 @@
   };
 
   const getFilterData = (key: string) => contentStore.getFilterData(key);
+  const isResultsCopyRoute = window.location.pathname.includes('/QRPOCCopy');
 
   const combineGroupedFilters = (filterGroups: string[][]) =>
     filterGroups.reduce(
@@ -174,8 +175,16 @@
   const isChecked = (filterKey: string) =>
     sessionStore.getSelectedFilters.includes(filterKey);
 
-  const isDisabled = (filterKey: string) =>
-    getNumberOfPlans(filterKey) === '0 plans';
+  const isDisabled = (filterKey: string) => {
+    if (
+      isResultsCopyRoute &&
+      filterKey.split('-')[0] === 'tripInterruption'
+    ) {
+      return false;
+    }
+
+    return getNumberOfPlans(filterKey) === '0 plans';
+  };
 
   const filterIncludedHandler = (checked: boolean, filterKey: string) => {
     const cfarFilters = apiStore.getFilters['cancelForAnyReasonOption-0'];
