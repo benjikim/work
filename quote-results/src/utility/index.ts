@@ -549,6 +549,7 @@ export function handleFilters(
   // f.e. [['aigd', 'tifpax'], ['aigd']]
   let arr = [] as string[][];
   const providerFiltersArr = [] as string[][];
+  const tripInterruptionFiltersArr = [] as string[][];
 
   const filterMap: Record<string, string[][]> = {
     medical: [],
@@ -565,6 +566,15 @@ export function handleFilters(
     if (filter.split('-')[0] === 'provider') {
       // Storing all provider filter into multi dimensional array.
       providerFiltersArr.push(Array.from(productFilters[filter]));
+      return;
+    }
+
+    if (
+      !themeStore.isThemeSoventure &&
+      window.location.pathname.includes('/QRPOCCopy') &&
+      category === 'tripInterruption'
+    ) {
+      tripInterruptionFiltersArr.push(filterValues);
       return;
     }
 
@@ -585,6 +595,15 @@ export function handleFilters(
   // Join all provider filter into arr since these can be multi selected.
   if (providerFiltersArr.length > 0) {
     arr.push(providerFiltersArr.reduce((acc, val) => acc.concat(val), []));
+  }
+
+  if (tripInterruptionFiltersArr.length > 0) {
+    arr.push(
+      tripInterruptionFiltersArr.reduce(
+        (acc, val) => acc.concat(val),
+        [] as string[]
+      )
+    );
   }
 
   if (themeStore.isThemeSoventure) {

@@ -67,6 +67,12 @@
 
   const getFilterData = (key: string) => contentStore.getFilterData(key);
 
+  const combineGroupedFilters = (filterGroups: string[][]) =>
+    filterGroups.reduce(
+      (accumulator, values) => accumulator.concat(values),
+      [] as string[]
+    );
+
   const getNumberOfPlans = (filterKey: string) => {
     let selectedFilters = [...sessionStore.getSelectedFilters];
     const productFilters = apiStore.getFilters;
@@ -127,11 +133,17 @@
     }
 
     const providerFiltersArr = [] as string[][];
+    const tripInterruptionFiltersArr = [] as string[][];
     selectedFilters.push(filterKey);
 
     let arr = [] as string[][];
 
     selectedFilters.forEach((selectedFilter: string) => {
+      if (selectedFilter.split('-')[0] === 'tripInterruption') {
+        tripInterruptionFiltersArr.push(Array.from(productFilters[selectedFilter]));
+        return;
+      }
+
       if (selectedFilter.split('-')[0] === 'provider') {
         providerFiltersArr.push(Array.from(productFilters[selectedFilter]));
         return;
@@ -143,7 +155,11 @@
     });
 
     if (providerFiltersArr.length > 0) {
-      arr.push(providerFiltersArr.reduce((acc, val) => acc.concat(val), []));
+      arr.push(combineGroupedFilters(providerFiltersArr));
+    }
+
+    if (tripInterruptionFiltersArr.length > 0) {
+      arr.push(combineGroupedFilters(tripInterruptionFiltersArr));
     }
 
     let setFilters = arr[0] || [];
