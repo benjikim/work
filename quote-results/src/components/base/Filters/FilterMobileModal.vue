@@ -2,6 +2,7 @@
   import { ChevronRightIcon } from '@heroicons/vue/24/solid';
   import { useUserSessionStore } from '@/store/userSession';
   import BaseFilterContainer from '@/components/base/Filters/BaseFilterContainer.vue';
+  import BaseFilterContainerCopy from '@/components/base/Filters/BaseFilterContainerCopy.vue';
   import { computed, watchEffect } from 'vue';
   import { useThemeStore } from '@/store/theme';
 
@@ -10,6 +11,9 @@
 
   const isMobile = computed(() => sessionStore.isMobileView);
   const isThemeIMT = computed(() => themeStore.isThemeIMT);
+  const isResultsCopyRoute = computed(() =>
+    window.location.pathname.includes('/QRPOCCopy')
+  );
 
   watchEffect(() => {
     const navHeader = document.querySelector('.header');
@@ -53,7 +57,16 @@
         </form>
       </div>
 
-      <BaseFilterContainer display-type="mobile" class="w-full p-5 content" />
+      <BaseFilterContainerCopy
+        v-if="isResultsCopyRoute"
+        display-type="mobile"
+        class="w-full p-5 content"
+      />
+      <BaseFilterContainer
+        v-else
+        display-type="mobile"
+        class="w-full p-5 content"
+      />
     </div>
     <!-- This creates a backdrop for the modal to enable us to close when clicked outside -->
     <div
