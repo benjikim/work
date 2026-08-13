@@ -577,10 +577,19 @@
   }
 
   .info-button {
-    border: 0;
-    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #0b67e3;
+    border-radius: 999px;
+    padding: 0;
+    background: #fff;
     color: #0b67e3;
-    font-size: 18px;
+    font-size: 15px;
+    font-weight: 700;
+    font-style: italic;
     line-height: 1;
     cursor: pointer;
   }
@@ -600,14 +609,13 @@
     align-items: center;
     gap: 14px;
     min-height: 34px;
-    margin-bottom: 8px;
     color: #212629;
     font-size: 15px;
     cursor: pointer;
   }
 
   .filter-row small {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 400;
   }
 
