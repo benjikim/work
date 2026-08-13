@@ -548,7 +548,7 @@ export const useContentStore = defineStore('content-store', {
           tripInterruption: {
             label: 'Trip Interruption',
             toolTipText:
-              'If your trip needs to be interrupted after departure for a specific, unforeseen, covered reason, the plans offer reimbursement up to the specified limit for the unused pre-paid, non-refundable trip costs you insured and have documented.',
+              'Trip Cancellation and Trip Interruption coverage can reimburse you for eligible, non-refundable expenses if you have to cancel your trip before departure or cut your trip short after it has started due to a covered reason.\n\nThe percentage represents the maximum amount of coverage available based on the insured trip cost. For example, 100% covers eligible expenses up to the trip cost, while 125% or 150% provides additional coverage above the trip cost for eligible expenses that may come up if the trip is interrupted.\n\nCancel for Any Reason (CFAR) provides additional flexibility by allowing you to cancel your trip for reasons that may not be covered under standard Trip Cancellation coverage. If eligibility requirements are met, it can reimburse a percentage of your insured, non-refundable trip cost.',
             checkBoxLabels: [
               '100% of Trip Cost',
               'Trip Cost + 25%',
