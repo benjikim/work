@@ -587,10 +587,10 @@
     padding: 0;
     background: #fff;
     color: #0b67e3;
-    font-family: 'Gamay SemiBold', 'Gamay', sans-serif;
+    font-family: 'Gamay', sans-serif;
     font-size: 12px;
-    font-weight: 700;
-    font-style: italic;
+    font-weight: 600;
+    font-style: normal;
     line-height: 1;
     cursor: pointer;
   }
