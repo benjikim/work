@@ -69,6 +69,114 @@ const getStaticDemoFFValues = (): FFValues => ({
   imt_20260121_pbm_clickthrough_buy_modal: false,
 });
 
+const STATIC_DEMO_PROVIDER_FALLBACKS: Record<
+  string,
+  { code: string; name: string }
+> = {
+  TIFPAX: { code: 'TI', name: 'Travel Insured International' },
+  GRELI: { code: 'CSA', name: 'Generali Global Assistance' },
+  WTELV: { code: 'WT', name: 'WorldTrips' },
+  WTESC: { code: 'WT', name: 'WorldTrips' },
+  WTEXP: { code: 'WT', name: 'WorldTrips' },
+  IMGPI: { code: 'IMG', name: 'International Medical Group' },
+  GBVC: { code: 'GB', name: 'GeoBlue' },
+  DTACC: { code: 'DT', name: 'Detour Insurance' },
+  GBVE: { code: 'GB', name: 'GeoBlue' },
+  GBTE: { code: 'GB', name: 'GeoBlue' },
+  ITILXP: { code: 'IMG', name: 'International Medical Group' },
+  GBTC: { code: 'GB', name: 'GeoBlue' },
+};
+
+const STATIC_DEMO_TYPE_FALLBACKS: Record<string, QuoteResult['type']> = {
+  IMGPI: 'Travel Medical',
+  GBVC: 'Travel Medical',
+  GBVE: 'Travel Medical',
+  GBTE: 'Travel Medical',
+  GBTC: 'Travel Medical',
+};
+
+const normalizeStaticDemoProduct = (
+  product: Partial<QuoteResult>
+): QuoteResult => {
+  const providerFallback =
+    STATIC_DEMO_PROVIDER_FALLBACKS[product.code || ''] || undefined;
+  const providerCode = product.provider?.code || providerFallback?.code || '';
+  const providerName = product.provider?.name || providerFallback?.name || '';
+
+  return {
+    available: product.available ?? false,
+    name: product.name || '',
+    code: product.code || '',
+    cost: {
+      base: product.cost?.base ?? 0,
+      amount: product.cost?.amount ?? {
+        type: 'Provider',
+        amount: product.cost?.base ?? 0,
+      },
+      taxes: product.cost?.taxes ?? {
+        type: 'Provincial',
+        amount: 0,
+      },
+    },
+    fees: product.fees ?? {
+      type: 'Provider',
+      amount: 0,
+    },
+    provider: product.provider ?? {
+      code: providerCode,
+      name: providerName,
+      logo: {
+        url: '',
+      },
+    },
+    revision: product.revision ?? 1,
+    certificate: product.certificate ?? {
+      url: '',
+    },
+    type:
+      product.type ||
+      STATIC_DEMO_TYPE_FALLBACKS[product.code || ''] ||
+      'Comprehensive',
+    options: Array.isArray(product.options) ? product.options : [],
+    clickthroughs: Array.isArray(product.clickthroughs)
+      ? product.clickthroughs
+      : [],
+    coverages: Array.isArray(product.coverages) ? product.coverages : [],
+    popularityRank: product.popularityRank ?? 999,
+    includedBenefits: Array.isArray(product.includedBenefits)
+      ? product.includedBenefits
+      : [],
+    ltc: Array.isArray(product.ltc) ? product.ltc : [],
+    additionalOptions: product.additionalOptions ?? {
+      secondary: false,
+      details: [],
+    },
+    reviewPeriod: Array.isArray(product.reviewPeriod)
+      ? product.reviewPeriod
+      : [],
+    rules: Array.isArray(product.rules) ? product.rules : [],
+    availability: Array.isArray(product.availability)
+      ? product.availability
+      : [],
+    coveredActivities: Array.isArray(product.coveredActivities)
+      ? product.coveredActivities
+      : [],
+  };
+};
+
+const normalizeStaticDemoResults = (
+  results: QuoteResults | Record<string, any>
+): QuoteResults => ({
+  ...results,
+  requestStatus: results.requestStatus ?? HTTP_REQUEST_STATES.NOT_STARTED,
+  metadata: results.metadata || {},
+  products: Array.isArray(results.products)
+    ? results.products.map((product: Partial<QuoteResult>) =>
+        normalizeStaticDemoProduct(product)
+      )
+    : [],
+});
+
 interface State {
   quote: {
     dataLoaded: boolean;
@@ -623,11 +731,12 @@ export const useApiStore = defineStore('api-store', {
           fetch(getStaticDemoUrl('demo-destinations.json')),
         ]);
 
-      const [detailsData, resultsData, destinationsData] = await Promise.all([
+      const [detailsData, rawResultsData, destinationsData] = await Promise.all([
         detailsResponse.json(),
         resultsResponse.json(),
         destinationsResponse.json(),
       ]);
+      const resultsData = normalizeStaticDemoResults(rawResultsData);
 
       this.setQuoteDetails({
         ...detailsData,
@@ -1305,8 +1414,11 @@ export const useApiStore = defineStore('api-store', {
         filters[key] = new Set();
       });
       plans.forEach((plan: any) => {
+        const planCoverages = Array.isArray(plan.coverages) ? plan.coverages : [];
+        const planOptions = Array.isArray(plan.options) ? plan.options : [];
+
         // Loop through coverages once instead of multiple findIndex calls
-        plan.coverages.forEach((coverage: any) => {
+        planCoverages.forEach((coverage: any) => {
           switch (coverage.id) {
             case 'tripCancellation':
               if (coverage.limits?.some((ele: any) => ele.valuePerTrip > 0)) {
@@ -1401,7 +1513,7 @@ export const useApiStore = defineStore('api-store', {
               break;
 
             case 'medical':
-              const hasMedicalOption = plan?.options.find(
+              const hasMedicalOption = planOptions.find(
                 (option: any) => option.id === 'medical' && option.selected
               );
 
@@ -1528,8 +1640,9 @@ export const useApiStore = defineStore('api-store', {
 
       // Loop through each available plan and set our list of filters.
       availableProducts.forEach((plan: QuoteResult) => {
+        const planCoverages = Array.isArray(plan.coverages) ? plan.coverages : [];
         // Loop through coverages once instead of multiple findIndex calls
-        plan.coverages.forEach((coverage) => {
+        planCoverages.forEach((coverage) => {
           switch (coverage.id) {
             case 'medical':
               const medicalValue = Number(

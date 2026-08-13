@@ -639,7 +639,12 @@ export const useUserSessionStore = defineStore('user-session-store', {
     setPlans(plans: QuoteResult[]): void {
       plans?.forEach((plan: QuoteResult) => {
         if (plan.available === true) {
-          const currOptions = plan.options.reduce(
+          const planOptions = Array.isArray(plan.options) ? plan.options : [];
+          const planCoverages = Array.isArray(plan.coverages)
+            ? plan.coverages
+            : [];
+
+          const currOptions = planOptions.reduce(
             (result: FormattedOption, option) => {
               const { id, value, displayName, ...rest } = option;
 
@@ -659,7 +664,7 @@ export const useUserSessionStore = defineStore('user-session-store', {
             {} as FormattedOption
           );
 
-          const currCoverages = plan.coverages.reduce(
+          const currCoverages = planCoverages.reduce(
             (result: FormattedCoverage, coverage) => {
               const { id, ...rest } = coverage;
 
