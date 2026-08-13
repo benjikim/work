@@ -148,7 +148,7 @@
   .form-input {
     &__label {
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 600;
       line-height: 18px;
       letter-spacing: 0px;
       text-align: left;

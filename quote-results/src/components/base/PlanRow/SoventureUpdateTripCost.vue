@@ -142,7 +142,7 @@
       border-radius: 6px;
       border: 1px solid #000;
       padding-left: 20px;
-      font-weight: 700;
+      font-weight: 600;
     }
   }
 
@@ -151,7 +151,7 @@
     left: 12px;
     top: 12px;
     color: #374151;
-    font-weight: 700;
+    font-weight: 600;
     z-index: 2;
     pointer-events: none;
   }
