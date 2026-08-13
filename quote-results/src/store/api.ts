@@ -39,7 +39,7 @@ import {
 } from '@/utility';
 import * as configcat from 'configcat-js';
 
-const STATIC_DEMO_QID = '1f192837-2b7a-66d0-b302-2f0757b9b2cb';
+const STATIC_DEMO_QID = '1f1964f4-94b3-62ec-ad3c-415ce827df76';
 const isPlanDetailsPocRoute = () =>
   window.location.pathname.includes('/QRPlanDetailsPOC');
 const isStaticDemoMode = () =>
