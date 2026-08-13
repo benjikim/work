@@ -1,6 +1,7 @@
 #quote-results-app {
   font-size: $base-font-size;
-  // We removed default font as wordpress will set our font to Gamay SemiBold
+  // Standalone builds need to set Gamay here because WordPress is not present
+  font-family: 'gamay', sans-serif;
   a {
     color: $imt-blue;
   }
@@ -72,6 +73,7 @@ html {
 
 body {
   background-color: #fff;
+  font-family: 'gamay', sans-serif;
 }
 
 // for wordpress... Wordpress has main element with id of main
