@@ -587,7 +587,7 @@
     padding: 0;
     background: #fff;
     color: #0b67e3;
-    font-family: 'Gamay', sans-serif;
+    font-family: 'gamay', sans-serif;
     font-size: 12px;
     font-weight: 600;
     font-style: normal;
