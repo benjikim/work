@@ -12,12 +12,14 @@
   );
 
   const utilityLinks = [
-    { label: 'Login', href: 'https://www.insuremytrip.com/login/' },
     { label: 'Contact Us', href: 'https://www.insuremytrip.com/contact/' },
   ];
 
   const primaryLinks = [
-    { label: 'Plans', href: 'https://www.insuremytrip.com/travel-insurance-plans/' },
+    {
+      label: 'Discover Insurance',
+      href: 'https://www.insuremytrip.com/travel-insurance-plans/',
+    },
     { label: 'Reviews & FAQs', href: 'https://www.insuremytrip.com/travel-insurance-reviews/' },
     { label: 'Resources', href: 'https://www.insuremytrip.com/travel-guidance/' },
     { label: 'Get Support', href: 'https://www.insuremytrip.com/service/' },
@@ -39,6 +41,7 @@
 
       <div class="compare-page-header__nav-group">
         <nav class="compare-page-header__utility-nav" aria-label="Utility">
+          <div class="compare-page-header__utility-spacer"></div>
           <a
             v-for="link in utilityLinks"
             :key="link.label"
@@ -71,7 +74,7 @@
           </a>
 
           <a class="compare-page-header__cta" :href="resultsHref">
-            Quote &amp; Compare
+            Start a Quote
           </a>
         </div>
       </div>
@@ -83,32 +86,33 @@
   .compare-page-header {
     background: #0c233c;
     color: #fff;
-    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
   }
 
   .compare-page-header__inner {
     align-items: center;
     display: flex;
-    gap: 48px;
-    height: 100px;
+    gap: 28px;
+    max-width: 1200px;
     justify-content: space-between;
     margin: 0 auto;
-    max-width: 1420px;
-    padding: 0 50px;
+    padding: 0 24px;
     width: 100%;
   }
 
   .compare-page-header__logo-link {
     align-items: center;
     display: inline-flex;
-    flex: 0 0 306px;
+    flex: 0 0 auto;
   }
 
   .compare-page-header__logo {
     display: block;
     filter: brightness(0) invert(1);
-    height: 52px;
-    width: 306px;
+    max-width: 100%;
+    width: 198px;
   }
 
   .compare-page-header__nav-group {
@@ -116,7 +120,7 @@
     flex: 1;
     flex-direction: column;
     align-items: flex-end;
-    gap: 17px;
+    gap: 0;
   }
 
   .compare-page-header__utility-nav,
@@ -127,17 +131,21 @@
   }
 
   .compare-page-header__utility-nav {
-    gap: 32px;
-    padding-bottom: 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    min-height: 34px;
+    width: 100%;
+  }
+
+  .compare-page-header__utility-spacer {
+    flex: 1;
   }
 
   .compare-page-header__utility-link {
-    color: #fff !important;
+    color: #f3f6f9 !important;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: 0;
-    line-height: 14.4px;
-    opacity: 0.88;
+    line-height: 1.4;
     text-decoration: none;
     text-transform: uppercase;
     transition:
@@ -147,21 +155,28 @@
 
   .compare-page-header__main-row {
     gap: 18px;
+    min-height: 76px;
+    width: 100%;
   }
 
   .compare-page-header__primary-nav {
-    gap: 18px;
+    align-items: center;
+    display: flex;
+    flex: 1;
+    gap: 42px;
+    justify-content: center;
   }
 
   .compare-page-header__primary-link {
     align-items: center;
     color: #fff !important;
     display: inline-flex;
+    font-family: 'Open Sans', sans-serif;
     font-size: 18px;
     font-weight: 700;
     gap: 6px;
     letter-spacing: 0;
-    line-height: 19.8px;
+    line-height: 1.3;
     text-decoration: none;
     transition:
       color 0.18s ease,
@@ -181,39 +196,38 @@
     color: #fff !important;
     cursor: pointer;
     display: inline-flex;
-    height: 28px;
+    height: 22px;
     justify-content: center;
     padding: 0;
     text-decoration: none;
     transition:
       color 0.18s ease,
       opacity 0.18s ease;
-    width: 20px;
+    width: 22px;
   }
 
   .compare-page-header__search-icon {
-    height: 20px;
-    width: 20px;
+    height: 22px;
+    width: 22px;
   }
 
   .compare-page-header__cta {
     align-items: center;
-    background: #77bb33;
-    border: 2px solid #77bb33;
+    background: #7bb832;
+    border: 0;
     color: #fff !important;
     display: inline-flex;
     font-size: 16px;
-    font-weight: 700;
-    height: 64px;
+    font-weight: 600;
+    height: 58px;
     justify-content: center;
-    letter-spacing: 2px;
-    min-width: 208px;
-    padding: 0 28px;
+    letter-spacing: 0;
+    min-width: 0;
+    padding: 0 26px;
     text-decoration: none;
     text-transform: uppercase;
     transition:
       background-color 0.18s ease,
-      border-color 0.18s ease,
       color 0.18s ease;
     white-space: nowrap;
   }
@@ -227,7 +241,6 @@
 
   .compare-page-header__cta:hover {
     background: #6cab2c;
-    border-color: #6cab2c;
     color: #fff !important;
   }
 </style>

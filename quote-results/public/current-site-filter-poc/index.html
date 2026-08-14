@@ -17,8 +17,9 @@
         --border-strong: #aab3bd;
         --surface: #ffffff;
         --surface-soft: #f7f9fc;
-        --page: #ffffff;
+        --page: linear-gradient(180deg, #f4f8fb 0%, #ffffff 100%);
         --orange: #ff9f2f;
+        --shadow: 0 20px 40px rgba(12, 35, 60, 0.08);
       }
 
       * {
@@ -36,112 +37,57 @@
         color: inherit;
       }
 
-      .topbar {
-        background: var(--navy);
-        color: #fff;
-      }
-
-      .topbar__utility,
-      .topbar__main {
-        width: min(100%, 1540px);
-        margin: 0 auto;
-        padding: 0 28px;
-      }
-
-      .topbar__utility {
-        min-height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-      }
-
-      .topbar__utility nav {
-        display: inline-flex;
-        gap: 32px;
-      }
-
-      .topbar__utility a {
-        color: #fff;
-        font-size: 12px;
-        font-weight: 700;
-        text-decoration: none;
-        text-transform: uppercase;
-      }
-
-      .topbar__main {
-        min-height: 76px;
-        display: flex;
-        align-items: center;
-        gap: 24px;
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-      }
-
-      .brand img {
-        width: 290px;
-        max-width: 100%;
-        display: block;
-        filter: brightness(0) invert(1);
-      }
-
-      .nav-links {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 34px;
-        margin-left: auto;
-      }
-
-      .nav-links a {
-        color: #fff;
-        font-size: 18px;
-        font-weight: 700;
-        text-decoration: none;
-      }
-
-      .nav-links .caret {
-        margin-left: 8px;
-        font-size: 12px;
-      }
-
-      .search {
-        color: #fff;
-        font-size: 28px;
-        line-height: 1;
-        text-decoration: none;
-      }
-
-      .start-quote {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 58px;
-        min-width: 268px;
-        padding: 0 22px;
-        background: var(--green);
-        color: #fff;
-        font-size: 15px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-decoration: none;
-        text-transform: uppercase;
-      }
-
       .page {
-        width: min(100%, 1540px);
+        width: min(100%, 960px);
         margin: 0 auto;
-        padding: 34px 30px 72px;
+        padding: 64px 24px 80px;
+      }
+
+      .hero {
+        margin-bottom: 36px;
+      }
+
+      .eyebrow {
+        margin: 0 0 12px;
+        color: #0354d6;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero-copy {
+        margin: 0;
+        max-width: 760px;
+        color: #607286;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      .grid {
+        display: grid;
+        gap: 20px;
       }
 
       .summary {
         display: grid;
-        grid-template-columns: minmax(0, 1.08fr) minmax(430px, 0.92fr);
-        gap: 56px;
+        grid-template-columns: 1fr;
+        gap: 18px;
         align-items: start;
+      }
+
+      .summary-card,
+      .destination-card,
+      .sidebar-shell,
+      .results-shell {
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .summary-card {
+        padding: 24px 24px 20px;
       }
 
       .summary-card h1 {
@@ -153,20 +99,12 @@
 
       .summary-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
       }
 
       .summary-item {
-        padding: 0 18px;
-        border-right: 2px solid var(--border-strong);
-      }
-
-      .summary-item:first-child {
-        padding-left: 0;
-      }
-
-      .summary-item:last-child {
-        padding-right: 0;
+        padding: 0 18px 0 0;
         border-right: 0;
       }
 
@@ -191,18 +129,16 @@
 
       .summary-divider {
         width: 100%;
-        max-width: 760px;
         height: 2px;
-        margin-top: 56px;
-        background: #41464f;
+        margin-top: 24px;
+        background: #e4ebf2;
       }
 
       .destination-card {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 160px;
+        grid-template-columns: minmax(0, 1fr) 180px;
         overflow: hidden;
-        border: 2px solid var(--blue);
-        border-radius: 8px;
+        border-color: #cfe0fb;
       }
 
       .destination-copy {
@@ -232,10 +168,18 @@
 
       .content {
         display: grid;
-        grid-template-columns: 430px minmax(0, 1fr);
-        gap: 34px;
-        margin-top: 52px;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin-top: 0;
         align-items: start;
+      }
+
+      .sidebar-shell {
+        padding: 24px;
+      }
+
+      .results-shell {
+        padding: 24px;
       }
 
       .filters-summary {
@@ -272,7 +216,7 @@
         justify-content: space-between;
         gap: 14px;
         padding-bottom: 12px;
-        border-bottom: 2px solid var(--border-strong);
+        border-bottom: 1px solid #dfe6ee;
       }
 
       .filter-group__title {
@@ -318,9 +262,9 @@
       }
 
       .filter-divider {
-        height: 2px;
+        height: 1px;
         margin: 8px 0 4px;
-        background: var(--border-strong);
+        background: #dfe6ee;
       }
 
       .filter-row {
@@ -392,7 +336,7 @@
 
       .results-controls {
         display: grid;
-        grid-template-columns: 1fr auto;
+        grid-template-columns: 1fr;
         align-items: center;
         gap: 18px;
         margin-bottom: 18px;
@@ -404,13 +348,14 @@
         align-items: center;
         justify-content: center;
         min-height: 56px;
-        border: 2px solid #dfe3e8;
+        border: 1px solid var(--border);
         border-radius: 999px;
         background: #fff;
         color: #28384d;
         font-size: 18px;
         font-weight: 700;
         text-decoration: none;
+        box-shadow: 0 10px 24px rgba(12, 35, 60, 0.06);
       }
 
       .sort-pill {
@@ -421,6 +366,7 @@
 
       .share-pill {
         min-width: 220px;
+        justify-self: start;
         gap: 18px;
       }
 
@@ -442,14 +388,15 @@
 
       .plan-card {
         border: 1px solid var(--border);
-        border-radius: 8px;
+        border-radius: 18px;
         background: #fff;
         overflow: hidden;
+        box-shadow: 0 14px 30px rgba(12, 35, 60, 0.06);
       }
 
       .plan-card__inner {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 220px;
+        grid-template-columns: 1fr;
         gap: 22px;
         padding: 16px 18px 14px;
       }
@@ -547,14 +494,14 @@
       .plan-price {
         display: grid;
         align-content: start;
-        justify-items: stretch;
+        justify-items: start;
         gap: 14px;
       }
 
       .plan-price__amount {
         display: flex;
         align-items: flex-start;
-        justify-content: flex-end;
+        justify-content: flex-start;
         color: #000;
         font-size: 42px;
         font-weight: 800;
@@ -613,6 +560,34 @@
         text-transform: uppercase;
       }
 
+      .section-title {
+        margin: 0 0 10px;
+        color: var(--navy);
+        font-size: 28px;
+        line-height: 1.15;
+      }
+
+      .section-copy {
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .meta {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        margin-bottom: 16px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: #edf4ff;
+        color: #0354d6;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
       .sr-only {
         position: absolute;
         width: 1px;
@@ -629,11 +604,13 @@
         display: none;
         padding: 36px 28px;
         border: 1px solid var(--border);
-        border-radius: 10px;
+        border-radius: 18px;
         color: #3b4b5f;
         font-size: 18px;
         font-weight: 700;
         text-align: center;
+        background: #fff;
+        box-shadow: 0 14px 30px rgba(12, 35, 60, 0.06);
       }
 
       .empty-state.is-visible {
@@ -644,37 +621,10 @@
         display: block;
       }
 
-      @media (max-width: 1320px) {
-        .summary,
-        .content {
-          grid-template-columns: 1fr;
-        }
-
-        .summary-divider {
-          max-width: none;
-        }
-      }
-
       @media (max-width: 1024px) {
-        .topbar__main,
-        .nav-links {
-          display: grid;
-          gap: 20px;
-        }
-
-        .nav-links {
-          justify-content: start;
-          margin-left: 0;
-        }
-
         .summary-grid,
         .plan-metrics {
           grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .plan-card__inner,
-        .results-controls {
-          grid-template-columns: 1fr;
         }
 
         .destination-card {
@@ -683,9 +633,7 @@
       }
 
       @media (max-width: 720px) {
-        .page,
-        .topbar__utility,
-        .topbar__main {
+        .page {
           padding-left: 20px;
           padding-right: 20px;
         }
@@ -701,7 +649,6 @@
 
         .summary-item {
           padding: 0 0 18px;
-          border-right: 0;
           border-bottom: 1px solid var(--border);
         }
 
@@ -715,43 +662,27 @@
           grid-template-columns: 1fr;
         }
 
-        .brand img {
-          width: 240px;
-        }
-
-        .start-quote {
-          min-width: 0;
-          width: 100%;
+        .content {
+          grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
-    <header class="topbar">
-      <div class="topbar__utility">
-        <nav aria-label="Utility">
-          <a href="#">Login</a>
-          <a href="#">Contact Us</a>
-        </nav>
-      </div>
-      <div class="topbar__main">
-        <a class="brand" href="/work/QRPOC?_qid=1f192837-2b7a-66d0-b302-2f0757b9b2cb" aria-label="InsureMyTrip">
-          <img src="/work/assets/logo.svg" alt="InsureMyTrip" />
-        </a>
-        <nav class="nav-links" aria-label="Primary">
-          <a href="#">Plans <span class="caret">⌄</span></a>
-          <a href="#">Reviews &amp; FAQs <span class="caret">⌄</span></a>
-          <a href="#">Resources <span class="caret">⌄</span></a>
-          <a href="#">Get Support <span class="caret">⌄</span></a>
-        </nav>
-        <a class="search" href="#" aria-label="Search">⌕</a>
-        <a class="start-quote" href="/work/QRPOC?_qid=1f192837-2b7a-66d0-b302-2f0757b9b2cb">Quote &amp; Compare</a>
-      </div>
-    </header>
-
     <main class="page">
-      <section class="summary">
-        <div class="summary-card">
+      <section class="hero">
+        <p class="eyebrow">Current Design</p>
+        <h1>Current Site + Updated Filters</h1>
+        <p class="hero-copy">
+          A hosted concept that applies the updated grouped filter treatment to the
+          quote-results experience, but uses the same compact page size, card system,
+          and overall layout style as the rest of the `/work/` project hub.
+        </p>
+      </section>
+
+      <section class="grid">
+        <article class="summary-card">
+          <div class="meta">Quote Summary</div>
           <h1>Your Quote Results</h1>
           <div class="summary-grid">
             <div class="summary-item">
@@ -772,10 +703,11 @@
             </div>
           </div>
           <div class="summary-divider" aria-hidden="true"></div>
-        </div>
+        </article>
 
-        <aside class="destination-card">
+        <article class="destination-card">
           <div class="destination-copy">
+            <div class="meta">Destination</div>
             <h2>France</h2>
             <p>
               France offers endless excitement, but experienced travelers know
@@ -784,11 +716,17 @@
             </p>
           </div>
           <div class="destination-media" aria-hidden="true"></div>
-        </aside>
+        </article>
       </section>
 
       <section class="content">
-        <aside aria-label="Updated filters on current site design">
+        <aside class="sidebar-shell" aria-label="Updated filters on current site design">
+          <div class="meta">Filters</div>
+          <h2 class="section-title">Updated Filter Groups</h2>
+          <p class="section-copy">
+            This panel keeps the grouped filter concept active while matching the
+            hosted `/work/` card styling and overall page scale.
+          </p>
           <div class="filters-summary">
             <strong id="results-count">Showing 22 Plans</strong>
             <a href="#" id="reset-filters">RESET FILTERS <span id="reset-filters-copy">(Show all 22 Plans)</span></a>
@@ -885,7 +823,13 @@
           </section>
         </aside>
 
-        <section>
+        <section class="results-shell">
+          <div class="meta">Results</div>
+          <h2 class="section-title">Comprehensive Plans</h2>
+          <p class="section-copy">
+            The full comprehensive plan set is rendered from the local demo dataset,
+            and the filters on the left update this list live.
+          </p>
           <div class="results-controls">
             <a class="sort-pill" href="#"><span class="caret">⌄</span> Most Popular</a>
             <a class="share-pill" href="#"><span class="caret">⌄</span> ↥</a>

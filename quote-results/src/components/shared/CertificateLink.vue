@@ -62,7 +62,7 @@
     :data-cy="dataCy"
     @click="handleClick"
     :disabled="loading"
-    class="text-blue-600 hover:text-blue-800 block w-full"
+    class="text-blue-600 hover:text-blue-800 block w-full text-left"
     :class="{ uppercase: isComparePage }"
   >
     <template v-if="isComparePage">

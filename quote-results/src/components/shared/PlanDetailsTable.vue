@@ -163,11 +163,15 @@
           v-for="coverage in section.coverages"
           :key="coverage.key"
         >
-          <td class="text-xs flex justify-between snap-center">
-            <span class="font-bold text-[#878787] uppercase pr-1"
-              >{{ coverage.label }}
-            </span>
-            <CoverageLabelToolTip :tool-tip-text="coverage.toolTipText" />
+          <td class="text-xs snap-center">
+            <CoverageLabelToolTip
+              :tool-tip-text="coverage.toolTipText"
+              :underline-label="true"
+            >
+              <span class="font-bold text-[#878787] uppercase pr-1">
+                {{ coverage.label }}
+              </span>
+            </CoverageLabelToolTip>
           </td>
           <CoverageTableRows
             :plan-code="plan.code"

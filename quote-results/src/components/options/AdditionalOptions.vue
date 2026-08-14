@@ -5,8 +5,6 @@
   import { useThemeStore } from '@/store/theme';
   import Option from '@/components/options/Option.vue';
   import { FormattedOption } from '@/types';
-  import { event } from 'vue-gtag';
-  import { GAObject } from '@/types';
 
   const contentStore = useContentStore();
   const sessionStore = useUserSessionStore();
@@ -62,16 +60,6 @@
 
   const isModeAnnual = computed(() => themeStore.isModeAnnual);
 
-  const handleDeluxeUpgradeClick = () => {
-    event('plan_action_deluxe_upgrade_click', {
-      hierarchical_layer_1: 'Deluxe Upgrade',
-      hierarchical_layer_2: `Plan Code ${props.planCode}`,
-      hierarchical_layer_3: 'Annual Quote Results',
-    } as GAObject);
-
-    sessionStore.setMoreInfoModalKey('deluxeUpgrade');
-    sessionStore.setMoreInfoModalOpen(true);
-  };
 </script>
 
 <template>
@@ -94,14 +82,26 @@
             :option-key="optionId"
             :option-location="optionLocation"
           />
-          <button
+          <div
             v-if="optionId === 'DeluxeUpgrade' && isModeAnnual"
             :data-cy="`option-${optionId}__${optionLocation}-${planCode}`"
-            class="text-xs text-action-primary font-bold btn btn-link capitalize p-0 tracking-normal"
-            @click="handleDeluxeUpgradeClick"
+            class="annual-deluxe-copy"
           >
-            What Does Deluxe Upgrade Include?
-          </button>
+            <ul>
+              <li>
+                <strong>Increase Trip delay coverage</strong>
+                <span>5+ hours: $100 per day; $500 per person/per trip</span>
+              </li>
+              <li>
+                <strong>Increase Emergency Medical expenses</strong>
+                <span>$25,000 per person/per trip</span>
+              </li>
+              <li>
+                <strong>Increase Emergency Medical Evacuation / Repatriation</strong>
+                <span>$250,000 per person/per trip</span>
+              </li>
+            </ul>
+          </div>
         </template>
       </div>
     </div>
@@ -111,5 +111,38 @@
 <style lang="scss">
   .form-checkbox input {
     background-color: white;
+  }
+
+  .annual-deluxe-copy {
+    padding-top: 8px;
+    color: #2a2a2a;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: left;
+    align-self: flex-start;
+    width: 100%;
+  }
+
+  .annual-deluxe-copy ul {
+    margin: 0;
+    padding-left: 18px;
+    text-align: left;
+  }
+
+  .annual-deluxe-copy li {
+    margin: 0 0 10px;
+    text-align: left;
+  }
+
+  .annual-deluxe-copy li:last-child {
+    margin-bottom: 0;
+  }
+
+  .annual-deluxe-copy span {
+    display: block;
+  }
+
+  .annual-deluxe-copy strong {
+    font-weight: 600;
   }
 </style>
