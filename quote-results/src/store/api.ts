@@ -42,12 +42,27 @@ import * as configcat from 'configcat-js';
 const STATIC_DEMO_QID = '1f1964f4-94b3-62ec-ad3c-415ce827df76';
 const isPlanDetailsPocRoute = () =>
   window.location.pathname.includes('/QRPlanDetailsPOC');
+const isAnnualResultsCopyRoute = () =>
+  window.location.pathname.includes('/annual-results-copy');
 const isStaticDemoMode = () =>
   import.meta.env.VITE_STATIC_DEMO === 'true' ||
   window.location.hostname.endsWith('github.io');
 
 const getStaticDemoUrl = (filename: string) =>
   `${import.meta.env.BASE_URL}${filename}`;
+
+const getStaticDemoFilenames = () =>
+  isAnnualResultsCopyRoute()
+    ? {
+        details: 'demo-annual-quote-details.json',
+        results: 'demo-annual-quote-results.json',
+        destinations: 'demo-destinations.json',
+      }
+    : {
+        details: 'demo-quote-details.json',
+        results: 'demo-quote-results.json',
+        destinations: 'demo-destinations.json',
+      };
 
 const getStaticDemoFFValues = (): FFValues => ({
   cms_20250303_soventure_theme_us_release: false,
@@ -726,9 +741,9 @@ export const useApiStore = defineStore('api-store', {
 
       const [detailsResponse, resultsResponse, destinationsResponse] =
         await Promise.all([
-          fetch(getStaticDemoUrl('demo-quote-details.json')),
-          fetch(getStaticDemoUrl('demo-quote-results.json')),
-          fetch(getStaticDemoUrl('demo-destinations.json')),
+          fetch(getStaticDemoUrl(getStaticDemoFilenames().details)),
+          fetch(getStaticDemoUrl(getStaticDemoFilenames().results)),
+          fetch(getStaticDemoUrl(getStaticDemoFilenames().destinations)),
         ]);
 
       const [detailsData, rawResultsData, destinationsData] = await Promise.all([
