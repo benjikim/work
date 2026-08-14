@@ -1,5 +1,12 @@
 <script setup lang="ts">
-  import { computed, onBeforeMount, onMounted, ref, watch } from 'vue';
+  import {
+    computed,
+    onBeforeMount,
+    onBeforeUnmount,
+    onMounted,
+    ref,
+    watch,
+  } from 'vue';
   import { event } from 'vue-gtag';
   import { useApiStore } from '@/store/api';
   import { useContentStore } from '@/store/content';
@@ -7,6 +14,7 @@
   import { useUserSessionStore } from '@/store/userSession';
   import Loader from '@/components/shared/Loader.vue';
   import PlanDetailsTable from '@/components/shared/PlanDetailsTable.vue';
+  import CoverageLabelToolTip from '@/components/shared/CoverageLabelToolTip.vue';
   import EditTripModal from '@/components/header/EditTripModal.vue';
   import AnnualEligibilityModal from '@/components/eligibility/AnnualEligibilityModal.vue';
   import MoreInfoModal from '@/components/shared/MoreInfoModal.vue';
@@ -24,11 +32,75 @@
 
   const isReady = ref(false);
   const isMobileWhyChooseOpen = ref(false);
+  const annualPlanCardWrapRef = ref<HTMLElement | null>(null);
+  const annualPlanCardSummaryRef = ref<HTMLElement | null>(null);
+  const annualPlanCardTableRef = ref<HTMLElement | null>(null);
+  const isAnnualPlanCardScrolled = ref(false);
+  let annualPlanCardScrollFrame: number | null = null;
+  const annualAdditionalCoverageOptions = [
+    {
+      label: 'Cancel for Any Reason',
+      toolTipText:
+        'Coverage that allows you to cancel your trip for any reason, provided you meet all the requirements of the benefit. This is a pre-departure benefit.',
+    },
+    {
+      label: 'Interrupt for Any Reason',
+      toolTipText:
+        'Coverage that allows you to interrupt your trip for any reason, provided you meet all the requirements of the benefit. This is a post-departure benefit.',
+    },
+    {
+      label: 'Financial Default',
+      toolTipText:
+        'Coverage for trip cancellation or interruption that is due to the bankruptcy of your travel supplier.',
+    },
+    {
+      label: 'Vacation Rental Damage',
+      toolTipText: 'Property damage protection while renting a vacation home.',
+    },
+    {
+      label: 'Pre-Existing Condition Waiver',
+      toolTipText:
+        'Most plans have exclusions for medical problems that result from pre-existing conditions. If you purchase this waiver, you will not be subject to exclusions based on pre-existing conditions.',
+    },
+  ];
 
   const updateScreenResize = () => {
     sessionStore.setIsSM(window.matchMedia('(max-width: 640px)').matches);
     sessionStore.setIsMobile(window.matchMedia('(max-width: 768px)').matches);
     sessionStore.setIsLG(window.matchMedia('(min-width: 1024px)').matches);
+  };
+
+  const updateAnnualPlanCardStickyState = () => {
+    if (
+      !annualPlanCardWrapRef.value ||
+      !annualPlanCardSummaryRef.value ||
+      !annualPlanCardTableRef.value ||
+      sessionStore.isMobileView
+    ) {
+      isAnnualPlanCardScrolled.value = false;
+      return;
+    }
+
+    const wrapRect = annualPlanCardWrapRef.value.getBoundingClientRect();
+    const summaryRect = annualPlanCardSummaryRef.value.getBoundingClientRect();
+    const tableRect = annualPlanCardTableRef.value.getBoundingClientRect();
+    const stickyTop = 0;
+    const isStickyActive =
+      wrapRect.top <= stickyTop && wrapRect.bottom > summaryRect.height + stickyTop;
+    const isContentBehindSummary = tableRect.top < summaryRect.bottom - 1;
+
+    isAnnualPlanCardScrolled.value = isStickyActive && isContentBehindSummary;
+  };
+
+  const queueAnnualPlanCardStickyState = () => {
+    if (annualPlanCardScrollFrame !== null) {
+      cancelAnimationFrame(annualPlanCardScrollFrame);
+    }
+
+    annualPlanCardScrollFrame = window.requestAnimationFrame(() => {
+      updateAnnualPlanCardStickyState();
+      annualPlanCardScrollFrame = null;
+    });
   };
 
   onBeforeMount(async () => {
@@ -65,6 +137,22 @@
     contentStore.setCoverageLimitMap();
     contentStore.setPlanDetailsCoverageLimitMap();
     isReady.value = true;
+    queueAnnualPlanCardStickyState();
+    window.addEventListener('scroll', queueAnnualPlanCardStickyState, {
+      passive: true,
+    });
+    window.addEventListener('resize', queueAnnualPlanCardStickyState);
+  });
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', updateScreenResize);
+    window.removeEventListener('scroll', queueAnnualPlanCardStickyState);
+    window.removeEventListener('resize', queueAnnualPlanCardStickyState);
+
+    if (annualPlanCardScrollFrame !== null) {
+      cancelAnimationFrame(annualPlanCardScrollFrame);
+      annualPlanCardScrollFrame = null;
+    }
   });
 
   const displayLoader = computed(() => apiStore.getLoaderState);
@@ -141,6 +229,10 @@
     if (!newVal && oldVal) {
       setTimeout(initResellerRatings, 500);
     }
+  });
+
+  watch([isMobile, plan], () => {
+    queueAnnualPlanCardStickyState();
   });
 
   const openMobileWhyChoose = () => {
@@ -282,18 +374,66 @@
               <h3>Need help choosing?</h3>
               <p>Our licensed agents are here to help.</p>
               <a href="tel:8004874722">800-487-4722</a>
+
+              <a
+                class="annual-sidebar__promo"
+                href="https://benjikim.github.io/work/previous-site-20260323/compare-plans.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div class="annual-sidebar__promo-top">
+                  <span class="annual-sidebar__promo-icon" aria-hidden="true">$</span>
+                  <h3>Lowest Prices Anywhere</h3>
+                </div>
+
+                <div class="annual-sidebar__promo-body">
+                  <h4>Why Prices Are the Same Everywhere</h4>
+                  <p>
+                    Travel insurance prices are regulated by state law. Because of this,
+                    insurers must charge the same price for the same plan, whether you
+                    buy it directly from the provider or through a comparison site.
+                  </p>
+
+                  <div class="annual-sidebar__promo-divider"></div>
+
+                  <h4>Added Support With InsureMyTrip</h4>
+
+                  <div class="annual-sidebar__promo-support">
+                    <p>
+                      Free with every plan, get access to licensed insurance pros who
+                      explain your coverage, guide you through claims, and answer your
+                      questions.
+                    </p>
+
+                    <div class="annual-sidebar__promo-assist">
+                      <img
+                        class="annual-sidebar__promo-assist-logo"
+                        src="https://benjikim.github.io/work/previous-site-20260323/imt-assist-logo.svg"
+                        alt="IMT Assist"
+                      />
+                      <span class="annual-sidebar__promo-button">Learn More</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
             </div>
           </aside>
 
-          <section class="annual-plan-card-wrap">
+          <section ref="annualPlanCardWrapRef" class="annual-plan-card-wrap">
             <div class="annual-plan-card">
-              <div class="annual-plan-card__summary">
-              <div class="annual-plan-card__brand">
-                <img :src="planLogo" :alt="`${plan.provider.name} logo`" />
-                <div class="annual-plan-card__title-group">
-                  <h2>{{ plan.name }}</h2>
+              <div
+                ref="annualPlanCardSummaryRef"
+                class="annual-plan-card__summary"
+                :class="{
+                  'annual-plan-card__summary--shadow': isAnnualPlanCardScrolled,
+                }"
+              >
+                <div class="annual-plan-card__brand">
+                  <img :src="planLogo" :alt="`${plan.provider.name} logo`" />
+                  <div class="annual-plan-card__title-group">
+                    <h2>{{ plan.name }}</h2>
+                  </div>
                 </div>
-              </div>
 
                 <div class="annual-plan-card__pricing">
                   <div class="annual-plan-card__amount" v-if="currentCost">
@@ -314,20 +454,140 @@
                 </div>
               </div>
 
-              <div class="annual-plan-card__table">
+              <div ref="annualPlanCardTableRef" class="annual-plan-card__table">
                 <PlanDetailsTable :plan="plan" />
               </div>
             </div>
 
-            <p class="annual-plan-card__footer-note">
-              Don’t see the coverage you need?
-              <a href="https://www.insuremytrip.com/annual-travel-insurance/" target="_blank" rel="noreferrer">
+            <div class="annual-additional-coverage-note">
+              <p class="annual-additional-coverage-note__title">
+                Don’t see the coverage you need?
+              </p>
+              <p class="annual-additional-coverage-note__copy">
+                Some benefits are available only with select single-trip plans.
+              </p>
+              <p class="annual-additional-coverage-note__list">
+                <template
+                  v-for="(coverage, index) in annualAdditionalCoverageOptions"
+                  :key="coverage.label"
+                >
+                  <CoverageLabelToolTip
+                    :tool-tip-text="coverage.toolTipText"
+                    :underline-label="true"
+                  >
+                    <span class="annual-additional-coverage-note__item">
+                      {{ coverage.label }}
+                    </span>
+                  </CoverageLabelToolTip>
+                  <span
+                    v-if="index < annualAdditionalCoverageOptions.length - 1"
+                    class="annual-additional-coverage-note__separator"
+                  >
+                    ·
+                  </span>
+                </template>
+              </p>
+              <a
+                class="annual-additional-coverage-note__link"
+                href="https://www.insuremytrip.com/travel-insurance/quote/"
+                target="_blank"
+                rel="noreferrer"
+              >
                 Explore more options.
               </a>
-            </p>
+            </div>
+
           </section>
         </section>
       </main>
+
+      <footer class="annual-footer">
+        <div class="annual-footer__inner">
+          <div class="annual-footer__top">
+            <div class="annual-footer__brand">
+              <a
+                class="annual-footer__brand-link"
+                href="https://www.insuremytrip.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img :src="siteLogo" alt="InsureMyTrip" />
+              </a>
+            </div>
+
+            <div class="annual-footer__links">
+              <div class="annual-footer__link-column">
+                <a href="https://www.insuremytrip.com/about-us/" target="_blank" rel="noreferrer">About Us</a>
+                <a href="https://www.insuremytrip.com/media-center/" target="_blank" rel="noreferrer">Media Center</a>
+                <a href="https://www.insuremytrip.com/affiliate-program/" target="_blank" rel="noreferrer">Affiliate Program</a>
+                <a href="https://www.insuremytrip.com/student-travel-insurance/" target="_blank" rel="noreferrer">Academic Travel</a>
+              </div>
+              <div class="annual-footer__link-column">
+                <a href="https://www.insuremytrip.com/travel-insurance-plans/" target="_blank" rel="noreferrer">Explore Plans</a>
+                <a href="https://www.insuremytrip.com/travel-insurance-providers/" target="_blank" rel="noreferrer">Explore Providers</a>
+                <a href="https://www.insuremytrip.com/traveler-guidance/" target="_blank" rel="noreferrer">Traveler Guidance</a>
+                <a href="https://www.insuremytrip.com/faq/" target="_blank" rel="noreferrer">FAQs</a>
+              </div>
+              <div class="annual-footer__link-column">
+                <a href="https://www.insuremytrip.com/service/" target="_blank" rel="noreferrer">Services</a>
+                <a href="https://www.insuremytrip.com/imt-assist/" target="_blank" rel="noreferrer">IMT Assist</a>
+                <a href="https://www.insuremytrip.com/employment/" target="_blank" rel="noreferrer">Employment</a>
+                <a href="https://www.insuremytrip.com/contact/" target="_blank" rel="noreferrer">Contact Us</a>
+              </div>
+            </div>
+
+            <div class="annual-footer__support">
+              <a
+                class="annual-footer__message"
+                href="https://www.insuremytrip.com/contact/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Message Us
+              </a>
+              <a class="annual-footer__phone" href="tel:8442761214">
+                844-276-1214
+              </a>
+            </div>
+          </div>
+
+          <div class="annual-footer__bottom">
+            <div class="annual-footer__meta">
+              <p class="annual-footer__copyright">
+                @ 2000-2026 IMT Services, LLC.
+              </p>
+              <a
+                class="annual-footer__policy"
+                href="https://www.insuremytrip.com/privacy-policy/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Privacy/Cookie/Legal/Security Policy
+              </a>
+              <a
+                class="annual-footer__privacy-choices"
+                href="https://www.insuremytrip.com/privacy-policy/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span>Your Privacy Choices</span>
+                <span class="annual-footer__privacy-icon" aria-hidden="true">
+                  <span class="annual-footer__privacy-pill"></span>
+                  <span class="annual-footer__privacy-check"></span>
+                </span>
+              </a>
+            </div>
+
+            <div class="annual-footer__social">
+              <a class="annual-footer__social-link" href="https://www.instagram.com/insuremytrip/" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a>
+              <a class="annual-footer__social-link" href="https://www.facebook.com/InsureMyTrip" target="_blank" rel="noreferrer" aria-label="Facebook">f</a>
+              <a class="annual-footer__social-link" href="https://www.youtube.com/user/InsureMyTrip" target="_blank" rel="noreferrer" aria-label="YouTube">▶</a>
+              <a class="annual-footer__social-link" href="https://www.pinterest.com/insuremytrip/" target="_blank" rel="noreferrer" aria-label="Pinterest">p</a>
+              <a class="annual-footer__social-link" href="https://x.com/insuremytrip" target="_blank" rel="noreferrer" aria-label="X">X</a>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       <div
         v-if="isMobile && isMobileWhyChooseOpen"
@@ -621,6 +881,255 @@
     display: none;
   }
 
+  .annual-footer {
+    background: #0c233c;
+    color: #fff;
+    margin-top: 48px;
+    padding: 44px 0 36px;
+  }
+
+  .annual-footer__inner {
+    width: min(1185px, calc(100% - 40px));
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+  }
+
+  .annual-footer__top {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 28px;
+  }
+
+  .annual-footer__brand,
+  .annual-footer__links,
+  .annual-footer__support {
+    position: relative;
+    min-height: 186px;
+    padding-top: 20px;
+  }
+
+  .annual-footer__brand {
+    flex: 0 0 26%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .annual-footer__brand::after,
+  .annual-footer__links::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -14px;
+    width: 1px;
+    height: 186px;
+    background: rgba(255, 255, 255, 0.55);
+  }
+
+  .annual-footer__brand-link {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .annual-footer__brand-link img {
+    width: 344px;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+
+  .annual-footer__links {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    column-gap: 34px;
+    padding-left: 34px;
+    padding-right: 34px;
+  }
+
+  .annual-footer__link-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .annual-footer__links a,
+  .annual-footer__links a:visited,
+  .annual-footer__links a:hover,
+  .annual-footer__links a:active {
+    color: #fff;
+    text-decoration: none;
+    font-family: 'gamay', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    font-weight: 500;
+  }
+
+  .annual-footer__support {
+    flex: 0 0 230px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 44px;
+    text-align: center;
+    padding-left: 34px;
+  }
+
+  .annual-footer__message,
+  .annual-footer__message:visited,
+  .annual-footer__message:hover,
+  .annual-footer__message:active {
+    color: #fff;
+    text-decoration: none;
+    font-family: 'gamay', sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .annual-footer__phone,
+  .annual-footer__phone:visited,
+  .annual-footer__phone:hover,
+  .annual-footer__phone:active {
+    color: #fff;
+    text-decoration: none;
+    font-family: 'gamay', sans-serif;
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .annual-footer__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .annual-footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    align-items: center;
+  }
+
+  .annual-footer__copyright {
+    margin: 0;
+    color: #fff;
+    font-family: 'gamay', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .annual-footer__policy,
+  .annual-footer__policy:visited,
+  .annual-footer__policy:hover,
+  .annual-footer__policy:active {
+    color: #fff;
+    text-decoration: none;
+    font-family: 'gamay', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .annual-footer__privacy-choices,
+  .annual-footer__privacy-choices:visited,
+  .annual-footer__privacy-choices:hover,
+  .annual-footer__privacy-choices:active {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-family: 'gamay', sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .annual-footer__privacy-icon {
+    position: relative;
+    width: 58px;
+    height: 24px;
+    border-radius: 999px;
+    background: #0d66ff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .annual-footer__privacy-pill {
+    position: absolute;
+    left: 4px;
+    top: 3px;
+    width: 29px;
+    height: 18px;
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .annual-footer__privacy-check {
+    position: absolute;
+    left: 14px;
+    top: 6px;
+    width: 11px;
+    height: 6px;
+    border-left: 2px solid #0d66ff;
+    border-bottom: 2px solid #0d66ff;
+    transform: rotate(-45deg);
+    z-index: 1;
+  }
+
+  .annual-footer__privacy-icon::after {
+    content: '×';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 600;
+  }
+
+  .annual-footer__social {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    flex: 0 0 auto;
+  }
+
+  .annual-footer__social-link,
+  .annual-footer__social-link:visited,
+  .annual-footer__social-link:hover,
+  .annual-footer__social-link:active {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    color: #fff;
+    text-decoration: none;
+    font-family: 'gamay', sans-serif;
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+  }
+
   .annual-summary-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 224px;
@@ -746,7 +1255,7 @@
 
   .annual-layout {
     display: grid;
-    grid-template-columns: 324px minmax(0, 1fr);
+    grid-template-columns: 300px minmax(0, 1fr);
     gap: 20px;
     align-items: start;
     padding-top: 20px;
@@ -757,7 +1266,7 @@
   }
 
   .annual-sidebar__help {
-    width: 324px;
+    width: 300px;
     color: #596270;
     font-family: 'gamay', sans-serif;
     font-size: 14px;
@@ -821,6 +1330,124 @@
     text-decoration: none;
   }
 
+  .annual-sidebar__promo {
+    display: block;
+    margin-top: 28px;
+    width: 300px;
+    max-width: 100%;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .annual-sidebar__promo-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #f6fafd;
+  }
+
+  .annual-sidebar__promo-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    border: 1px solid #0354d6;
+    border-radius: 999px;
+    color: #0354d6;
+    font-family: 'gamay', sans-serif;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  .annual-sidebar__promo-top h3 {
+    margin: 0;
+    color: #2a2a2a;
+    font-family: 'gamay', sans-serif;
+    font-size: 18px;
+    line-height: 22px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .annual-sidebar__promo-body {
+    padding: 16px 20px 0;
+  }
+
+  .annual-sidebar__promo-body h4 {
+    margin: 0;
+    color: #2a2a2a;
+    font-family: 'gamay', sans-serif;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .annual-sidebar__promo-body p {
+    margin: 0;
+    color: #2a2a2a;
+    font-family: 'gamay', sans-serif;
+    font-size: 14px;
+    line-height: 1.42;
+    font-weight: 400;
+  }
+
+  .annual-sidebar__promo-body h4 + p {
+    margin-top: 12px;
+  }
+
+  .annual-sidebar__promo-divider {
+    height: 1px;
+    margin: 15px 0 0;
+    background: #2a2a2a;
+  }
+
+  .annual-sidebar__promo-support {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 98px;
+    gap: 18px;
+    padding-top: 10px;
+    padding-bottom: 12px;
+  }
+
+  .annual-sidebar__promo-assist {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .annual-sidebar__promo-assist-logo {
+    display: block;
+    width: 100%;
+    max-width: 140px;
+    height: auto;
+  }
+
+  .annual-sidebar__promo-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 10px;
+    border-radius: 5px;
+    background: #0354d6;
+    color: #fff;
+    font-family: 'gamay', sans-serif;
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
   .annual-plan-card {
     overflow: visible;
     border: 1px solid #dedede;
@@ -833,12 +1460,24 @@
   }
 
   .annual-plan-card__summary {
+    position: sticky;
+    top: 0;
+    z-index: 15;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     padding: 20px;
+    background: #fff;
     border-bottom: 1px solid #f2f2f2;
+    transition:
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+
+  .annual-plan-card__summary--shadow {
+    border-bottom-color: rgba(25, 40, 64, 0.08);
+    box-shadow: 0 12px 24px rgba(12, 35, 60, 0.14);
   }
 
   .annual-plan-card__brand {
@@ -942,18 +1581,42 @@
     padding: 0 20px 18px;
   }
 
-  .annual-plan-card__footer-note {
+  .annual-additional-coverage-note {
     margin: 16px 0 0;
     padding: 0;
-    color: #526975;
+    color: #2a2a2a;
     font-family: 'gamay', sans-serif;
-    font-size: 16px;
-    line-height: 20px;
-    text-align: center;
   }
 
-  .annual-plan-card__footer-note a {
-    color: inherit;
+  .annual-additional-coverage-note__title {
+    margin: 0 0 6px;
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+
+  .annual-additional-coverage-note__copy,
+  .annual-additional-coverage-note__list {
+    margin: 0 0 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: rgba(42, 42, 42, 0.75);
+  }
+
+  .annual-additional-coverage-note__item {
+    color: rgba(42, 42, 42, 0.75);
+  }
+
+  .annual-additional-coverage-note__separator {
+    margin: 0 4px;
+    color: rgba(42, 42, 42, 0.75);
+  }
+
+  .annual-additional-coverage-note__link {
+    display: inline-block;
+    color: #2a2a2a;
+    font-size: 14px;
+    line-height: 1.2;
     font-weight: 600;
     text-decoration: none;
   }
@@ -1077,6 +1740,44 @@
       width: calc(100% - 40px);
     }
 
+    .annual-footer__inner {
+      width: calc(100% - 40px);
+    }
+
+    .annual-footer__top {
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .annual-footer__brand,
+    .annual-footer__links,
+    .annual-footer__support {
+      min-height: auto;
+      padding-top: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .annual-footer__brand::after,
+    .annual-footer__links::after {
+      display: none;
+    }
+
+    .annual-footer__links {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .annual-footer__support {
+      align-items: flex-start;
+      text-align: left;
+      gap: 20px;
+    }
+
+    .annual-footer__bottom {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
     .annual-layout {
       grid-template-columns: 1fr;
     }
@@ -1186,6 +1887,70 @@
 
     .annual-content {
       padding: 0 0 40px;
+    }
+
+    .annual-footer {
+      margin-top: 32px;
+      padding: 28px 0;
+    }
+
+    .annual-footer__inner {
+      width: calc(100% - 32px);
+      gap: 24px;
+    }
+
+    .annual-footer__top {
+      gap: 24px;
+    }
+
+    .annual-footer__brand-link img {
+      width: 240px;
+    }
+
+    .annual-footer__links {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .annual-footer__support {
+      gap: 12px;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .annual-footer__phone,
+    .annual-footer__message,
+    .annual-footer__message:visited,
+    .annual-footer__message:hover,
+    .annual-footer__message:active {
+      font-size: 14px;
+    }
+
+    .annual-footer__copyright,
+    .annual-footer__policy,
+    .annual-footer__privacy-choices,
+    .annual-footer__policy:visited,
+    .annual-footer__policy:hover,
+    .annual-footer__policy:active {
+      font-size: 12px;
+    }
+
+    .annual-footer__bottom {
+      align-items: flex-start;
+      gap: 18px;
+    }
+
+    .annual-footer__social {
+      gap: 10px;
+    }
+
+    .annual-footer__social-link,
+    .annual-footer__social-link:visited,
+    .annual-footer__social-link:hover,
+    .annual-footer__social-link:active {
+      width: 30px;
+      height: 30px;
+      font-size: 16px;
     }
 
     .annual-summary-row {
@@ -1411,10 +2176,12 @@
     }
 
     .annual-plan-card__summary {
+      position: static;
       padding: 10px;
       align-items: flex-start;
       gap: 10px;
       border-bottom: 0;
+      box-shadow: none;
     }
 
     .annual-layout {
@@ -1548,7 +2315,7 @@
       justify-content: flex-start;
       gap: 8px;
       width: 100%;
-      padding: 10px 10px 2px;
+      padding: 10px 6px 2px 10px;
       color: #878787;
       font-size: 10px !important;
       line-height: 16px !important;
@@ -1570,7 +2337,7 @@
 
     :deep(.annual-plan-card__table tbody td:last-child) {
       width: 100%;
-      padding: 0 10px 10px;
+      padding: 0 10px 10px 6px;
       font-size: 14px !important;
       line-height: 16px !important;
     }
