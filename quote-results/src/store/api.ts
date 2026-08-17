@@ -738,6 +738,12 @@ export const useApiStore = defineStore('api-store', {
         (localJsonStorage?.providers || []).map((provider: any) => ({
           name: provider.name,
           code: provider.companyCode,
+          title: provider.title,
+          summary: provider.summary,
+          summaryListing: provider.summaryListing,
+          contentReviews: provider.contentReviews,
+          logoSvg: provider.logoSvg,
+          logo: provider.logo,
         }))
       );
       this.setCMSPlans(localJsonStorage?.plans || []);

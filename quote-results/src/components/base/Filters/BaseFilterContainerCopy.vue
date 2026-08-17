@@ -55,8 +55,9 @@
     openSections[section] = !openSections[section];
   };
 
-  const handleTooltip = (filterKey: string) => {
+  const handleTooltip = (filterKey: string, label?: string) => {
     sessionStore.setFilterToolTipId(filterKey);
+    sessionStore.setFilterToolTipLabel(label ?? null);
     sessionStore.setFilterToolTipModalOpen(true);
     contentStore.removeHighlightedCoverageInformation();
     event('filter_tool_tip', {
@@ -296,9 +297,6 @@
           <span :class="['chevron', { 'chevron--open': openSections.trip }]"></span>
           <p class="filter-title">Trip Interruption &amp; Cancellation</p>
         </div>
-        <button class="info-button" @click.stop="handleTooltip('tripInterruption')" aria-label="coverage-info">
-          i
-        </button>
       </div>
       <div v-if="openSections.trip" class="filter-body">
         <label
@@ -313,7 +311,19 @@
             :disabled="isDisabled(option.key)"
             @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, option.key)"
           />
-          <span>{{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              {{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip(option.key, option.label)"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
         <div class="filter-divider"></div>
         <label
@@ -326,7 +336,20 @@
             :disabled="isDisabled('cancelForAnyReasonOption-0')"
             @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, 'cancelForAnyReasonOption-0')"
           />
-          <span>Cancel for Any Reason (CFAR) <small>{{ getNumberOfPlans('cancelForAnyReasonOption-0') }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              Cancel for Any Reason (CFAR)
+              <small>{{ getNumberOfPlans('cancelForAnyReasonOption-0') }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip('cancelForAnyReasonOption-0', 'Cancel for Any Reason (CFAR)')"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
       </div>
     </section>
@@ -337,9 +360,6 @@
           <span :class="['chevron', { 'chevron--open': openSections.medical }]"></span>
           <p class="filter-title">{{ getFilterData('medical').label }}</p>
         </div>
-        <button class="info-button" @click.stop="handleTooltip('medical')" aria-label="coverage-info">
-          i
-        </button>
       </div>
       <div v-if="openSections.medical" class="filter-body">
         <label
@@ -355,7 +375,19 @@
             :disabled="isDisabled(option.key)"
             @change="filterRadioHandler(option.key, medicalOptions.length)"
           />
-          <span>{{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              {{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip(option.key, option.label)"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
         <div class="filter-divider"></div>
         <label
@@ -368,7 +400,19 @@
             :disabled="isDisabled('medical-primary')"
             @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, 'medical-primary')"
           />
-          <span>Primary Only <small>{{ getNumberOfPlans('medical-primary') }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              Primary Only <small>{{ getNumberOfPlans('medical-primary') }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip('medical-primary', 'Primary Only')"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
         <label
           class="filter-row"
@@ -380,7 +424,19 @@
             :disabled="isDisabled('preExWaiver-0')"
             @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, 'preExWaiver-0')"
           />
-          <span>PRE-EX Waivers <small>{{ getNumberOfPlans('preExWaiver-0') }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              PRE-EX Waivers <small>{{ getNumberOfPlans('preExWaiver-0') }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip('preExWaiver-0', 'PRE-EX Waivers')"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
       </div>
     </section>
@@ -391,9 +447,6 @@
           <span :class="['chevron', { 'chevron--open': openSections.evacuation }]"></span>
           <p class="filter-title">Emergency Evacuation</p>
         </div>
-        <button class="info-button" @click.stop="handleTooltip('emergencyMedicalEvacuation')" aria-label="coverage-info">
-          i
-        </button>
       </div>
       <div v-if="openSections.evacuation" class="filter-body">
         <label
@@ -409,7 +462,19 @@
             :disabled="isDisabled(option.key)"
             @change="filterRadioHandler(option.key, evacuationOptions.length)"
           />
-          <span>{{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              {{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip(option.key, option.label)"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
         <div class="filter-divider"></div>
         <label
@@ -422,7 +487,20 @@
             :disabled="isDisabled('emergencyMedicalEvacuation-primary')"
             @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, 'emergencyMedicalEvacuation-primary')"
           />
-          <span>Primary Only <small>{{ getNumberOfPlans('emergencyMedicalEvacuation-primary') }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              Primary Only
+              <small>{{ getNumberOfPlans('emergencyMedicalEvacuation-primary') }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip('emergencyMedicalEvacuation-primary', 'Primary Only')"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
       </div>
     </section>
@@ -433,9 +511,6 @@
           <span :class="['chevron', { 'chevron--open': openSections.baggage }]"></span>
           <p class="filter-title">Baggage + Delay Coverage</p>
         </div>
-        <button class="info-button" @click.stop="handleTooltip('baggage')" aria-label="coverage-info">
-          i
-        </button>
       </div>
       <div v-if="openSections.baggage" class="filter-body">
         <label
@@ -450,7 +525,19 @@
             :disabled="isDisabled(option.key)"
             @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, option.key)"
           />
-          <span>{{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              {{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip(option.key, option.label)"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
       </div>
     </section>
@@ -461,9 +548,6 @@
           <span :class="['chevron', { 'chevron--open': openSections.other }]"></span>
           <p class="filter-title">Other Coverages</p>
         </div>
-        <button class="info-button" @click.stop="handleTooltip('otherCoverages')" aria-label="coverage-info">
-          i
-        </button>
       </div>
       <div v-if="openSections.other" class="filter-body">
         <label
@@ -478,7 +562,19 @@
             :disabled="isDisabled(option.key)"
             @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, option.key)"
           />
-          <span>{{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              {{ option.label }} <small>{{ getNumberOfPlans(option.key) }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip(option.key, option.label)"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
       </div>
     </section>
@@ -489,9 +585,6 @@
           <span :class="['chevron', { 'chevron--open': openSections.providers }]"></span>
           <p class="filter-title">Insurance Providers</p>
         </div>
-        <button class="info-button" @click.stop="handleTooltip('provider')" aria-label="coverage-info">
-          i
-        </button>
       </div>
       <div v-if="openSections.providers" class="filter-body">
         <label
@@ -506,7 +599,19 @@
             :disabled="isDisabled(providerKey)"
             @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, providerKey)"
           />
-          <span>{{ providerLabels[index] }} <small>{{ getNumberOfPlans(providerKey) }}</small></span>
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              {{ providerLabels[index] }} <small>{{ getNumberOfPlans(providerKey) }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip(providerKey, providerLabels[index])"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
         </label>
       </div>
     </section>
@@ -615,6 +720,21 @@
     cursor: pointer;
   }
 
+  .filter-row__content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .filter-row__label {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
   .filter-row small {
     font-size: 11px;
     font-weight: 400;
@@ -639,5 +759,16 @@
 
   .filter-row--disabled input {
     cursor: not-allowed;
+  }
+
+  .info-button--inline {
+    width: 15.3px;
+    height: 15.3px;
+    min-width: 15.3px;
+    min-height: 15.3px;
+    border-width: 1px;
+    font-size: 9.35px;
+    flex: 0 0 auto;
+    opacity: 0.5;
   }
 </style>

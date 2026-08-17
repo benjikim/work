@@ -267,6 +267,12 @@ export type CMSHighlights = {
 export type CMSProvider = {
   name: string;
   code: string;
+  title?: string;
+  summary?: string;
+  summaryListing?: string;
+  contentReviews?: string;
+  logoSvg?: CMSImage[];
+  logo?: CMSImage[];
 };
 
 type CMSPopup = {

@@ -38,6 +38,7 @@ interface State {
   numberOfFilterPlans: number;
   modalOpen: boolean;
   filterToolTipId: string;
+  filterToolTipLabel: string | null;
   filterToolTipOpen: boolean;
   filterToolTipPlanShow: boolean;
   errorModalType: ErrorModalTypes;
@@ -88,6 +89,7 @@ export const useUserSessionStore = defineStore('user-session-store', {
     errorModalType: '',
     numberOfFilterPlans: 0,
     filterToolTipId: '',
+    filterToolTipLabel: null,
     filterToolTipOpen: false,
     filterToolTipPlanShow: false,
     mobileFilterModalOpen: false,
@@ -329,6 +331,9 @@ export const useUserSessionStore = defineStore('user-session-store', {
      */
     getFilterToolTipId(): State['filterToolTipId'] {
       return this.filterToolTipId;
+    },
+    getFilterToolTipLabel(): State['filterToolTipLabel'] {
+      return this.filterToolTipLabel;
     },
     /**
      * Get the status of the tool tip modal.
@@ -991,6 +996,10 @@ export const useUserSessionStore = defineStore('user-session-store', {
      */
     setFilterToolTipId(val: string) {
       this.filterToolTipId = val;
+      this.filterToolTipLabel = null;
+    },
+    setFilterToolTipLabel(val: string | null) {
+      this.filterToolTipLabel = val;
     },
     /**
      * Sets the tool tip modal status
