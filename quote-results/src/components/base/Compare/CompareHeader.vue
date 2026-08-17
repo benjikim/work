@@ -49,7 +49,7 @@
 
 <template>
   <!-- Sticky wrapper -->
-  <div v-if="!isMobile" class="sticky top-0 z-30 px-0 pt-4 bg-white pl-0">
+  <div v-if="!isMobile" class="sticky top-0 z-30 mt-[50px] px-0 bg-white pl-0">
     <div class="grid grid-cols-3 items-center">
       <button
         type="button"

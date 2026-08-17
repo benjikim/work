@@ -195,7 +195,7 @@
     :class="{
       'display-none lg:flex': isCompare,
       'bg-white pt-2': isMobile,
-      'sticky top-0 z-[1] shadow-sm': !isModeAnnual && isMobile,
+      'sticky top-0 z-[1] shadow-sm': !isModeAnnual && isMobile && !isCompare,
     }"
   >
     <div class="mx-auto pb-4 sm:pb-0 px-0 md:px-4 flex flex-col lg:flex-row w-full lg:mt-2">

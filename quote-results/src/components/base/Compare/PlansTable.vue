@@ -199,7 +199,7 @@
   >
     <div
       ref="headerScrollRef"
-      class="sticky top-0 z-30 bg-white w-full overflow-x-auto md:pt-[6%] lg:pt-[4%]"
+      class="sticky top-0 z-30 bg-white w-full overflow-x-auto"
       :class="[
         isMobile ? 'no-scrollbar' : '',
         hasStickyHeaderShadow ? 'compare-sticky-header--shadow' : '',

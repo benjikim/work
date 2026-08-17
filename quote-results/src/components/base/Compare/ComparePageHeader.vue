@@ -86,8 +86,8 @@
   .compare-page-header {
     background: #0c233c;
     color: #fff;
-    position: sticky;
-    top: 0;
+    position: static;
+    top: auto;
     z-index: 30;
   }
 

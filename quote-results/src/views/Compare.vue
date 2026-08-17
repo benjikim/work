@@ -97,13 +97,15 @@
 </script>
 
 <template>
-  <div class="quote-results-container compare-page-shell">
+  <div class="compare-page-shell">
     <ComparePageHeader v-if="!isMobile" />
     <HeaderContainer v-if="isMobile" :is-compare="true" />
-    <CompareHeader v-if="!isMobile" />
-    <PlansTable v-if="planCodes.length > 0" />
-    <Loader v-if="displayLoader && determinedTheme" />
-    <CompareFooter v-if="isMobile" />
+    <div class="quote-results-container">
+      <CompareHeader v-if="!isMobile" />
+      <PlansTable v-if="planCodes.length > 0" />
+      <Loader v-if="displayLoader && determinedTheme" />
+      <CompareFooter v-if="isMobile" />
+    </div>
   </div>
 </template>
 
