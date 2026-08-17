@@ -43,6 +43,14 @@
     return sessionStore.getCoveragesOfSelectedPlan(planCode)?.[coverage];
   };
 
+  const annualSingleTripAvailabilityKeys = new Set([
+    'financialDefault',
+    'cancelForAnyReasonOption',
+    'tripInterruptionForAnyReason',
+    'vacationRentalDamage',
+    'preExWaiver',
+  ]);
+
   const options = computed(() => {
     if (props.planCode)
       return sessionStore.getOptionsOfSelectedPlan(props.planCode);
@@ -152,7 +160,7 @@
         v-if="plan && plan.certificate.url"
         :plan-code="plan.code"
         :certificate-url="plan.certificate.url"
-        label="Please see certificate for full plan information"
+        label="See Full Plan Information"
         class="text-xs text-action-primary font-bold"
         data-cy="plan-details__certificate_link"
         :track-certificate-click="trackCertificateClick"
@@ -266,8 +274,20 @@
 
     <span
       :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
+      :class="
+        isModeAnnual && annualSingleTripAvailabilityKeys.has(coverage.key)
+          ? 'text-[rgba(42,42,42,0.5)]'
+          : ''
+      "
       v-else
-      >-
+    >
+      {{
+        isModeAnnual && coverage.annualBottomLabel
+          ? coverage.annualBottomLabel
+          : isModeAnnual && annualSingleTripAvailabilityKeys.has(coverage.key)
+            ? 'Available on select single-trip plans'
+          : '-'
+      }}
     </span>
   </td>
 </template>

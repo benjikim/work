@@ -15,6 +15,12 @@
   const sessionStore = useUserSessionStore();
   const themeStore = useThemeStore();
   const isComparePage = window.location.pathname.includes('compare');
+  type AnnualBottomCoverageRow = {
+    key: string;
+    label: string;
+    toolTipText: string;
+    annualBottomLabel: string;
+  };
 
   const props = defineProps({
     plan: {
@@ -24,11 +30,28 @@
   });
 
   const isModeAnnual = computed(() => themeStore.isModeAnnual);
+  const annualSingleTripBottomCoverageKeys = [
+    'financialDefault',
+    'cancelForAnyReasonOption',
+    'tripInterruptionForAnyReason',
+  ];
+  const annualSingleTripBottomCoverageKeySet = new Set(
+    annualSingleTripBottomCoverageKeys
+  );
+  const annualSingleTripHiddenKeys = new Set([
+    'vacationRentalDamage',
+    'preExWaiver',
+  ]);
 
   const coverageLimitMap = computed(() => {
     // Annual Specific Logic for how we display the table
     if (isModeAnnual.value) {
-      const annualCoverageLimitsMap = [...contentStore.getCoverageLimitsMap];
+      const annualCoverageLimitsMap = contentStore.getCoverageLimitsMap.map(
+        (section) => ({
+          ...section,
+          coverages: [...section.coverages],
+        })
+      );
 
       annualCoverageLimitsMap[0].coverages.push({
         label: 'certificate',
@@ -60,6 +83,48 @@
       if (props.plan?.includedBenefits?.length === 0) {
         annualCoverageLimitsMap.pop();
       }
+
+      annualCoverageLimitsMap.forEach((section) => {
+        if (section.coverages?.length) {
+          if (section.header === 'Trip Protection') {
+            const visibleCoverages = section.coverages.filter(
+              (coverage) => !annualSingleTripHiddenKeys.has(coverage.key)
+            );
+
+            const reorderedBottomRows: AnnualBottomCoverageRow[] =
+              annualSingleTripBottomCoverageKeys
+                .map((key, index) => {
+                  const matchingCoverage = visibleCoverages.find(
+                    (coverage) => coverage.key === key
+                  );
+
+                  if (!matchingCoverage) return null;
+
+                  return {
+                    ...matchingCoverage,
+                    annualBottomLabel: index === 0 ? 'See below' : '-',
+                  };
+                })
+                .filter(
+                  (coverage): coverage is AnnualBottomCoverageRow =>
+                    coverage !== null
+                );
+
+            const standardCoverages = visibleCoverages.filter(
+              (coverage) =>
+                !annualSingleTripBottomCoverageKeySet.has(coverage.key)
+            );
+
+            section.coverages = [...standardCoverages, ...reorderedBottomRows];
+          } else {
+            section.coverages = section.coverages.filter(
+              (coverage) =>
+                !annualSingleTripBottomCoverageKeySet.has(coverage.key) &&
+                !annualSingleTripHiddenKeys.has(coverage.key)
+            );
+          }
+        }
+      });
 
       return annualCoverageLimitsMap;
     }
@@ -96,7 +161,7 @@
         v-if="plan && plan.certificate.url"
         :plan-code="plan.code"
         :certificate-url="plan.certificate.url"
-        label="Please see certificate for full plan information"
+        label="See Full Plan Information"
         class="text-xs text-action-primary font-bold"
         data-cy="plan-details__certificate_link"
         :track-certificate-click="trackCertificateClick"

@@ -1332,12 +1332,12 @@
 
   .annual-sidebar__promo {
     display: block;
-    margin-top: 28px;
+    margin-top: 70px;
     width: 300px;
     max-width: 100%;
+    border: 1px solid #d8dde6;
     border-radius: 12px;
     background: #fff;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     overflow: hidden;
     text-decoration: none;
     color: inherit;

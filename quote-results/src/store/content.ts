@@ -1286,24 +1286,6 @@ export const useContentStore = defineStore('content-store', {
                 'Coverage for the payments and deposits you made before your trip was canceled due to a covered reason. This is a pre-departure benefit.',
             },
             {
-              label: 'financial default',
-              key: 'financialDefault',
-              toolTipText:
-                'Coverage for trip cancellation or interruption that is due to the bankruptcy of your travel supplier.',
-            },
-            {
-              label: 'cancel for any reason',
-              key: 'cancelForAnyReasonOption',
-              toolTipText:
-                'Coverage that allows you to cancel your trip for any reason, provided you meet all the requirements of the benefit. This is a pre-departure benefit.',
-            },
-            {
-              label: 'interrupt for any reason',
-              key: 'tripInterruptionForAnyReason',
-              toolTipText:
-                'Coverage that allows you to interrupt your trip for any reason, provided you meet all the requirements of the benefit. This is a post-departure benefit.',
-            },
-            {
               label: 'travel delay',
               key: 'travelDelay',
               toolTipText:
@@ -1320,6 +1302,24 @@ export const useContentStore = defineStore('content-store', {
               key: 'baggage',
               toolTipText:
                 'Coverage for baggage if it is lost, damaged, or stolen.',
+            },
+            {
+              label: 'financial default',
+              key: 'financialDefault',
+              toolTipText:
+                'Coverage for trip cancellation or interruption that is due to the bankruptcy of your travel supplier.',
+            },
+            {
+              label: 'cancel for any reason',
+              key: 'cancelForAnyReasonOption',
+              toolTipText:
+                'Coverage that allows you to cancel your trip for any reason, provided you meet all the requirements of the benefit. This is a pre-departure benefit.',
+            },
+            {
+              label: 'interrupt for any reason',
+              key: 'tripInterruptionForAnyReason',
+              toolTipText:
+                'Coverage that allows you to interrupt your trip for any reason, provided you meet all the requirements of the benefit. This is a post-departure benefit.',
             },
             {
               label: 'vacation rental damage',
@@ -1438,24 +1438,6 @@ export const useContentStore = defineStore('content-store', {
                 'Coverage for the payments and deposits you made before your trip was canceled due to a covered reason. This is a pre-departure benefit.',
             },
             {
-              label: 'financial default',
-              key: 'financialDefault',
-              toolTipText:
-                'Coverage for trip cancellation or interruption that is due to the bankruptcy of your travel supplier.',
-            },
-            {
-              label: 'cancel for any reason',
-              key: 'cancelForAnyReasonOption',
-              toolTipText:
-                'Coverage that allows you to cancel your trip for any reason, provided you meet all the requirements of the benefit. This is a pre-departure benefit.',
-            },
-            {
-              label: 'interrupt for any reason',
-              key: 'tripInterruptionForAnyReason',
-              toolTipText:
-                'Coverage that allows you to interrupt your trip for any reason, provided you meet all the requirements of the benefit. This is a post-departure benefit.',
-            },
-            {
               label: 'travel delay',
               key: 'travelDelay',
               toolTipText:
@@ -1472,6 +1454,24 @@ export const useContentStore = defineStore('content-store', {
               key: 'baggage',
               toolTipText:
                 'Coverage for baggage if it is lost, damaged, or stolen.',
+            },
+            {
+              label: 'financial default',
+              key: 'financialDefault',
+              toolTipText:
+                'Coverage for trip cancellation or interruption that is due to the bankruptcy of your travel supplier.',
+            },
+            {
+              label: 'cancel for any reason',
+              key: 'cancelForAnyReasonOption',
+              toolTipText:
+                'Coverage that allows you to cancel your trip for any reason, provided you meet all the requirements of the benefit. This is a pre-departure benefit.',
+            },
+            {
+              label: 'interrupt for any reason',
+              key: 'tripInterruptionForAnyReason',
+              toolTipText:
+                'Coverage that allows you to interrupt your trip for any reason, provided you meet all the requirements of the benefit. This is a post-departure benefit.',
             },
             {
               label: 'vacation rental damage',
