@@ -252,7 +252,7 @@
               >Total</span
             >
             <span
-              class="text-[0.45rem]/[1.2] md:text-[0.625rem]/[1.2] font-normal normal-case text-[#6b7280] whitespace-nowrap"
+              class="mt-0.5 block text-[0.5625rem]/[1.2] md:text-[0.6875rem]/[1.2] font-medium normal-case text-[#6b7280] whitespace-nowrap"
               >For All Travelers</span
             >
           </span>
@@ -281,7 +281,7 @@
               >Total</span
             >
             <span
-              class="text-[0.45rem]/[1.2] md:text-[0.625rem]/[1.2] font-normal normal-case text-[#6b7280] whitespace-nowrap"
+              class="mt-0.5 block text-[0.5625rem]/[1.2] md:text-[0.6875rem]/[1.2] font-medium normal-case text-[#6b7280] whitespace-nowrap"
               >For All Travelers</span
             >
           </span>
