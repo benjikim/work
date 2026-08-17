@@ -473,6 +473,7 @@
                 >
                   <CoverageLabelToolTip
                     :tool-tip-text="coverage.toolTipText"
+                    :mobile-modal-heading="coverage.label"
                     :underline-label="true"
                   >
                     <span class="annual-additional-coverage-note__item">
@@ -2154,16 +2155,17 @@
 
     .annual-mobile-why-overlay__cta {
       margin: 28px 14px 0;
-      min-height: 92px;
-      border: 0;
-      border-radius: 18px;
-      background: #0f8cab;
+      min-height: 0;
+      padding: 12px;
+      border: 2px solid var(--action-primary);
+      border-radius: 0.5rem;
+      background: var(--action-primary);
       color: #fff;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
       font-family: 'gamay', sans-serif;
-      font-size: 20px;
+      font-size: 16px;
       line-height: 1.2;
       font-weight: 600;
+      text-transform: uppercase;
     }
 
     .annual-plan-card__summary {
@@ -2210,10 +2212,10 @@
     }
 
     .annual-plan-card__pricing {
-      align-items: center;
+      align-items: flex-start;
       min-width: 190px;
       gap: 12px;
-      margin-left: auto;
+      margin-left: 0;
     }
 
     .annual-plan-card__select {
@@ -2223,7 +2225,8 @@
     }
 
     .annual-plan-card__amount {
-      justify-content: center;
+      justify-content: flex-start;
+      text-align: left;
     }
 
     .annual-plan-card__currency {
@@ -2249,6 +2252,12 @@
 
     .annual-plan-card__table {
       padding: 0 10px;
+      text-align: left;
+    }
+
+    .annual-additional-coverage-note {
+      padding: 0 10px;
+      text-align: left;
     }
 
     :deep(.annual-plan-card__table .daisy-table) {
@@ -2331,6 +2340,7 @@
       padding: 0 10px 10px 6px;
       font-size: 14px !important;
       line-height: 16px !important;
+      text-align: left !important;
     }
 
     :deep(.annual-plan-card__table tbody td:last-child *),
@@ -2342,6 +2352,7 @@
     :deep(.annual-plan-card__table tbody td:last-child label) {
       font-size: 14px !important;
       line-height: 16px !important;
+      text-align: left !important;
     }
 
     :deep(.annual-plan-card__table .form-checkbox) {

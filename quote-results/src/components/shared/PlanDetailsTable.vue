@@ -231,6 +231,7 @@
           <td class="text-xs snap-center">
             <CoverageLabelToolTip
               :tool-tip-text="coverage.toolTipText"
+              :mobile-modal-heading="coverage.label"
               :underline-label="true"
             >
               <span class="font-bold text-[#878787] uppercase pr-1">

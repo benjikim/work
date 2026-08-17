@@ -156,6 +156,7 @@
                     <div class="flex items-center flex-nowrap">
                       <CoverageLabelToolTip
                         :tool-tip-text="coverage.toolTipText"
+                        :mobile-modal-heading="coverage.label"
                         tool-tip-position="right"
                         underline-label
                       >

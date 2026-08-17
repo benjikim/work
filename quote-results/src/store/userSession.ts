@@ -73,6 +73,8 @@ interface State {
   moreInfoModalOpen: boolean;
   hideSoventureUpdateTripCost: boolean;
   moreInfoModalKey: string;
+  moreInfoModalHeading: string;
+  moreInfoModalContent: string;
   availabilityModalOpen: boolean;
   sectionOpenStates: Record<string, Record<string, boolean>>;
 }
@@ -128,6 +130,8 @@ export const useUserSessionStore = defineStore('user-session-store', {
     moreInfoModalOpen: false,
     hideSoventureUpdateTripCost: true,
     moreInfoModalKey: '',
+    moreInfoModalHeading: '',
+    moreInfoModalContent: '',
     sectionOpenStates: {},
   }),
   getters: {
@@ -611,6 +615,12 @@ export const useUserSessionStore = defineStore('user-session-store', {
     },
     getMoreInfoModalKey(): State['moreInfoModalKey'] {
       return this.moreInfoModalKey;
+    },
+    getMoreInfoModalHeading(): State['moreInfoModalHeading'] {
+      return this.moreInfoModalHeading;
+    },
+    getMoreInfoModalContent(): State['moreInfoModalContent'] {
+      return this.moreInfoModalContent;
     },
     /**
      * Checks if a section is open by header name
@@ -1388,6 +1398,16 @@ export const useUserSessionStore = defineStore('user-session-store', {
     },
     setMoreInfoModalKey(key: string) {
       this.moreInfoModalKey = key;
+    },
+    setMoreInfoModalContent({
+      heading,
+      content,
+    }: {
+      heading: string;
+      content: string;
+    }) {
+      this.moreInfoModalHeading = heading;
+      this.moreInfoModalContent = content;
     },
     setHideSoventureUpdateTripCost(val: boolean) {
       this.hideSoventureUpdateTripCost = val;

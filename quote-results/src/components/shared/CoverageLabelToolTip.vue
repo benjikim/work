@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed } from 'vue';
   import { InformationCircleIcon } from '@heroicons/vue/24/outline';
+  import { useUserSessionStore } from '@/store/userSession';
 
   const props = defineProps({
     toolTipText: {
@@ -17,7 +18,17 @@
       required: false,
       default: false,
     },
+    mobileModalHeading: {
+      type: String,
+      required: false,
+      default: 'More Information',
+    },
   });
+
+  const sessionStore = useUserSessionStore();
+  const useMobileModal = computed(
+    () => sessionStore.isMobile && Boolean(props.toolTipText)
+  );
 
   const tooltipClass = computed(() => {
     const position = props.toolTipPosition?.toLowerCase();
@@ -29,13 +40,25 @@
     };
     return classMap[position];
   });
+
+  const openMobileModal = () => {
+    if (!useMobileModal.value) return;
+
+    sessionStore.setMoreInfoModalKey('');
+    sessionStore.setMoreInfoModalContent({
+      heading: props.mobileModalHeading,
+      content: props.toolTipText,
+    });
+    sessionStore.setMoreInfoModalOpen(true);
+  };
 </script>
 
 <template>
   <div
-    class="daisy-tooltip inline-block tooltip-wrapper"
-    :class="tooltipClass"
-    :data-tip="toolTipText"
+    class="inline-block tooltip-wrapper"
+    :class="useMobileModal ? '' : ['daisy-tooltip', tooltipClass]"
+    :data-tip="useMobileModal ? null : toolTipText"
+    @click="openMobileModal"
   >
     <span
       v-if="underlineLabel"

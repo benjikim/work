@@ -417,6 +417,7 @@
                 >
                   <CoverageLabelToolTip
                     :tool-tip-text="evacCoverage.toolTipText"
+                    :mobile-modal-heading="evacCoverage.label"
                     tool-tip-position="right"
                     underline-label
                   >
@@ -464,6 +465,7 @@
                 >
                   <CoverageLabelToolTip
                     :tool-tip-text="preExCoverage.toolTipText"
+                    :mobile-modal-heading="preExCoverage.label"
                     tool-tip-position="right"
                     underline-label
                   >
@@ -508,6 +510,7 @@
                 >
                   <CoverageLabelToolTip
                     :tool-tip-text="coverage.toolTipText"
+                    :mobile-modal-heading="coverage.label"
                     tool-tip-position="right"
                     underline-label
                   >

@@ -70,6 +70,7 @@
       <div v-else>
         <CoverageLabelToolTip
           :tool-tip-text="coverage.toolTipText"
+          :mobile-modal-heading="coverage.label"
           underline-label
         >
           <span

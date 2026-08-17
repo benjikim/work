@@ -12,8 +12,17 @@
     apiStore.getFFValue('sb_20250818_annual_plans_release_us')
   );
   const optionKey = computed(() => sessionStore.getMoreInfoModalKey);
+  const customHeading = computed(() => sessionStore.getMoreInfoModalHeading);
+  const customContent = computed(() => sessionStore.getMoreInfoModalContent);
 
   const moreInfoContent = computed(() => {
+    if (customContent.value) {
+      return {
+        heading: customHeading.value,
+        content: customContent.value,
+      };
+    }
+
     if (planCode.value && typeof planCode.value === 'string') {
       return contentStore.getMoreInfoText(planCode.value, optionKey.value);
     }
@@ -26,6 +35,7 @@
     @close="
       sessionStore.setMoreInfoModalOpen(false);
       sessionStore.setMoreInfoModalKey('');
+      sessionStore.setMoreInfoModalContent({ heading: '', content: '' });
     "
   >
     <div
@@ -44,6 +54,7 @@
         @click="
           sessionStore.setMoreInfoModalOpen(false);
           sessionStore.setMoreInfoModalKey('');
+          sessionStore.setMoreInfoModalContent({ heading: '', content: '' });
         "
       >
         Back
@@ -54,6 +65,7 @@
       @click="
         sessionStore.setMoreInfoModalOpen(false);
         sessionStore.setMoreInfoModalKey('');
+        sessionStore.setMoreInfoModalContent({ heading: '', content: '' });
       "
     ></div>
   </dialog>
