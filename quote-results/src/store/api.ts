@@ -42,9 +42,12 @@ import * as configcat from 'configcat-js';
 const STATIC_DEMO_QID = '1f1964f4-94b3-62ec-ad3c-415ce827df76';
 const isPlanDetailsPocRoute = () =>
   window.location.pathname.includes('/QRPlanDetailsPOC');
+const isResultsCopyRoute = () =>
+  window.location.pathname.includes('/QRPOCCopy');
 const isAnnualResultsCopyRoute = () =>
   window.location.pathname.includes('/annual-results-copy');
 const isStaticDemoMode = () =>
+  isResultsCopyRoute() ||
   import.meta.env.VITE_STATIC_DEMO === 'true' ||
   window.location.hostname.endsWith('github.io');
 
@@ -80,7 +83,7 @@ const getStaticDemoFFValues = (): FFValues => ({
   sb_20250818_annual_plans_release_us: '',
   web_20251113_qr_number_of_compare: 5,
   website_20260121_enable_new_plan_row_details_us_release:
-    isPlanDetailsPocRoute(),
+    isPlanDetailsPocRoute() || isResultsCopyRoute(),
   imt_20260121_pbm_clickthrough_buy_modal: false,
 });
 
