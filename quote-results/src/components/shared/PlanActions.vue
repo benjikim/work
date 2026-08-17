@@ -251,6 +251,10 @@
               class="text-[0.5rem]/[1.5] md:text-[0.75rem]/[1.5] font-normal uppercase"
               >Total</span
             >
+            <span
+              class="text-[0.45rem]/[1.2] md:text-[0.625rem]/[1.2] font-normal normal-case text-[#6b7280] whitespace-nowrap"
+              >For All Travelers</span
+            >
           </span>
         </span>
         <span v-else class="inline-flex items-start text-imt-black cap-trim">
@@ -275,6 +279,10 @@
             <span
               class="text-[0.5rem]/[1.5] md:text-[0.65rem]/[1.5] font-normal uppercase"
               >Total</span
+            >
+            <span
+              class="text-[0.45rem]/[1.2] md:text-[0.625rem]/[1.2] font-normal normal-case text-[#6b7280] whitespace-nowrap"
+              >For All Travelers</span
             >
           </span>
         </span>

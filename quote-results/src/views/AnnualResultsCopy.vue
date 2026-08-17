@@ -442,6 +442,7 @@
                     <span class="annual-plan-card__decimal-wrap">
                       <span class="annual-plan-card__decimals">.{{ currentCostParts.decimals }}</span>
                       <span class="annual-plan-card__total">TOTAL</span>
+                      <span class="annual-plan-card__traveler-copy">For All Travelers</span>
                     </span>
                   </div>
                   <button
@@ -1564,6 +1565,16 @@
     font-weight: 500;
   }
 
+  .annual-plan-card__traveler-copy {
+    margin-top: 4px;
+    color: #6b7280;
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 500;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
   .annual-plan-card__select {
     min-width: 152px;
     min-height: 40px;
@@ -2248,6 +2259,12 @@
       font-size: 10px;
       line-height: 15px;
       text-transform: uppercase;
+    }
+
+    .annual-plan-card__traveler-copy {
+      margin-top: 2px;
+      font-size: 9px;
+      line-height: 12px;
     }
 
     .annual-plan-card__table {
