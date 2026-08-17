@@ -229,8 +229,8 @@
       >
         <span
           v-if="!isComparePage"
-          class="inline-flex items-start text-imt-black"
-        >
+        class="inline-flex items-start text-imt-black"
+      >
           <span class="text-sm md:text-2xl">$</span>
           <span
             class="md:text-[2.5rem] leading-none"
@@ -350,15 +350,8 @@
         >Compare
       </span>
     </button>
-    <CertificateLink
-      v-else-if="modal"
-      :plan-code="plan.code"
-      :data-cy="`plan-action__certificate__link-details-${plan.code}`"
-      class="col-span-12 text-action-primary text-sm display-none md:block pt-3"
-      :track-certificate-click="() => trackCertificateClick(plan.code)"
-    />
     <button
-      v-else-if="!isComparePage && !modal"
+      v-if="!isComparePage && !modal"
       class="md:mb-2 w-full bg-[white] border-2 rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-action-alt-primary h-9 col-span-3"
       :class="{
         'md:col-span-10 md:col-start-2': !isBuyButtonAndCompareButtonHidden,
@@ -379,6 +372,13 @@
         />
       </span>
     </button>
+    <CertificateLink
+      v-else-if="modal"
+      :plan-code="plan.code"
+      :data-cy="`plan-action__certificate__link-details-${plan.code}`"
+      class="col-span-12 text-action-primary text-sm display-none md:block pt-3"
+      :track-certificate-click="() => trackCertificateClick(plan.code)"
+    />
   </div>
 </template>
 
