@@ -1623,7 +1623,7 @@
 
   :deep(.annual-plan-card__table .daisy-table) {
     width: 100%;
-    border-spacing: 0 0;
+    border-spacing: 0 5px;
   }
 
   :deep(.annual-plan-card__table thead th) {
@@ -1634,16 +1634,12 @@
     line-height: 20px;
     font-weight: 400;
     text-transform: none;
-    border-top: 1px solid #f2f2f2;
-    border-bottom: 1px solid #f2f2f2;
+    border-top: 0;
+    border-bottom: 0;
   }
 
   :deep(.annual-plan-card__table thead:not(:first-child) th) {
     padding-top: 24px;
-  }
-
-  :deep(.annual-plan-card__table thead:first-child th) {
-    border-top: 0;
   }
 
   :deep(.annual-plan-card__table tbody tr) {
@@ -1652,12 +1648,7 @@
 
   :deep(.annual-plan-card__table tbody td) {
     padding: 10px 16px;
-    border-bottom: 1px solid #f2f2f2;
     vertical-align: top;
-  }
-
-  :deep(.annual-plan-card__table tbody tr:last-child td) {
-    border-bottom: 0;
   }
 
   :deep(.annual-plan-card__table tbody td:first-child) {
