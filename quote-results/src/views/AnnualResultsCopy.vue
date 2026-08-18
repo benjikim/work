@@ -44,6 +44,11 @@
         'Coverage that allows you to cancel your trip for any reason, provided you meet all the requirements of the benefit. This is a pre-departure benefit.',
     },
     {
+      label: 'Pre-Existing Condition Waiver',
+      toolTipText:
+        'Most plans have exclusions for medical problems that result from pre-existing conditions. If you purchase this waiver, you will not be subject to exclusions based on pre-existing conditions.',
+    },
+    {
       label: 'Interrupt for Any Reason',
       toolTipText:
         'Coverage that allows you to interrupt your trip for any reason, provided you meet all the requirements of the benefit. This is a post-departure benefit.',
@@ -56,11 +61,6 @@
     {
       label: 'Vacation Rental Damage',
       toolTipText: 'Property damage protection while renting a vacation home.',
-    },
-    {
-      label: 'Pre-Existing Condition Waiver',
-      toolTipText:
-        'Most plans have exclusions for medical problems that result from pre-existing conditions. If you purchase this waiver, you will not be subject to exclusions based on pre-existing conditions.',
     },
   ];
 

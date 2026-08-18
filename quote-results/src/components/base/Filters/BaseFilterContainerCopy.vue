@@ -30,7 +30,7 @@
   const openSections = reactive({
     trip: true,
     medical: true,
-    evacuation: true,
+    evacuation: false,
     baggage: true,
     other: true,
     providers: false,
@@ -292,7 +292,10 @@
     </div>
 
     <section class="filter-section">
-      <div class="filter-header" @click="toggleSection('trip')">
+      <div
+        :class="['filter-header', { 'filter-header--collapsed': !openSections.trip }]"
+        @click="toggleSection('trip')"
+      >
         <div class="filter-title-wrap">
           <span :class="['chevron', { 'chevron--open': openSections.trip }]"></span>
           <p class="filter-title">Trip Interruption &amp; Cancellation</p>
@@ -351,11 +354,38 @@
             </button>
           </span>
         </label>
+        <label
+          class="filter-row"
+          :class="{ 'filter-row--disabled': isDisabled('preExWaiver-0') }"
+        >
+          <input
+            type="checkbox"
+            :checked="isChecked('preExWaiver-0')"
+            :disabled="isDisabled('preExWaiver-0')"
+            @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, 'preExWaiver-0')"
+          />
+          <span class="filter-row__content">
+            <span class="filter-row__label">
+              PRE-EX Waivers <small>{{ getNumberOfPlans('preExWaiver-0') }}</small>
+            </span>
+            <button
+              type="button"
+              class="info-button info-button--inline"
+              @click.stop.prevent="handleTooltip('preExWaiver-0', 'PRE-EX Waivers')"
+              aria-label="coverage-info"
+            >
+              i
+            </button>
+          </span>
+        </label>
       </div>
     </section>
 
     <section class="filter-section">
-      <div class="filter-header" @click="toggleSection('medical')">
+      <div
+        :class="['filter-header', { 'filter-header--collapsed': !openSections.medical }]"
+        @click="toggleSection('medical')"
+      >
         <div class="filter-title-wrap">
           <span :class="['chevron', { 'chevron--open': openSections.medical }]"></span>
           <p class="filter-title">{{ getFilterData('medical').label }}</p>
@@ -414,35 +444,14 @@
             </button>
           </span>
         </label>
-        <label
-          class="filter-row"
-          :class="{ 'filter-row--disabled': isDisabled('preExWaiver-0') }"
-        >
-          <input
-            type="checkbox"
-            :checked="isChecked('preExWaiver-0')"
-            :disabled="isDisabled('preExWaiver-0')"
-            @change="filterIncludedHandler(($event.target as HTMLInputElement).checked, 'preExWaiver-0')"
-          />
-          <span class="filter-row__content">
-            <span class="filter-row__label">
-              PRE-EX Waivers <small>{{ getNumberOfPlans('preExWaiver-0') }}</small>
-            </span>
-            <button
-              type="button"
-              class="info-button info-button--inline"
-              @click.stop.prevent="handleTooltip('preExWaiver-0', 'PRE-EX Waivers')"
-              aria-label="coverage-info"
-            >
-              i
-            </button>
-          </span>
-        </label>
       </div>
     </section>
 
     <section class="filter-section">
-      <div class="filter-header" @click="toggleSection('evacuation')">
+      <div
+        :class="['filter-header', { 'filter-header--collapsed': !openSections.evacuation }]"
+        @click="toggleSection('evacuation')"
+      >
         <div class="filter-title-wrap">
           <span :class="['chevron', { 'chevron--open': openSections.evacuation }]"></span>
           <p class="filter-title">Emergency Evacuation</p>
@@ -506,7 +515,10 @@
     </section>
 
     <section class="filter-section">
-      <div class="filter-header" @click="toggleSection('baggage')">
+      <div
+        :class="['filter-header', { 'filter-header--collapsed': !openSections.baggage }]"
+        @click="toggleSection('baggage')"
+      >
         <div class="filter-title-wrap">
           <span :class="['chevron', { 'chevron--open': openSections.baggage }]"></span>
           <p class="filter-title">Baggage + Delay Coverage</p>
@@ -543,7 +555,10 @@
     </section>
 
     <section class="filter-section">
-      <div class="filter-header" @click="toggleSection('other')">
+      <div
+        :class="['filter-header', { 'filter-header--collapsed': !openSections.other }]"
+        @click="toggleSection('other')"
+      >
         <div class="filter-title-wrap">
           <span :class="['chevron', { 'chevron--open': openSections.other }]"></span>
           <p class="filter-title">Other Coverages</p>
@@ -580,7 +595,10 @@
     </section>
 
     <section class="filter-section">
-      <div class="filter-header" @click="toggleSection('providers')">
+      <div
+        :class="['filter-header', { 'filter-header--collapsed': !openSections.providers }]"
+        @click="toggleSection('providers')"
+      >
         <div class="filter-title-wrap">
           <span :class="['chevron', { 'chevron--open': openSections.providers }]"></span>
           <p class="filter-title">Insurance Providers</p>
@@ -653,6 +671,11 @@
     padding-bottom: 10px;
     border-bottom: 2px solid #a7a7a7;
     cursor: pointer;
+  }
+
+  .filter-header--collapsed {
+    padding-bottom: 0;
+    border-bottom: 0;
   }
 
   .filter-title-wrap {

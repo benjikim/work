@@ -15,12 +15,6 @@
   const sessionStore = useUserSessionStore();
   const themeStore = useThemeStore();
   const isComparePage = window.location.pathname.includes('compare');
-  type AnnualBottomCoverageRow = {
-    key: string;
-    label: string;
-    toolTipText: string;
-    annualBottomLabel: string;
-  };
 
   const props = defineProps({
     plan: {
@@ -30,15 +24,10 @@
   });
 
   const isModeAnnual = computed(() => themeStore.isModeAnnual);
-  const annualSingleTripBottomCoverageKeys = [
+  const annualSingleTripHiddenKeys = new Set([
     'financialDefault',
     'cancelForAnyReasonOption',
     'tripInterruptionForAnyReason',
-  ];
-  const annualSingleTripBottomCoverageKeySet = new Set(
-    annualSingleTripBottomCoverageKeys
-  );
-  const annualSingleTripHiddenKeys = new Set([
     'vacationRentalDamage',
     'preExWaiver',
   ]);
@@ -86,43 +75,9 @@
 
       annualCoverageLimitsMap.forEach((section) => {
         if (section.coverages?.length) {
-          if (section.header === 'Trip Protection') {
-            const visibleCoverages = section.coverages.filter(
-              (coverage) => !annualSingleTripHiddenKeys.has(coverage.key)
-            );
-
-            const reorderedBottomRows: AnnualBottomCoverageRow[] =
-              annualSingleTripBottomCoverageKeys
-                .map((key, index) => {
-                  const matchingCoverage = visibleCoverages.find(
-                    (coverage) => coverage.key === key
-                  );
-
-                  if (!matchingCoverage) return null;
-
-                  return {
-                    ...matchingCoverage,
-                    annualBottomLabel: index === 0 ? 'See below' : '-',
-                  };
-                })
-                .filter(
-                  (coverage): coverage is AnnualBottomCoverageRow =>
-                    coverage !== null
-                );
-
-            const standardCoverages = visibleCoverages.filter(
-              (coverage) =>
-                !annualSingleTripBottomCoverageKeySet.has(coverage.key)
-            );
-
-            section.coverages = [...standardCoverages, ...reorderedBottomRows];
-          } else {
-            section.coverages = section.coverages.filter(
-              (coverage) =>
-                !annualSingleTripBottomCoverageKeySet.has(coverage.key) &&
-                !annualSingleTripHiddenKeys.has(coverage.key)
-            );
-          }
+          section.coverages = section.coverages.filter(
+            (coverage) => !annualSingleTripHiddenKeys.has(coverage.key)
+          );
         }
       });
 
