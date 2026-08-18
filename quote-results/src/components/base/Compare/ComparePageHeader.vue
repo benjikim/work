@@ -28,6 +28,24 @@
 
   const searchHref = 'https://www.insuremytrip.com/?s=';
   const isWhatsNewOpen = ref(false);
+  const showWhatsNewPill = ref(false);
+
+  const handleHeaderMouseMove = (event: MouseEvent) => {
+    const currentTarget = event.currentTarget as HTMLElement | null;
+    if (!currentTarget) {
+      showWhatsNewPill.value = false;
+      return;
+    }
+
+    const { top } = currentTarget.getBoundingClientRect();
+    const pointerOffsetY = event.clientY - top;
+
+    showWhatsNewPill.value = pointerOffsetY <= 22;
+  };
+
+  const handleHeaderMouseLeave = () => {
+    showWhatsNewPill.value = false;
+  };
 
   const execSummary = [
     'This version is a more guided, more structured quote results experience than what’s currently live. The biggest differences are a redesigned filter system, a stronger Trip Details + trust-factor header, and more interactive plan rows with clearer actions and refined typography.',
@@ -134,12 +152,17 @@
 </script>
 
 <template>
-  <div class="display-none lg:block compare-page-header">
+  <div
+    class="display-none lg:block compare-page-header"
+    @mousemove="handleHeaderMouseMove"
+    @mouseleave="handleHeaderMouseLeave"
+  >
     <div class="compare-page-header__inner">
       <div class="compare-page-header__brand-column">
         <button
           type="button"
           class="compare-page-header__whats-new-pill"
+          :class="{ 'compare-page-header__whats-new-pill--visible': showWhatsNewPill }"
           @click="isWhatsNewOpen = true"
         >
           What&apos;s New?
@@ -362,12 +385,23 @@
     height: 28px;
     justify-content: center;
     letter-spacing: 0.03em;
+    opacity: 0;
+    pointer-events: none;
     padding: 0 12px;
     text-transform: uppercase;
     transition:
       background-color 0.18s ease,
+      opacity 0.18s ease,
+      visibility 0.18s ease,
       transform 0.18s ease;
+    visibility: hidden;
     white-space: nowrap;
+  }
+
+  .compare-page-header__whats-new-pill--visible {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
   }
 
   .compare-page-header__primary-link {
