@@ -150,7 +150,7 @@
           v-for="evacCoverage in evacuationSpecificSection"
           :key="`${evacCoverage.key}-${plan.code}`"
         >
-          <td class="font-bold text-[#878787] uppercase text-xs snap-center">
+          <td class="font-bold text-[#878787] uppercase text-sm snap-center">
             {{ evacCoverage.label }}
           </td>
           <CoverageTableRows
@@ -168,7 +168,7 @@
           v-for="preExCoverage in medicalSpecificSection"
           :key="`${preExCoverage.key}-${plan.code}`"
         >
-          <td class="font-bold text-[#878787] uppercase text-xs snap-center">
+          <td class="font-bold text-[#878787] uppercase text-sm snap-center">
             {{ preExCoverage.label }}
           </td>
           <CoverageTableRows
@@ -183,7 +183,7 @@
           v-for="coverage in section.coverages"
           :key="coverage.key"
         >
-          <td class="text-xs snap-center">
+          <td class="text-sm snap-center">
             <CoverageLabelToolTip
               :tool-tip-text="coverage.toolTipText"
               :mobile-modal-heading="coverage.label"
@@ -205,9 +205,9 @@
           v-else-if="section.header === 'Optional Coverages'"
         >
           <td
-            class="font-bold text-[#878787] uppercase text-xs snap-center"
+            class="font-bold text-[#878787] uppercase text-sm snap-center"
           ></td>
-          <td class="font-bold text-xs snap-center">
+          <td class="font-bold text-sm snap-center">
             <AdditionalOptions
               :plan-code="plan.code"
               option-location="detailsModal"
@@ -219,7 +219,7 @@
           v-else-if="section.header === 'Included Benefits' && !isModeAnnual"
         >
           <td
-            class="font-bold text-[#878787] uppercase text-xs snap-center"
+            class="font-bold text-[#878787] uppercase text-sm snap-center"
           ></td>
           <IncludedBenefitsTableRows :plan-code="plan.code" />
         </tr>

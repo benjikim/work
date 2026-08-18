@@ -515,6 +515,8 @@ export function sortBasedOnUserSelection(
  * @param {QuoteResults[]} plans
  * @param {Filters} productFilters
  */
+const RESULTS_COPY_ROUTES = ['/QRPOCCopy', '/QRPOCSeparate'];
+
 export function handleFilters(
   selectedFilters: string[],
   plans: QuoteResult[],
@@ -571,7 +573,9 @@ export function handleFilters(
 
     if (
       !themeStore.isThemeSoventure &&
-      window.location.pathname.includes('/QRPOCCopy') &&
+      RESULTS_COPY_ROUTES.some((route) =>
+        window.location.pathname.includes(route)
+      ) &&
       category === 'tripInterruption'
     ) {
       tripInterruptionFiltersArr.push(filterValues);
@@ -594,14 +598,22 @@ export function handleFilters(
 
   // Join all provider filter into arr since these can be multi selected.
   if (providerFiltersArr.length > 0) {
-    arr.push(providerFiltersArr.reduce((acc, val) => acc.concat(val), []));
+    arr.push(
+      Array.from(
+        new Set(providerFiltersArr.reduce((acc, val) => acc.concat(val), []))
+      )
+    );
   }
 
   if (tripInterruptionFiltersArr.length > 0) {
     arr.push(
-      tripInterruptionFiltersArr.reduce(
-        (acc, val) => acc.concat(val),
-        [] as string[]
+      Array.from(
+        new Set(
+          tripInterruptionFiltersArr.reduce(
+            (acc, val) => acc.concat(val),
+            [] as string[]
+          )
+        )
       )
     );
   }
@@ -609,7 +621,7 @@ export function handleFilters(
   if (themeStore.isThemeSoventure) {
     Object.values(filterMap)
       .filter((group) => group.length)
-      .forEach((group) => arr.push(group.flat()));
+      .forEach((group) => arr.push(Array.from(new Set(group.flat()))));
   }
 
   // This loops through the array and

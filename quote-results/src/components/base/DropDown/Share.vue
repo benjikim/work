@@ -268,15 +268,15 @@
   <button
     v-if="isMobile && hasShareCapability && isComparePage"
     type="button"
-    class="flex-1 inline-flex flex-row items-center justify-center daisy-btn rounded-3xl bg-white border-2 border-[#DEDEDE] font-normal max-w-[215px]"
+    class="w-full max-w-[215px] bg-[white] border border-[#DEDEDE] rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center h-9 hover:bg-[#F6FAFD]"
     @click="handleShareMobile"
     aria-label="Back to results"
   >
     <ArrowUpOnSquareIcon
-      class="size-5 stroke-imt-blue cursor-pointer mb-[2px]"
+      class="size-5 text-action-alt-primary"
     />
     <span
-      class="font-bold text-xs text-[--action-primary] ml-[-3px] pt-[2px]"
+      class="uppercase font-bold text-[0.625rem] text-action-alt-primary"
       v-if="shareContent"
     >
       <span class="block">Share results</span>
@@ -285,10 +285,10 @@
   <div v-else-if="isMobile && hasShareCapability">
     <button
       data-cy="share-results-button"
-      class="text-xs h-[36px] md:h-12 min-h-8 md:min-h-12 sm:text-base m-1 daisy-btn mb-1 md:mb-5 md:rounded-3xl md:bg-transparent md:border-2 md:border-[#DEDEDE] font-normal md:w-[215px]"
+      class="w-full md:w-[215px] bg-[white] border border-[#DEDEDE] rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center h-9 hover:bg-[#F6FAFD]"
       @click="handleShareMobile"
     >
-      <ArrowUpOnSquareIcon class="size-5 md:stroke-imt-blue cursor-pointer" />
+      <ArrowUpOnSquareIcon class="size-5 text-action-alt-primary" />
     </button>
   </div>
   <div v-else>
@@ -298,24 +298,18 @@
     >
       <summary
         data-cy="share-results-button"
-        class="text-xs h-[36px] m-0 !mt-0 !mb-0 flex items-center list-none md:h-12 min-h-8 md:min-h-12 sm:text-base daisy-btn md:mb-5 md:rounded-3xl md:bg-transparent md:border-2 md:border-[#DEDEDE] font-normal md:w-[215px]"
+        class="w-full md:w-[215px] bg-[white] border border-[#DEDEDE] rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center h-9 hover:bg-[#F6FAFD] list-none"
         @click="handleDropdownOpen"
       >
-        <ChevronDownIcon
-          class="size-3 sm:size-5 stroke-[--action-primary] display-none md:block"
-        />
+        <ChevronDownIcon class="size-5 text-action-alt-primary display-none md:block" />
         <span
-          class="md:font-bold text-[--action-primary] display-none md:block"
+          class="uppercase text-action-alt-primary text-[0.625rem] font-bold display-none md:block"
           v-if="shareContent"
         >
           {{ shareContent.label }}
         </span>
-        <ArrowUpOnSquareIcon
-          class="size-5 md:stroke-[--action-primary] cursor-pointer"
-        />
-        <ChevronDownIcon
-          class="size-3 sm:size-5 stroke-imt-black md:display-none"
-        />
+        <ArrowUpOnSquareIcon class="size-5 text-action-alt-primary" />
+        <ChevronDownIcon class="size-5 text-action-alt-primary md:display-none" />
       </summary>
       <ul
         class="p-2 shadow daisy-menu daisy-dropdown-content z-[1] rounded-box w-52 bg-white"

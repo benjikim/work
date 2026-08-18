@@ -11,7 +11,7 @@
 <template>
   <aside
     v-if="!isModeEdu && !isModeAnnual"
-    class="col-span-full lg:col-span-3 block lg:m-0"
+    class="col-span-full lg:col-span-3 block px-6 lg:px-0 lg:m-0"
   >
     <BaseFilterContainerCopy display-type="desktop" />
   </aside>

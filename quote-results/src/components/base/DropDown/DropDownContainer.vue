@@ -15,7 +15,7 @@
 </script>
 <template>
   <section
-    class="max-w-screen-md w-full flex justify-center lg:justify-between md:max-w-[98%] mt-1 md:mt-4 lg:mt-0"
+    class="max-w-screen-md w-full flex justify-center lg:justify-between md:max-w-[98%] mt-1 md:mt-2 lg:mt-2 mb-5 lg:mb-7"
   >
     <Filter v-if="!isViewLG && !isModeEdu && !isModeAnnual" class="max-w-fit" />
     <SortBy v-if="!isModeAnnual" class="max-w-fit" />

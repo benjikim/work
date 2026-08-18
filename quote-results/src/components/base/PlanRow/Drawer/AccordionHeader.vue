@@ -59,7 +59,17 @@
 <template>
   <!-- Accordion Header -->
   <div
-    class="flex items-center justify-between border-b border-[#A7A7A7] pb-2 mb-2 cursor-pointer select-none"
+    class="flex items-center justify-between pt-[5px] pb-2 mb-2 cursor-pointer select-none transition-colors duration-150 rounded-[6px]"
+    :class="{
+      'border-b border-[#DEDEDE]': userSessionStore.isSectionOpen(
+        section.header,
+        plan.code
+      ),
+      'hover:bg-[#F7F7F7]': !userSessionStore.isSectionOpen(
+        section.header,
+        plan.code
+      ),
+    }"
     @click="toggleSection(section.header)"
   >
     <div
@@ -94,7 +104,7 @@
         ].includes(section.header)
       "
       key="coverage-limits"
-      class="text-xs md:text-sm text-[#999999] uppercase mr-2 inline-block"
+      class="text-[0.6875rem] uppercase tracking-wide text-[#999999] mr-2 inline-block"
       >Coverage Limits Below are per person</span
     >
     <span
@@ -103,7 +113,7 @@
         section.header === 'Covered Activities'
       "
       key="covered-activities"
-      class="text-xs md:text-sm text-[#999999] uppercase mr-2 inline-block"
+      class="text-[0.6875rem] uppercase tracking-wide text-[#999999] mr-2 inline-block"
       >{{ plan?.coveredActivities?.length }} Covered Activities</span
     >
     <span
@@ -112,7 +122,7 @@
         section.header === 'Included Benefits'
       "
       key="included-benefits"
-      class="text-xs md:text-sm text-[#999999] uppercase mr-2 inline-block"
+      class="text-[0.6875rem] uppercase tracking-wide text-[#999999] mr-2 inline-block"
       >{{ plan?.includedBenefits?.length }} Included</span
     >
     <span
@@ -121,7 +131,7 @@
         section.header === 'Optional Coverages'
       "
       key="optional-coverages"
-      class="text-xs md:text-sm text-[#999999] uppercase mr-2 inline-block"
+      class="text-[0.6875rem] uppercase tracking-wide text-[#999999] mr-2 inline-block"
       >{{ numberOfOptionalCoverages }} Available</span
     >
   </div>

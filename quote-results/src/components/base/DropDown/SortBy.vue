@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { ChevronDownIcon } from '@heroicons/vue/24/solid';
   import { CheckIcon } from '@heroicons/vue/24/solid';
   import { StopIcon } from '@heroicons/vue/24/outline';
   import { useContentStore } from '@/store/content';
@@ -64,13 +63,19 @@
 <template>
   <details ref="dropdown" class="daisy-dropdown" @click="handleDropdownOpen">
     <summary
-      class="text-xs h-[36px] md:h-12 min-h-8 md:min-h-12 sm:text-base m-1 daisy-btn mb-1 md:mb-5 md:rounded-3xl md:bg-transparent md:border-2 md:border-[#DEDEDE] font-normal md:w-[215px]"
+      class="w-full md:w-[215px] bg-[white] border border-[#DEDEDE] rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center h-9 hover:bg-[#F6FAFD]"
     >
-      <ChevronDownIcon class="size-3 sm:size-5 stroke-imt-black display-none md:block" />
-      <span class="md:font-bold" v-if="sortContent">{{
+      <svg
+        class="size-5 text-action-alt-primary"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M4 7l1.41 1.41L8 5.83V13h2V5.83l2.59 2.58L14 7 9 2 4 7zm16 10l-1.41-1.41L16 18.17V11h-2v7.17l-2.59-2.58L10 17l5 5 5-5z"></path>
+      </svg>
+      <span class="uppercase text-action-alt-primary text-[0.625rem] font-bold" v-if="sortContent">{{
         findCurrentSelection(currentSortSelection)?.label
-      }}</span
-      ><ChevronDownIcon class="size-3 sm:size-5 stroke-imt-black md:display-none" />
+      }}</span>
     </summary>
     <ul
       class="p-2 shadow daisy-menu daisy-dropdown-content z-[1] bg-base-100 rounded-box w-52"

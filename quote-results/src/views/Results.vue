@@ -65,7 +65,7 @@
   <HeaderContainer v-if="isMobile"></HeaderContainer>
   <ComparePageHeader v-if="!isMobile" />
   <div
-    class="quote-results-container grid md:grid-cols-10 gap-3 sm:gap-0 lg:gap-14"
+    class="quote-results-container grid md:grid-cols-10 gap-3 sm:gap-0 lg:gap-x-14 lg:gap-y-5"
   >
     <HeaderContainer v-if="!isMobile"></HeaderContainer>
     <SectionSidebar></SectionSidebar>

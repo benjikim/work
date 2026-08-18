@@ -19,6 +19,11 @@ const routes = [
     component: () => import('@/views/ResultsCopy.vue'),
   },
   {
+    path: '/QRPOCSeparate',
+    name: 'ResultsPOCSeparate',
+    component: () => import('@/views/ResultsCopy.vue'),
+  },
+  {
     path: '/annual-results-copy',
     name: 'AnnualResultsCopy',
     component: () => import('@/views/AnnualResultsCopy.vue'),

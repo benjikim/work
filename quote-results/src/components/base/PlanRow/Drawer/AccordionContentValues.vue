@@ -100,7 +100,7 @@
       :track-certificate-click="trackCertificateClick"
     />
   </td>
-  <td v-else class="text-xs text-right align-top">
+  <td v-else class="text-sm font-normal normal-case text-left align-top">
     <span
       v-if="optionLocation !== 'planRowDetails'"
       class="font-bold text-[#878787] uppercase text-xs text-left table-cell relative right-2 md:display-none"
@@ -115,6 +115,7 @@
         plan.type === 'Evacuation' &&
         plan?.availability
       "
+      class="text-sm font-normal normal-case text-left"
       :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
     >
       {{
@@ -126,6 +127,7 @@
 
     <div
       v-else-if="plan && coverage.key === 'refundWindow' && plan?.reviewPeriod"
+      class="text-sm font-normal normal-case text-left"
       :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
     >
       {{
@@ -161,7 +163,7 @@
       <div class="flex">
         <UtilityHTMLRenderer
           is="span"
-          class="utility-html-renderer inline text-left"
+          class="utility-html-renderer inline text-sm font-normal normal-case text-left"
           :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
           :content="displayTripInterruptionAndTripCancellation(coverage.key)"
         ></UtilityHTMLRenderer>
@@ -172,7 +174,7 @@
       <div class="flex">
         <UtilityHTMLRenderer
           is="span"
-          class="utility-html-renderer inline text-left"
+          class="utility-html-renderer inline text-sm font-normal normal-case text-left"
           :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
           :content="getCoverageData(plan, coverage.key)"
         ></UtilityHTMLRenderer>
@@ -196,10 +198,11 @@
       "
       :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
     >
-      <a class="text-xs text-color-action-alt-primary">N/A*</a>
+      <a class="text-sm font-normal normal-case text-color-action-alt-primary">N/A*</a>
     </div>
 
     <span
+      class="text-sm font-normal normal-case"
       :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
       v-else
       >N/A

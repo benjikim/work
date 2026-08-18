@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { computed, watchEffect, watch } from 'vue';
+  import { event } from 'vue-gtag';
   import BasePlanRow from '@/components/base/PlanRow/BasePlanRow.vue';
   import BaseSoventurePlanRow from '@/components/base/PlanRow/BaseSoventurePlanRow.vue';
   import { useApiStore } from '@/store/api';
@@ -10,6 +11,7 @@
   import ReturnToSiteContainer from '@/components/base/PlanRow/ReturnToSiteContainer.vue';
   import BaseSubflow from '@/components/base/Subflow/BaseSubflow.vue';
   import SoventureUpdateTripCost from './SoventureUpdateTripCost.vue';
+  import { GAObject } from '@/types';
 
   const apiStore = useApiStore();
   const userSession = useUserSessionStore();
@@ -38,6 +40,10 @@
     }
     return getShownPlans();
   });
+
+  const visiblePlans = computed(() =>
+    plans.value.filter((plan) => plan.showPlan !== false)
+  );
 
   const isThemeSoventure = computed(() => themeStore.isThemeSoventure);
   const isModeEdu = computed(() => themeStore.isModeEdu);
@@ -146,6 +152,22 @@
   const arePlansFullyLoaded = computed(
     () => apiStore.getPlansFullyLoadedStatus
   );
+
+  const showNoFilteredPlansMessage = computed(
+    () =>
+      !displayLoader.value &&
+      apiStore.getDataLoadedState &&
+      arePlansFullyLoaded.value &&
+      apiStore.getAvailablePlans.length > 0 &&
+      visiblePlans.value.length === 0
+  );
+
+  const resetFilters = () => {
+    userSession.resetFilters();
+    event('filters__reset', {
+      hierarchical_layer_1: 'Reset Filters Link Clicked',
+    } as GAObject);
+  };
 </script>
 
 <template>
@@ -153,6 +175,21 @@
     <template v-if="displayLoader">
       <BasePlanRow v-for="index in loadingPlans" :key="index" />
     </template>
+    <div
+      v-else-if="showNoFilteredPlansMessage"
+      class="rounded-[6px] border border-[#DEDEDE] bg-white p-4 md:p-5 text-left"
+    >
+      <p class="text-sm md:text-base text-[#27364A]">
+        There are no plans available based on your filter selections,
+        <button
+          type="button"
+          class="text-action-primary underline decoration-dotted underline-offset-2"
+          @click="resetFilters"
+        >
+          click here to show all plans
+        </button>
+      </p>
+    </div>
     <template v-else-if="plans?.length > 0 && !isThemeSoventure">
       <BasePlanRow
         v-for="plan in plans"

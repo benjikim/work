@@ -147,7 +147,7 @@
   <div @click="handleClick" :data-cy="`${planCode}-planRow-${coverageKey}`">
     <p
       v-if="displayLabel === true"
-      class="text-[0.62rem] uppercase font-bold text-[#878787] tracking-wide"
+      class="text-[0.6875rem] uppercase font-normal text-[#878787] tracking-wide"
       :class="[isThemeSoventure ? 'group-hover:text-black' : '']"
     >
       {{ coverage.label }}
@@ -163,7 +163,7 @@
           areThereMultipleMedicalOptions(planCode)
         "
       >
-        <div class="text-sm font-bold capitalized flex items-center min-h-6">
+        <div class="text-sm font-semibold capitalized flex items-center min-h-6">
           <p>{{ getCurrentSelectedMedicalValue(planCode) }}</p>
           <div class="ml-1 flex flex-col items-center">
             <BaseCoverageMarker
@@ -186,7 +186,7 @@
         <!-- Medical plans' Interruption benefit is a wild card of information -->
         <!-- Let's just inform that user to go look at the details for more -->
         <div
-          class="flex flex-row text-sm capitalized items-center font-bold min-h-6"
+          class="flex flex-row text-sm capitalized items-center font-semibold min-h-6"
         >
           <p>See details</p>
           <div class="ml-1">
@@ -206,7 +206,7 @@
         <!-- For Evacuation Plans, this is emergencyMedicalEvacuation is -->
         <!-- the expected grid data.-->
         <div
-          class="flex flex-row text-sm capitalized items-center font-bold min-h-6"
+          class="flex flex-row text-sm capitalized items-center font-semibold min-h-6"
         >
           <p>{{ getPlanRowCoverageDisplay(plan, coverageKey) }}</p>
           <div class="ml-1 flex flex-col items-center">
@@ -236,7 +236,7 @@
             :content="getCoverageData(plan, coverageKey)"
           ></UtilityHTMLRenderer>
           <Secondary
-            class="font-bold capitalized inline"
+            class="font-semibold capitalized inline"
             v-if="coverage.secondary"
           />
         </div>
@@ -251,7 +251,7 @@
         <!-- Pre-Ex Waiver is tricky. We don't want the user to believe it is just included -->
         <div
           v-if="plan && isCoverageAvailable(planCode, coverageKey)"
-          class="flex flex-row text-sm capitalized items-center font-bold min-h-6"
+          class="flex flex-row text-sm capitalized items-center font-semibold min-h-6"
         >
           <p>See details</p>
           <div class="ml-1 flex flex-col items-center">
@@ -297,11 +297,11 @@
       >
         <div
           :class="{
-            'text-sm font-bold capitalized': !isThemeSoventure,
-            'text-xs font-bold capitalized': isThemeSoventure,
+            'text-sm font-semibold capitalized': !isThemeSoventure,
+            'text-xs font-semibold capitalized': isThemeSoventure,
           }"
         >
-          <div class="text-sm font-bold capitalized">
+          <div class="text-sm font-semibold capitalized">
             {{ plan.includedBenefits?.length }}
             <span class="text-action-alt-primary">See List</span>
           </div>
@@ -326,11 +326,11 @@
       >
         <div
           :class="{
-            'text-sm font-bold capitalized': !isThemeSoventure,
-            'text-xs font-bold capitalized': isThemeSoventure,
+            'text-sm font-semibold capitalized': !isThemeSoventure,
+            'text-xs font-semibold capitalized': isThemeSoventure,
           }"
         >
-          <div class="text-sm font-bold capitalized">
+          <div class="text-sm font-semibold capitalized">
             {{ plan.includedBenefits?.length }}
             <span class="qr-text-info">See List</span>
           </div>
@@ -353,7 +353,7 @@
           'columns-1 max-h-80': isThemeSoventure,
         }"
       >
-        <div class="text-sm font-bold capitalized">
+        <div class="text-sm font-semibold capitalized">
           {{ plan.coveredActivities?.length }}
           <span class="qr-text-info">See List</span>
         </div>
@@ -374,7 +374,7 @@
           class="text-xs capitalized lg:flex relative min-h-6"
         >
           <div
-            class="flex flex-row text-sm capitalized items-center font-bold capitalized"
+            class="flex flex-row text-sm capitalized items-center font-semibold capitalized"
           >
             <p v-if="ADDDisplayHaveAlpha">See details</p>
             <p v-else>
@@ -399,7 +399,7 @@
 
         <div
           v-else-if="areADDOptionsAvailable(planCode)"
-          class="text-sm font-bold items-center flex flex-row min-h-6"
+          class="text-sm font-semibold items-center flex flex-row min-h-6"
         >
           <p>See details</p>
           <div class="ml-1 flex flex-col items-center">
@@ -416,7 +416,7 @@
       <div v-else-if="Array.isArray(coverage.value)">
         <p
           v-for="(text, index) in coverage.value"
-          class="text-sm font-bold capitalized"
+          class="text-sm font-semibold capitalized"
           :key="index"
         >
           {{ text }}
@@ -424,7 +424,7 @@
       </div>
       <div
         v-else-if="coverage.value"
-        class="text-sm font-bold capitalized flex items-center min-h-6"
+        class="text-sm font-semibold capitalized flex items-center min-h-6"
       >
         <p class="text-sm">
           {{ coverage.value }}

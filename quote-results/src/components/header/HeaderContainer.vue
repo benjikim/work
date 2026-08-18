@@ -187,6 +187,10 @@
 
   const isComparePage = window.location.pathname.includes('compare');
   const isModeAnnual = computed(() => themeStore.isModeAnnual);
+
+  const openEditTripDetailsModal = () => {
+    sessionStore.setEditTripModalIsOpen(true);
+  };
 </script>
 
 <template>
@@ -198,12 +202,11 @@
       'sticky top-0 z-[1] shadow-sm': !isModeAnnual && isMobile && !isCompare,
     }"
   >
-    <div class="mx-auto pb-4 sm:pb-0 px-0 md:px-4 flex flex-col lg:flex-row w-full lg:mt-2">
+    <div class="mx-auto pb-4 sm:pb-0 lg:pb-0 px-0 flex flex-col lg:flex-row lg:items-center w-full lg:mt-2 lg:mb-2">
       <div
-        :class="[
-          'lg:pb-0 lg:mx-0',
-          isThemeIMT && !isModeAnnual ? 'md:border-b md:border-black' : '',
-        ]"
+        class="lg:pb-0 lg:mx-0 quote-details-summary-section group lg:p-3 lg:pt-[0.375rem] cursor-pointer"
+        data-cy="trip-details-summary-section"
+        @click="openEditTripDetailsModal"
       >
         <Header />
         <QuoteDetails class="display-none lg:flex" />
@@ -214,10 +217,10 @@
       </div>
 
       <div
-        class="relative lg:ml-auto display-none md:flex md:justify-center md:overflow-hidden py-2 lg:py-0"
+        class="relative lg:ml-auto display-none md:flex md:items-center md:justify-center md:overflow-hidden py-2 lg:py-0"
       >
         <TrustFactors
-          class="border-2 rounded-[6px] border-[--action-primary]"
+          class="border rounded-[6px] border-[#DEDEDE]"
           v-if="!isMobile"
         />
       </div>
@@ -237,4 +240,9 @@
   <MoreInfoModal v-if="isMoreInfoModalOpen" />
 </template>
 
-<style></style>
+<style scoped>
+  .quote-details-summary-section {
+    border: 1px solid transparent;
+    border-radius: 6px;
+  }
+</style>

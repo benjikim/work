@@ -28,8 +28,10 @@
 
   .btn-primary {
     background-color: var(--color-primary-btn);
-    :hover {
-      background-color: var(--color-primary-btn);
+    transition: background-color 0.18s ease, color 0.18s ease;
+
+    &:hover {
+      background-color: #6cab2c;
     }
   }
 

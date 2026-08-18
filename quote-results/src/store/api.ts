@@ -40,10 +40,13 @@ import {
 import * as configcat from 'configcat-js';
 
 const STATIC_DEMO_QID = '1f1964f4-94b3-62ec-ad3c-415ce827df76';
+const RESULTS_COPY_ROUTES = ['/QRPOCCopy', '/QRPOCSeparate'];
 const isPlanDetailsPocRoute = () =>
   window.location.pathname.includes('/QRPlanDetailsPOC');
 const isResultsCopyRoute = () =>
-  window.location.pathname.includes('/QRPOCCopy');
+  RESULTS_COPY_ROUTES.some((route) =>
+    window.location.pathname.includes(route)
+  );
 const isAnnualResultsCopyRoute = () =>
   window.location.pathname.includes('/annual-results-copy');
 const isStaticDemoMode = () =>

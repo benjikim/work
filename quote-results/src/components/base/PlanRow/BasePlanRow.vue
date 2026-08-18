@@ -466,7 +466,7 @@
 
 <template>
   <div
-    class="grid grid-cols-18 w-full rounded-md mb-5 lg:mb-7"
+    class="grid grid-cols-18 w-full rounded-md mb-5 lg:mb-7 transition-shadow duration-200 hover:shadow-[0_4px_12px_rgba(39,54,74,0.08)]"
     :class="{
       border: plan,
     }"
@@ -492,7 +492,7 @@
           <!-- Plan Header -->
           <div class="col-span-12">
             <div
-              class="grid grid-cols-12 gap-[0.625rem] pb-1 md:pb-2 md:border-b-3 md:grid-cols-5"
+              class="grid grid-cols-12 gap-[0.625rem] pb-1 md:pb-2 md:border-b md:border-[#DEDEDE] md:grid-cols-5"
             >
               <div
                 class="col-span-3 md:col-span-1 mx-2 flex justify-center items-center"
@@ -558,7 +558,7 @@
                     class="pt-2"
                   >
                     <BaseCoverageText
-                      class="pb-2 hover:[outline:3px_solid_#ebebeb] hover:bg-[#ebebeb] hover:cursor-pointer"
+                      class="pb-2"
                       v-for="(coverage, i) in col"
                       :key="i"
                       :coverage="coverage"

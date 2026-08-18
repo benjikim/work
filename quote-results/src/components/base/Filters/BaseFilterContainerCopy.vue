@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { computed, reactive } from 'vue';
+  import { ChevronUpIcon } from '@heroicons/vue/24/solid';
   import { event } from 'vue-gtag';
   import { useContentStore } from '@/store/content';
   import { useUserSessionStore } from '@/store/userSession';
@@ -67,12 +68,18 @@
   };
 
   const getFilterData = (key: string) => contentStore.getFilterData(key);
-  const isResultsCopyRoute = window.location.pathname.includes('/QRPOCCopy');
+  const isResultsCopyRoute = ['/QRPOCCopy', '/QRPOCSeparate'].some((route) =>
+    window.location.pathname.includes(route)
+  );
 
   const combineGroupedFilters = (filterGroups: string[][]) =>
-    filterGroups.reduce(
-      (accumulator, values) => accumulator.concat(values),
-      [] as string[]
+    Array.from(
+      new Set(
+        filterGroups.reduce(
+          (accumulator, values) => accumulator.concat(values),
+          [] as string[]
+        )
+      )
     );
 
   const getNumberOfPlans = (filterKey: string) => {
@@ -277,9 +284,9 @@
 
 <template>
   <div class="copy-filter-container">
-    <div>
+    <div class="summary-block">
       <p v-if="arePlansFullyLoaded" class="summary-count">
-        Showing {{ numberOfPlansShown }} Plans
+        {{ availablePlans.length }} Plans Available
       </p>
       <p v-else class="summary-count">Loading Plans</p>
       <button
@@ -287,18 +294,27 @@
         class="reset-link"
         @click="resetDefaultFilters"
       >
-        RESET FILTERS (Show all {{ availablePlans.length }} Plans)
+        <span class="reset-link__text reset-link__count"
+          >Showing {{ numberOfPlansShown }}</span
+        >
+        <span class="reset-link__text reset-link__action">Reset Filters</span>
       </button>
     </div>
 
     <section class="filter-section">
       <div
-        :class="['filter-header', { 'filter-header--collapsed': !openSections.trip }]"
+        class="filter-header"
+        :class="{
+          'border-b border-[#DEDEDE]': openSections.trip,
+        }"
         @click="toggleSection('trip')"
       >
-        <div class="filter-title-wrap">
-          <span :class="['chevron', { 'chevron--open': openSections.trip }]"></span>
-          <p class="filter-title">Trip Interruption &amp; Cancellation</p>
+        <div class="flex items-center gap-2">
+          <ChevronUpIcon
+            class="size-5 text-black cursor-pointer transition-transform duration-200 ease-in-out"
+            :class="{ 'rotate-180': openSections.trip }"
+          />
+          <p class="text-xs md:text-sm text-imt-black">Trip Interruption &amp; Cancellation</p>
         </div>
       </div>
       <div v-if="openSections.trip" class="filter-body">
@@ -383,12 +399,18 @@
 
     <section class="filter-section">
       <div
-        :class="['filter-header', { 'filter-header--collapsed': !openSections.medical }]"
+        class="filter-header"
+        :class="{
+          'border-b border-[#DEDEDE]': openSections.medical,
+        }"
         @click="toggleSection('medical')"
       >
-        <div class="filter-title-wrap">
-          <span :class="['chevron', { 'chevron--open': openSections.medical }]"></span>
-          <p class="filter-title">{{ getFilterData('medical').label }}</p>
+        <div class="flex items-center gap-2">
+          <ChevronUpIcon
+            class="size-5 text-black cursor-pointer transition-transform duration-200 ease-in-out"
+            :class="{ 'rotate-180': openSections.medical }"
+          />
+          <p class="text-xs md:text-sm text-imt-black">{{ getFilterData('medical').label }}</p>
         </div>
       </div>
       <div v-if="openSections.medical" class="filter-body">
@@ -449,12 +471,18 @@
 
     <section class="filter-section">
       <div
-        :class="['filter-header', { 'filter-header--collapsed': !openSections.evacuation }]"
+        class="filter-header"
+        :class="{
+          'border-b border-[#DEDEDE]': openSections.evacuation,
+        }"
         @click="toggleSection('evacuation')"
       >
-        <div class="filter-title-wrap">
-          <span :class="['chevron', { 'chevron--open': openSections.evacuation }]"></span>
-          <p class="filter-title">Emergency Evacuation</p>
+        <div class="flex items-center gap-2">
+          <ChevronUpIcon
+            class="size-5 text-black cursor-pointer transition-transform duration-200 ease-in-out"
+            :class="{ 'rotate-180': openSections.evacuation }"
+          />
+          <p class="text-xs md:text-sm text-imt-black">Emergency Evacuation</p>
         </div>
       </div>
       <div v-if="openSections.evacuation" class="filter-body">
@@ -516,12 +544,18 @@
 
     <section class="filter-section">
       <div
-        :class="['filter-header', { 'filter-header--collapsed': !openSections.baggage }]"
+        class="filter-header"
+        :class="{
+          'border-b border-[#DEDEDE]': openSections.baggage,
+        }"
         @click="toggleSection('baggage')"
       >
-        <div class="filter-title-wrap">
-          <span :class="['chevron', { 'chevron--open': openSections.baggage }]"></span>
-          <p class="filter-title">Baggage + Delay Coverage</p>
+        <div class="flex items-center gap-2">
+          <ChevronUpIcon
+            class="size-5 text-black cursor-pointer transition-transform duration-200 ease-in-out"
+            :class="{ 'rotate-180': openSections.baggage }"
+          />
+          <p class="text-xs md:text-sm text-imt-black">Baggage + Delay Coverage</p>
         </div>
       </div>
       <div v-if="openSections.baggage" class="filter-body">
@@ -556,12 +590,18 @@
 
     <section class="filter-section">
       <div
-        :class="['filter-header', { 'filter-header--collapsed': !openSections.other }]"
+        class="filter-header"
+        :class="{
+          'border-b border-[#DEDEDE]': openSections.other,
+        }"
         @click="toggleSection('other')"
       >
-        <div class="filter-title-wrap">
-          <span :class="['chevron', { 'chevron--open': openSections.other }]"></span>
-          <p class="filter-title">Other Coverages</p>
+        <div class="flex items-center gap-2">
+          <ChevronUpIcon
+            class="size-5 text-black cursor-pointer transition-transform duration-200 ease-in-out"
+            :class="{ 'rotate-180': openSections.other }"
+          />
+          <p class="text-xs md:text-sm text-imt-black">Other Coverages</p>
         </div>
       </div>
       <div v-if="openSections.other" class="filter-body">
@@ -596,12 +636,18 @@
 
     <section class="filter-section">
       <div
-        :class="['filter-header', { 'filter-header--collapsed': !openSections.providers }]"
+        class="filter-header"
+        :class="{
+          'border-b border-[#DEDEDE]': openSections.providers,
+        }"
         @click="toggleSection('providers')"
       >
-        <div class="filter-title-wrap">
-          <span :class="['chevron', { 'chevron--open': openSections.providers }]"></span>
-          <p class="filter-title">Insurance Providers</p>
+        <div class="flex items-center gap-2">
+          <ChevronUpIcon
+            class="size-5 text-black cursor-pointer transition-transform duration-200 ease-in-out"
+            :class="{ 'rotate-180': openSections.providers }"
+          />
+          <p class="text-xs md:text-sm text-imt-black">Insurance Providers</p>
         </div>
       </div>
       <div v-if="openSections.providers" class="filter-body">
@@ -641,11 +687,15 @@
     width: 100%;
   }
 
+  .summary-block {
+    padding-left: 24px;
+  }
+
   .summary-count {
     margin: 0 0 8px;
     color: #27364a;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 700;
   }
 
   .reset-link {
@@ -653,55 +703,82 @@
     border: 0;
     padding: 0;
     background: transparent;
-    color: #0b67e3;
     font-size: 14px;
-    font-weight: 800;
+    font-weight: 400;
     cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    display: inline-grid;
+    align-items: start;
+    justify-items: start;
+
+    &:hover {
+      .reset-link__count {
+        opacity: 0;
+      }
+
+      .reset-link__action {
+        opacity: 1;
+      }
+    }
+  }
+
+  .reset-link__text {
+    grid-area: 1 / 1;
+    transition: opacity 0.15s ease;
+  }
+
+  .reset-link__count {
+    color: #0b67e3;
+    opacity: 1;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+  }
+
+  .reset-link__action {
+    color: #0b67e3;
+    opacity: 0;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+  }
+
+  @media (min-width: 1024px) {
+    .summary-block {
+      padding-left: 12px;
+    }
   }
 
   .filter-section + .filter-section {
-    margin-top: 18px;
+    margin-top: 10px;
+  }
+
+  .filter-section {
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 10px;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:hover {
+      border-color: #dedede;
+      box-shadow: 0 4px 12px rgba(39, 54, 74, 0.08);
+    }
   }
 
   .filter-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #a7a7a7;
+    padding-top: 5px;
+    padding-bottom: 8px;
+    margin-bottom: 0;
     cursor: pointer;
-  }
-
-  .filter-header--collapsed {
-    padding-bottom: 0;
-    border-bottom: 0;
-  }
-
-  .filter-title-wrap {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .chevron {
-    width: 12px;
-    height: 12px;
-    border-right: 3px solid #0b67e3;
-    border-bottom: 3px solid #0b67e3;
-    transform: rotate(-45deg);
-    transition: transform 0.2s ease;
-  }
-
-  .chevron--open {
-    transform: rotate(45deg);
-  }
-
-  .filter-title {
-    margin: 0;
-    color: #212629;
-    font-size: 16px;
-    font-weight: 600;
+    user-select: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
   .info-button {
@@ -730,7 +807,7 @@
   .filter-divider {
     height: 1px;
     margin: 8px 0 10px;
-    background: #a7a7a7;
+    background: #dedede;
   }
 
   .filter-row {
@@ -738,9 +815,13 @@
     align-items: center;
     gap: 14px;
     min-height: 34px;
-    color: #212629;
+    color: rgba(33, 38, 41, 0.6);
     font-size: 15px;
     cursor: pointer;
+
+    &:hover {
+      color: rgba(33, 38, 41, 1);
+    }
   }
 
   .filter-row__content {
@@ -793,5 +874,9 @@
     font-size: 9.35px;
     flex: 0 0 auto;
     opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 </style>

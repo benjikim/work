@@ -131,10 +131,10 @@
   };
 </script>
 <template>
-  <td class="font-bold text-xs bg-[#F6FAFD] snap-center">
+  <td class="font-bold text-sm bg-[#F6FAFD] snap-center">
     <span
       v-if="optionLocation !== 'detailsModal'"
-      class="font-bold text-[#878787] uppercase text-xs text-left table-cell relative right-2 md:display-none"
+      class="font-bold text-[#878787] uppercase text-sm text-left table-cell relative right-2 md:display-none"
     >
       {{ coverage.label }}
     </span>
@@ -161,7 +161,7 @@
         :plan-code="plan.code"
         :certificate-url="plan.certificate.url"
         label="See Full Plan Information"
-        class="text-xs text-action-primary font-bold"
+        class="text-sm text-action-primary font-bold"
         data-cy="plan-details__certificate_link"
         :track-certificate-click="trackCertificateClick"
       />
@@ -170,7 +170,7 @@
     <div v-else-if="coverage.key === 'annualEligibility' && isModeAnnual">
       <button
         :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}`"
-        class="text-xs text-action-primary font-bold btn btn-link capitalize p-0 tracking-normal"
+        class="text-sm text-action-primary font-bold btn btn-link capitalize p-0 tracking-normal"
         @click="sessionStore.setAnnualEligibilityModalOpen(true)"
       >
         View Annual Eligibility

@@ -8,7 +8,7 @@
   import { getOptionKeyFromCoverageMap, formatCurrency } from '@/utility';
   import { GAObject } from '@/types';
   import CertificateLink from '@/components/shared/CertificateLink.vue';
-  import { ChevronUpIcon } from '@heroicons/vue/24/solid';
+  import { CheckIcon, ChevronUpIcon } from '@heroicons/vue/24/solid';
 
   const props = defineProps({
     plan: {
@@ -326,10 +326,11 @@
         isBuyButtonAndCompareButtonHidden &&
         !isComparePage
       "
-      class="md:mb-2 w-full bg-[white] border-2 rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-action-alt-primary mr-2 h-9 col-span-3 md:col-span-6"
+      class="md:mb-2 w-full bg-[white] border rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-[#DEDEDE] mr-2 h-9 col-span-3 md:col-span-6 group"
       :class="{
         'daisy-tooltip': isCheckboxDisabled,
         'bg-action-primary': isComparing,
+        'hover:bg-[#F6FAFD]': !isComparing,
         'col-span-12': modal,
       }"
       :for="`toggle-${plan.code}`"
@@ -338,16 +339,13 @@
       data-tip="To compare this plan, please uncheck one of the other selected plans."
       @click="handleCheckboxSelect"
     >
-      <input
+      <span
         v-if="isComparing"
-        type="checkbox"
-        :checked="isComparing"
-        class="display-none sm:block form-checkbox h-[0.625rem] w-[0.625rem] text-white rounded accent-action-primary focus:ring-action-primary"
-        :class="{
-          'bg-action-primary': isComparing,
-        }"
-        :disabled="isCheckboxDisabled"
-      />
+        class="display-none sm:inline-flex h-[0.875rem] w-[0.875rem] items-center justify-center rounded-[2px] bg-action-primary text-white shrink-0"
+        aria-hidden="true"
+      >
+        <CheckIcon class="size-[0.625rem]" />
+      </span>
       <span
         :id="`button-${plan.code}`"
         :checked="isComparing"
@@ -355,12 +353,17 @@
         :class="{
           'bg-action-primary text-imt-input-color-default': isComparing,
         }"
-        >Compare
+      >
+        <span v-if="isComparing" class="group-hover:hidden">Compare</span>
+        <span v-if="isComparing" class="hidden group-hover:inline"
+          >Remove</span
+        >
+        <span v-if="!isComparing">Compare</span>
       </span>
     </button>
     <button
       v-if="!isComparePage && !modal"
-      class="md:mb-2 w-full bg-[white] border-2 rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-action-alt-primary h-9 col-span-3"
+      class="md:mb-2 w-full bg-[white] border rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center border-[#DEDEDE] hover:bg-[#F6FAFD] h-9 col-span-3"
       :class="{
         'md:col-span-10 md:col-start-2': !isBuyButtonAndCompareButtonHidden,
         'md:col-span-6': isBuyButtonAndCompareButtonHidden,

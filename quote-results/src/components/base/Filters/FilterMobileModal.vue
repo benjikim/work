@@ -12,7 +12,9 @@
   const isMobile = computed(() => sessionStore.isMobileView);
   const isThemeIMT = computed(() => themeStore.isThemeIMT);
   const isResultsCopyRoute = computed(() =>
-    window.location.pathname.includes('/QRPOCCopy')
+    ['/QRPOCCopy', '/QRPOCSeparate'].some((route) =>
+      window.location.pathname.includes(route)
+    )
   );
 
   watchEffect(() => {

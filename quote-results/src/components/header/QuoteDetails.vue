@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import dayjs from 'dayjs';
   import { useApiStore } from '@/store/api';
   import { useContentStore } from '@/store/content';
   import { useUserSessionStore } from '@/store/userSession';
@@ -13,12 +14,30 @@
   const themeStore = useThemeStore();
 
   const travelDestination = computed(() => apiStore.getTravelDestination);
-  const travelDates = computed(() => apiStore.getTravelDates);
+  const travelDates = computed(() => {
+    const departureDate = apiStore.getDepartureDate;
+    const returnDate = apiStore.getReturnDate;
+
+    if (departureDate && returnDate) {
+      return `${dayjs(departureDate).format('MMM D, YYYY')} - ${dayjs(returnDate).format('MMM D, YYYY')}`;
+    }
+
+    return apiStore.getTravelDates;
+  });
   const travelerAges = computed(() => apiStore.getTravelerAges);
-  const tripCostAndITP = computed(() => apiStore.getTripCostAndITP);
+  const tripCostAndITP = computed(() => {
+    const travelerTripCost = apiStore.getQuoteDetails?.travelers?.[0]?.tripCost;
+    const initialTripPaymentDate =
+      apiStore.getQuoteDetails?.trip?.initialTripPaymentDate;
+
+    if (travelerTripCost && initialTripPaymentDate) {
+      return `$${travelerTripCost} on ${dayjs(initialTripPaymentDate).format('MMM D, YYYY')}`;
+    }
+
+    return apiStore.getTripCostAndITP;
+  });
   const tripCost = computed(() => apiStore.getTripCost);
   const loading = computed(() => apiStore.getLoaderState);
-  const isThemeIMT = computed(() => themeStore.isThemeIMT);
   const isThemeSoventure = computed(() => themeStore.isThemeSoventure);
   const isSoventureUpdateTripCostHidden = computed(
     () => sessionStore.isSoventureUpdateTripCostHidden
@@ -47,17 +66,13 @@
     <template v-if="!themeStore.isModeAnnual">
       <div class="mr-0 lg:mr-3">
         <div
-          class="lg:block display-none lg:font-bold lg:text-xs lg:uppercase lg:pb-1"
+          class="lg:block display-none lg:text-[0.6875rem] lg:uppercase lg:font-normal lg:text-[#878787] lg:tracking-wide lg:pb-1"
         >
           {{ contentStore.getQuoteDetailsContentByKey('destination') || '' }}:
         </div>
         <span
           :class="[
-            'text-sm md:text-xs font-bold underline decoration-dotted',
-            isThemeIMT
-              ? 'text-action-primary cursor-pointer'
-              : '',
-            isThemeSoventure ? 'text-black cursor-pointer' : '',
+            'text-sm md:text-sm font-semibold quote-details-link cursor-pointer text-imt-black',
           ]"
           v-if="travelDestination !== null"
           @click="openEditTripDetailsModal"
@@ -71,21 +86,17 @@
         ></span>
       </div>
       <div
-        class="display-none border-r border-imt-grey h-12 mr-3 lg:block"
+        class="display-none border-r border-[#DEDEDE] h-12 mr-3 lg:block"
       ></div>
       <div class="mr-0 lg:mr-3">
         <div
-          class="display-none lg:font-bold lg:text-xs lg:block lg:uppercase lg:pb-1"
+          class="display-none lg:block lg:text-[0.6875rem] lg:uppercase lg:font-normal lg:text-[#878787] lg:tracking-wide lg:pb-1"
         >
           {{ contentStore.getQuoteDetailsContentByKey('travelDates') || '' }}:
         </div>
         <span
           :class="[
-            'text-sm md:text-xs font-bold underline decoration-dotted',
-            isThemeIMT
-              ? 'text-action-primary cursor-pointer'
-              : '',
-            isThemeSoventure ? 'text-black cursor-pointer' : '',
+            'text-sm md:text-sm font-semibold quote-details-link cursor-pointer text-imt-black',
           ]"
           v-if="travelDates"
           @click="openEditTripDetailsModal"
@@ -99,23 +110,19 @@
         ></span>
       </div>
       <div
-        class="display-none border-r border-imt-grey h-12 mr-3 lg:block"
+        class="display-none border-r border-[#DEDEDE] h-12 mr-3 lg:block"
       ></div>
     </template>
     <template v-else>
       <div class="mr-0 lg:mr-3">
         <div
-          class="display-none lg:font-bold lg:text-xs lg:block lg:uppercase lg:pb-1"
+          class="display-none lg:block lg:text-[0.6875rem] lg:uppercase lg:font-normal lg:text-[#878787] lg:tracking-wide lg:pb-1"
         >
           Coverage Dates:
         </div>
         <span
           :class="[
-            'text-sm md:text-xs font-bold underline decoration-dotted',
-            isThemeIMT
-              ? 'text-action-primary cursor-pointer'
-              : '',
-            isThemeSoventure ? 'text-black cursor-pointer' : '',
+            'text-sm md:text-sm font-semibold quote-details-link cursor-pointer text-imt-black',
           ]"
           v-if="travelDates"
           @click="openEditTripDetailsModal"
@@ -129,22 +136,18 @@
         ></span>
       </div>
       <div
-        class="display-none border-r border-imt-grey h-12 mr-3 lg:block"
+        class="display-none border-r border-[#DEDEDE] h-12 mr-3 lg:block"
       ></div>
     </template>
     <div class="mr-0 display-none lg:mr-3 lg:block">
       <div
-        class="display-none lg:font-bold lg:text-xs lg:block lg:uppercase lg:pb-1"
+        class="display-none lg:block lg:text-[0.6875rem] lg:uppercase lg:font-normal lg:text-[#878787] lg:tracking-wide lg:pb-1"
       >
         {{ contentStore.getQuoteDetailsContentByKey('ages') || '' }}:
       </div>
       <span
         :class="[
-          'text-xs font-bold underline decoration-dotted',
-          isThemeIMT
-            ? 'text-action-primary cursor-pointer'
-            : '',
-          isThemeSoventure ? 'text-black cursor-pointer' : '',
+          'text-sm font-semibold quote-details-link cursor-pointer text-imt-black',
         ]"
         v-if="travelerAges"
         @click="openEditTripDetailsModal"
@@ -159,21 +162,17 @@
     </div>
     <template v-if="!themeStore.isModeAnnual">
       <div
-        class="display-none border-r border-imt-grey h-12 mr-3 lg:block"
+        class="display-none border-r border-[#DEDEDE] h-12 mr-3 lg:block"
       ></div>
       <div class="mr-0 display-none lg:mr-3 lg:block">
         <div
-          class="display-none lg:font-bold lg:text-xs lg:block lg:uppercase lg:pb-1"
+          class="display-none lg:block lg:text-[0.6875rem] lg:uppercase lg:font-normal lg:text-[#878787] lg:tracking-wide lg:pb-1"
         >
           {{ contentStore.getQuoteDetailsContentByKey('tripCost') || '' }}:
         </div>
         <span
           :class="[
-            'text-xs font-bold underline decoration-dotted',
-            isThemeIMT
-              ? 'text-action-primary cursor-pointer'
-              : '',
-            isThemeSoventure ? 'text-black cursor-pointer' : '',
+            'text-sm font-semibold quote-details-link cursor-pointer text-imt-black',
           ]"
           v-if="
             isThemeSoventure &&
@@ -186,11 +185,7 @@
         </span>
         <span
           :class="[
-            'text-xs font-bold underline decoration-dotted',
-            isThemeIMT
-              ? 'text-action-primary cursor-pointer'
-              : '',
-            isThemeSoventure ? 'text-black cursor-pointer' : '',
+            'text-sm font-semibold quote-details-link cursor-pointer text-imt-black',
           ]"
           v-else-if="tripCostAndITP"
           @click="openEditTripDetailsModal"
@@ -200,11 +195,7 @@
         </span>
         <span
           :class="[
-            'text-xs font-bold underline decoration-dotted',
-            isThemeIMT
-              ? 'text-action-primary cursor-pointer'
-              : '',
-            isThemeSoventure ? 'text-black cursor-pointer' : '',
+            'text-sm font-semibold quote-details-link cursor-pointer text-imt-black',
           ]"
           v-else-if="tripCost >= 0 && !loading"
           @click="openEditTripDetailsModal"
@@ -220,3 +211,9 @@
     </template>
   </div>
 </template>
+
+<style scoped>
+  .quote-details-link {
+    text-decoration: none;
+  }
+</style>

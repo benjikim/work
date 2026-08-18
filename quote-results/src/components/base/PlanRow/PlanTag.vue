@@ -185,7 +185,7 @@
           'Hidden',
         ].includes(type)
       "
-      class="mt-1 md:mt-0 rounded py-[0.125rem] md:block text-[#999999] uppercase text-[0.6875rem] font-bold"
+      class="mt-1 md:mt-0 rounded py-[0.125rem] md:block text-[#878787] uppercase text-[0.6875rem] font-normal tracking-wide"
     >
       {{ displayName[type] }}
       <span v-if="displayAdditionalText.length > 0" class="md:display-none">{{
@@ -201,7 +201,7 @@
     </p>
     <p
       v-else
-      class="mt-1 md:mt-0 rounded py-[0.125rem] md:block text-[#999999] uppercase text-[0.6875rem] font-bold"
+      class="mt-1 md:mt-0 rounded py-[0.125rem] md:block text-[#878787] uppercase text-[0.6875rem] font-normal tracking-wide"
     >
       {{ displayName[type] }}
       <span v-if="displayAdditionalText.length > 0" class="md:display-none">{{

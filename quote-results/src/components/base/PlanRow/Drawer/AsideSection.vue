@@ -80,7 +80,7 @@
         </CoverageLabelToolTip>
         <div
           v-if="plan && coverage.key === 'refundWindow' && plan?.reviewPeriod"
-          class="pt-2 text-xs font-normal text-black"
+          class="pt-2 text-sm font-normal text-black"
           :data-cy="`coverage-${coverage.key}__details-${plan.code}`"
         >
           {{
@@ -92,7 +92,7 @@
         <div v-else-if="getCoverageData(plan, coverage.key)">
           <UtilityHTMLRenderer
             is="span"
-            class="utility-html-renderer inline pt-2 text-xs font-normal text-black"
+            class="utility-html-renderer inline pt-2 text-sm font-normal text-black"
             :data-cy="`coverage-${coverage.key}__details-${plan.code}`"
             :content="getCoverageData(plan, coverage.key)"
           ></UtilityHTMLRenderer>
