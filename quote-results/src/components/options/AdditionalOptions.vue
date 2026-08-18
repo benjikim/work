@@ -63,7 +63,12 @@
 </script>
 
 <template>
-  <div class="col-span-12">
+  <div
+    class="col-span-12"
+    :class="{
+      'additional-options--compare': optionLocation === 'comparePage',
+    }"
+  >
     <div v-for="(optionHeader, i) in Object.keys(displayOptions)" :key="i">
       <div
         v-for="(optionId, j) in Object.keys(displayOptions[optionHeader])"
@@ -72,7 +77,7 @@
         <template v-if="isAdditionalOption(optionId)">
           <p
             v-if="optionHeader === 'Optional Coverages' && !isModeAnnual"
-            class="pt-2 text-left text-imt-grey font-semibold text-xs uppercase"
+            class="pt-2 text-left text-[#878787] font-normal text-sm uppercase"
           >
             {{ displayOptions[optionHeader][optionId].displayName }}
           </p>
@@ -111,6 +116,14 @@
 <style lang="scss">
   .form-checkbox input {
     background-color: white;
+  }
+
+  .additional-options--compare :deep(.form-checkbox__label) {
+    color: #878787;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+    text-transform: uppercase;
   }
 
   .annual-deluxe-copy {

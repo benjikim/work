@@ -53,14 +53,14 @@
     <div class="grid grid-cols-3 items-center">
       <button
         type="button"
-        class="flex-1 inline-flex flex-row items-center justify-center daisy-btn rounded-3xl bg-white border-2 border-[#DEDEDE] font-normal max-w-[215px] ml-[10px]"
+        class="flex w-full max-w-[215px] items-center justify-center gap-[5px] rounded-md border border-[#DEDEDE] bg-white p-1 text-center transition-colors duration-150 hover:bg-[#F6FAFD] ml-[10px] h-9"
         @click="handleBack"
         aria-label="Back to Quote Results"
       >
         <ChevronLeftIcon
-          class="size-4 font-bold ml-[-5px] text-[--action-primary]"
+          class="size-4 text-action-alt-primary"
         />
-        <span class="font-bold text-sm ml-[-5px] text-[--action-primary]">
+        <span class="text-[0.625rem] font-bold uppercase text-action-alt-primary">
           <span class="block">Back to Quote Results</span>
         </span>
       </button>

@@ -62,6 +62,58 @@
   };
 
   const isSectionOpen = userSessionStore.isSectionOpen;
+
+  const hasSectionContent = (section: { header: string; coverages: { key: string }[] }) => {
+    if (!props.plan) return false;
+
+    if (section.header === 'Optional Coverages') {
+      const optionKeys = Object.keys(
+        userSessionStore.getOptionsOfSelectedPlan(props.plan.code) || {}
+      ).filter(
+        (option) =>
+          ![
+            'medical',
+            'deductible',
+            'vacationRentalDamage',
+            'cancelForAnyReason',
+            'accidentalDeath24Hour',
+            'accidentalDeathCommonCarrier',
+            'accidentalDeathFlight',
+            'interruptionForAnyReason',
+          ].includes(option)
+      );
+
+      return optionKeys.length > 0;
+    }
+
+    if (section.header === 'Included Benefits') {
+      return (props.plan.includedBenefits?.length || 0) > 0;
+    }
+
+    if (section.header === 'Covered Activities') {
+      return (props.plan.coveredActivities?.length || 0) > 0;
+    }
+
+    if (section.header === 'Description') {
+      return !!planDescription.value;
+    }
+
+    if (
+      props.plan.type === 'Evacuation' &&
+      section.header === 'Evacuation'
+    ) {
+      return evacuationSpecificSection.length > 0;
+    }
+
+    if (
+      props.plan.type === 'Travel Medical' &&
+      section.header === 'Pre-Existing Conditions'
+    ) {
+      return medicalSpecificSection.length > 0;
+    }
+
+    return section.coverages.length > 0;
+  };
 </script>
 <template>
   <div class="px-3">
@@ -79,7 +131,11 @@
           section.header === 'Plan Info' ? 'block md:display-none' : '',
         ]"
       >
-        <AccordionHeader :plan="plan" :section="section" />
+        <AccordionHeader
+          :plan="plan"
+          :section="section"
+          :has-content="hasSectionContent(section)"
+        />
         <!-- Accordion Content -->
         <Transition
           enter-active-class="transition-opacity duration-200 ease-out"

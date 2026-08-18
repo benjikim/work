@@ -26,7 +26,45 @@
       type: String,
       required: false,
     },
+    planName: {
+      type: String,
+      required: false,
+    },
   });
+
+  const customPlanLabels: Record<string, string> = {
+    'explore elite': 'Best Value for Families',
+    'international choice': 'Comprehensive',
+    essential: 'Popular Cruise Plan Option',
+    'go ready choice': 'Comprehensive',
+    'exactcare value': 'Comprehensive',
+    'atlas journey elevate': 'Great Value Plan Option',
+    exactcare: 'Comprehensive',
+    ultimate: 'Great Value for Cruise Coverage',
+    'atlas journey escape': 'Comprehensive',
+    'international travel se': 'Comprehensive',
+    'international choice cruise': 'Comprehensive',
+    'atlas journey explore': 'Popular Cruise Plan Option',
+    'explore secure': 'Comprehensive',
+    classic: 'Comprehensive',
+    'patriot international lite': 'Comprehensive',
+    'single-trip prime': 'Comprehensive',
+    aegis: 'Comprehensive',
+    'international travel lx': 'Comprehensive',
+    advantage: 'Comprehensive',
+    gold: 'Comprehensive',
+    bronze: 'Comprehensive',
+    'single-trip gold': 'Comprehensive',
+    'multi-trip gold': 'Comprehensive',
+    'international travel select cve': 'Comprehensive',
+    'multi-trip preferred': 'Comprehensive',
+    'medicare plus': 'International Medical',
+    'medicare xl': 'International Medical',
+    'medicare start': 'International Medical',
+    'medicare complete': 'International Medical',
+    'medicare premier': 'International Medical',
+    'medicare executive': 'International Medical',
+  };
   const displayName = {
     Evacuation: 'Medical Evacuation',
     Comprehensive: 'Comprehensive',
@@ -134,14 +172,31 @@
   });
 
   const planLabelContent = computed(() => {
+    const normalizedPlanName = props.planName?.trim().toLowerCase();
+
+    if (normalizedPlanName && normalizedPlanName in customPlanLabels) {
+      return customPlanLabels[normalizedPlanName];
+    }
+
     return contentStore.getPlanLabelsByKey(props.planCode || '');
+  });
+
+  const usesDefaultPlanLabelStyle = computed(() => {
+    return ['Comprehensive', 'International Medical'].includes(
+      planLabelContent.value || ''
+    );
   });
 </script>
 
 <template>
   <div class="flex items-center"v-if="planLabelContent && planLabelContent.length > 0">
     <p
-      class="mt-1 md:mt-0 rounded py-[0.125rem] text-center md:block text-[#e68a00] uppercase text-[0.6875rem] font-bold"
+      :class="[
+        'mt-1 md:mt-0 rounded py-[0.125rem] text-center md:block uppercase text-[0.6875rem] tracking-wide',
+        usesDefaultPlanLabelStyle
+          ? 'text-[#878787] font-normal'
+          : 'text-[#e68a00] font-medium',
+      ]"
     >
       {{ planLabelContent }}
     </p>

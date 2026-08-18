@@ -74,6 +74,15 @@
     sessionStore.setCoveredActivitiesModalOpen(true);
   }
 
+  const hasExpandableContent = computed(() => {
+    const data = filterData.value;
+    if (!data) {
+      return false;
+    }
+
+    return (data.checkBoxLabels?.length || 0) > 0;
+  });
+
   /**
    * Sets tooltip id in session store.
    */
@@ -213,12 +222,21 @@
         "
   >
     <div class="flex justify-between border-b-2 border-[#A7A7A7] pb-2">
-      <div class="flex" @click="handleAccordion">
+      <div
+        class="flex"
+        :class="[
+          hasExpandableContent
+            ? 'cursor-pointer daisy-tooltip daisy-tooltip-right'
+            : 'cursor-default opacity-50',
+        ]"
+        :data-tip="hasExpandableContent ? 'Click to expand' : null"
+        @click="hasExpandableContent ? handleAccordion() : undefined"
+      >
         <ChevronUpIcon
           v-if="hide"
-          class="size-6 stroke-action-primary cursor-pointer"
+          class="size-6 stroke-action-primary"
         />
-        <ChevronDownIcon v-else class="size-6 stroke-action-primary cursor-pointer" />
+        <ChevronDownIcon v-else class="size-6 stroke-action-primary" />
         <p class="pl-2 text-base font-bold tracking-wide text-[#212629]">
           {{ filterData?.label }}
         </p>

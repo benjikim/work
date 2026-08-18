@@ -122,6 +122,53 @@
     showRating.value = !showRating.value;
   };
 
+  const sectionHasContent = (section: {
+    header: string;
+    coverages: { key: string }[];
+  }) => {
+    if (section.header === 'Optional Coverages') {
+      return planCodes.value.some((planCode) => {
+        const planOptions = userSessionStore.getOptionsOfSelectedPlan(planCode);
+        return Object.keys(planOptions || {}).some(
+          (option) =>
+            ![
+              'medical',
+              'deductible',
+              'vacationRentalDamage',
+              'cancelForAnyReason',
+              'accidentalDeath24Hour',
+              'accidentalDeathCommonCarrier',
+              'accidentalDeathFlight',
+              'interruptionForAnyReason',
+            ].includes(option)
+        );
+      });
+    }
+
+    if (section.header === 'Included Benefits') {
+      return planCodes.value.some(
+        (planCode) => (getPlan(planCode)?.includedBenefits?.length || 0) > 0
+      );
+    }
+
+    if (section.header === 'Covered Activities') {
+      return coveredActivitiesArray.value.length > 0;
+    }
+
+    if (section.header === 'Evacuation' && isEvacPlanIncluded.value) {
+      return evacuationSpecificSection.length > 0;
+    }
+
+    if (
+      section.header === 'Pre-Existing Conditions' &&
+      isMedPlanIncluded.value
+    ) {
+      return medicalSpecificSection.length > 0;
+    }
+
+    return section.coverages.length > 0;
+  };
+
   const updateStickyHeaderShadow = () => {
     const headerEl = headerScrollRef.value;
     const bodyEl = bodyScrollRef.value;
@@ -261,33 +308,36 @@
 
         <tbody>
           <tr
-            class="compare-section-header w-full cursor-pointer transition-colors duration-200 hover:bg-[rgba(135,135,135,0.2)]"
+            class="compare-section-header w-full cursor-pointer transition-colors duration-150"
+            :class="[
+              showRating ? 'compare-group-start compare-group-start--open' : 'compare-group-closed',
+              { 'compare-section-header--open': showRating },
+            ]"
+            title="Click to expand"
             @click="toggleRating"
           >
             <th
               v-for="(_, j) in userSessionStore.isMobileView ? planCodes : [null]"
               :key="`rating-header-${j}`"
               :colspan="1"
-              class="py-3"
+              class="py-0"
             >
-              <div class="flex items-center justify-center gap-2">
-                <p class="text-imt-black text-center text-xs md:text-sm uppercase tracking-[0.08em]">
-                  Plan Summary
-                </p>
+              <div class="compare-section-header__content">
                 <ChevronUpIcon
                   v-if="showRating"
-                  class="size-5 stroke-[#878787] fill-[#878787]"
+                  class="compare-section-header__icon"
                 />
                 <ChevronDownIcon
                   v-else
-                  class="size-5 stroke-[#878787] fill-[#878787]"
+                  class="compare-section-header__icon"
                 />
+                <p class="compare-section-header__title">Plan Summary</p>
               </div>
             </th>
             <th
               v-if="!userSessionStore.isMobileView"
               :colspan="planCodes.length"
-              class="py-3"
+              class="py-0"
             ></th>
           </tr>
 
@@ -299,13 +349,16 @@
             leave-from-class="max-h-[200px] opacity-100"
             leave-to-class="max-h-0 opacity-0"
           >
-            <tr v-if="showRating" class="align-top text-center">
+            <tr
+              v-if="showRating"
+              class="compare-data-row compare-group-middle align-top text-center"
+            >
               <th
                 scope="row"
                 v-if="!isMobile"
-                class="text-xs text-left md:table-cell align-top"
+                class="text-left md:table-cell align-top"
               >
-                <span class="font-normal text-[#878787] uppercase pr-1">
+                <span class="text-sm font-normal text-[#878787] uppercase pr-1">
                   Overall Rating
                 </span>
               </th>
@@ -327,13 +380,16 @@
             leave-from-class="max-h-[200px] opacity-100"
             leave-to-class="max-h-0 opacity-0"
           >
-            <tr v-if="showRating" class="align-top text-center">
+            <tr
+              v-if="showRating"
+              class="compare-data-row compare-group-end align-top text-center"
+            >
               <th
                 scope="row"
                 v-if="!isMobile"
-                class="text-xs text-left md:table-cell align-top"
+                class="text-left md:table-cell align-top"
               >
-                <span class="font-normal text-[#878787] uppercase pr-1">
+                <span class="text-sm font-normal text-[#878787] uppercase pr-1">
                   View Certificate
                 </span>
               </th>
@@ -360,8 +416,16 @@
             <!-- Section title row -->
             <tr
               v-if="section.header.toLowerCase() !== 'plan info'"
-              class="compare-section-header w-full cursor-pointer transition-colors duration-200 hover:bg-[rgba(135,135,135,0.2)]"
-              @click="handleAccordion(i)"
+              class="compare-section-header w-full transition-colors duration-150"
+              :class="[
+                show[i] ? 'compare-group-start compare-group-start--open' : 'compare-group-closed',
+                { 'compare-section-header--open': show[i] },
+                sectionHasContent(section)
+                  ? 'cursor-pointer'
+                  : 'cursor-default opacity-50',
+              ]"
+              :title="sectionHasContent(section) ? 'Click to expand' : undefined"
+              @click="sectionHasContent(section) ? handleAccordion(i) : undefined"
             >
               <!-- first cell -->
               <th
@@ -370,22 +434,20 @@
                   : [null]"
                 :key="j"
                 :colspan="1"
-                class="py-3"
+                class="py-0"
               >
-                <div class="flex justify-center w-full items-center gap-2">
-                  <p
-                    class="text-imt-black text-center text-xs md:text-sm uppercase tracking-[0.08em]"
-                  >
-                    {{ section.header }}
-                  </p>
+                <div class="compare-section-header__content">
                   <ChevronUpIcon
                     v-if="show[i]"
-                    class="size-5 stroke-[#878787] fill-[#878787] cursor-pointer"
+                    class="compare-section-header__icon"
                   />
                   <ChevronDownIcon
                     v-else
-                    class="size-5 stroke-[#878787] fill-[#878787] cursor-pointer"
+                    class="compare-section-header__icon"
                   />
+                  <p class="compare-section-header__title">
+                    {{ section.header }}
+                  </p>
                 </div>
               </th>
 
@@ -393,7 +455,7 @@
               <th
                 v-if="!userSessionStore.isMobileView"
                 :colspan="planCodes.length"
-                class="h-7 py-1"
+                class="py-0"
               ></th>
             </tr>
 
@@ -409,11 +471,19 @@
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
-              <tr v-if="show[i]">
+              <tr
+                v-if="show[i]"
+                class="compare-data-row"
+                :class="
+                  evacuationSpecificSection.indexOf(evacCoverage) === evacuationSpecificSection.length - 1
+                    ? 'compare-group-end'
+                    : 'compare-group-middle'
+                "
+              >
                 <th
                   scope="row"
                   v-if="!isMobile"
-                  class="text-xs text-left md:table-cell align-top"
+                  class="text-left md:table-cell align-top"
                 >
                   <CoverageLabelToolTip
                     :tool-tip-text="evacCoverage.toolTipText"
@@ -421,7 +491,7 @@
                     tool-tip-position="right"
                     underline-label
                   >
-                    <span class="font-normal text-[#878787] uppercase pr-1">
+                    <span class="text-sm font-normal text-[#878787] uppercase pr-1">
                       {{ evacCoverage.label }}
                     </span>
                   </CoverageLabelToolTip>
@@ -457,11 +527,19 @@
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
-              <tr v-if="show[i]">
+              <tr
+                v-if="show[i]"
+                class="compare-data-row"
+                :class="
+                  medicalSpecificSection.indexOf(preExCoverage) === medicalSpecificSection.length - 1
+                    ? 'compare-group-end'
+                    : 'compare-group-middle'
+                "
+              >
                 <th
                   scope="row"
                   v-if="!isMobile"
-                  class="text-xs text-left md:table-cell align-top"
+                  class="text-left md:table-cell align-top"
                 >
                   <CoverageLabelToolTip
                     :tool-tip-text="preExCoverage.toolTipText"
@@ -469,7 +547,7 @@
                     tool-tip-position="right"
                     underline-label
                   >
-                    <span class="font-normal text-[#878787] uppercase pr-1">
+                    <span class="text-sm font-normal text-[#878787] uppercase pr-1">
                       {{ preExCoverage.label }}
                     </span>
                   </CoverageLabelToolTip>
@@ -493,7 +571,7 @@
 
             <Transition
               v-else-if="section.coverages.length > 0"
-              v-for="coverage in section.coverages"
+              v-for="(coverage, coverageIndex) in section.coverages"
               :key="coverage.key"
               enter-active-class="transition-none"
               enter-from-class="max-h-0 opacity-0"
@@ -502,11 +580,19 @@
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
-              <tr v-if="show[i]">
+              <tr
+                v-if="show[i]"
+                class="compare-data-row"
+                :class="
+                  coverageIndex === section.coverages.length - 1
+                    ? 'compare-group-end'
+                    : 'compare-group-middle'
+                "
+              >
                 <th
                   scope="row"
                   v-if="!isMobile"
-                  class="text-xs text-left md:table-cell align-top"
+                  class="text-left md:table-cell align-top"
                 >
                   <CoverageLabelToolTip
                     :tool-tip-text="coverage.toolTipText"
@@ -514,7 +600,7 @@
                     tool-tip-position="right"
                     underline-label
                   >
-                    <span class="font-normal text-[#878787] uppercase pr-1">
+                    <span class="text-sm font-normal text-[#878787] uppercase pr-1">
                       {{ coverage.label }}
                     </span>
                   </CoverageLabelToolTip>
@@ -544,12 +630,12 @@
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
-              <tr v-if="show[i]">
+              <tr v-if="show[i]" class="compare-data-row compare-group-end">
                 <th v-if="!isMobile" class="md:table-cell"></th>
                 <td
                   v-for="planCode in planCodes"
                   :key="`${planCode}-optional-coverages`"
-                  class="text-xs snap-center align-top !text-left"
+                  class="text-sm font-normal snap-center align-top !text-left"
                 >
                   <AdditionalOptions
                     :plan-code="planCode"
@@ -569,7 +655,7 @@
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
-              <tr v-if="show[i]">
+              <tr v-if="show[i]" class="compare-data-row compare-group-end">
                 <th v-if="!isMobile" class="md:table-cell"></th>
                 <td
                   v-for="planCode in planCodes"
@@ -594,12 +680,12 @@
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
-              <tr v-if="show[i]">
+              <tr v-if="show[i]" class="compare-data-row compare-group-end">
                 <th v-if="!isMobile" class="md:table-cell"></th>
                 <td
                   v-for="planCode in planCodes"
                   :key="`${planCode}-coveredActivities`"
-                  class="align-top font-bold text-xs snap-center text-left"
+                  class="align-top text-sm font-normal snap-center text-left"
                 >
                   <CoveredActivitiesTableRow
                     :plan-code="planCode"
@@ -673,10 +759,51 @@
     .utility-html-renderer strong {
       font-weight: 400;
     }
+
+    tbody tr.compare-data-row:hover {
+      th,
+      td {
+        background-color: rgb(246, 250, 253);
+      }
+    }
   }
 
-  .compare-section-header {
-    background-color: #f7f7f7;
+  .compare-section-header__content {
+    align-items: center;
+    border-radius: 6px;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    padding: 5px 0 0.5rem;
+    width: 100%;
+  }
+
+  .compare-section-header__title {
+    color: #000;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+    text-align: left;
+  }
+
+  .compare-section-header__icon {
+    color: #878787;
+    flex: 0 0 auto;
+    height: 1.25rem;
+    width: 1.25rem;
+  }
+
+  .compare-section-header th {
+    border-bottom: 1px solid #dedede;
+    text-align: left;
+  }
+
+  .compare-section-header--open th {
+    border-bottom-color: #dedede;
+  }
+
+  #quote-results-app .plans-table .daisy-tooltip::before {
+    font-weight: 400;
   }
 
   .compare-sticky-header--shadow {

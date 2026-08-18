@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ChevronDownIcon, LinkIcon } from '@heroicons/vue/24/solid';
+  import { LinkIcon } from '@heroicons/vue/24/solid';
   import { ArrowUpOnSquareIcon, EnvelopeIcon } from '@heroicons/vue/24/outline';
   import { useApiStore } from '@/store/api';
   import { useContentStore } from '@/store/content';
@@ -289,6 +289,12 @@
       @click="handleShareMobile"
     >
       <ArrowUpOnSquareIcon class="size-5 text-action-alt-primary" />
+      <span
+        class="uppercase text-action-alt-primary text-[0.625rem] font-bold"
+        v-if="shareContent"
+      >
+        Share Results
+      </span>
     </button>
   </div>
   <div v-else>
@@ -301,15 +307,19 @@
         class="w-full md:w-[215px] bg-[white] border border-[#DEDEDE] rounded-md flex p-1 items-center text-center mt-2.5 cursor-pointer relative gap-[5px] justify-center h-9 hover:bg-[#F6FAFD] list-none"
         @click="handleDropdownOpen"
       >
-        <ChevronDownIcon class="size-5 text-action-alt-primary display-none md:block" />
         <span
           class="uppercase text-action-alt-primary text-[0.625rem] font-bold display-none md:block"
           v-if="shareContent"
         >
-          {{ shareContent.label }}
+          Share Results
         </span>
         <ArrowUpOnSquareIcon class="size-5 text-action-alt-primary" />
-        <ChevronDownIcon class="size-5 text-action-alt-primary md:display-none" />
+        <span
+          class="uppercase text-action-alt-primary text-[0.625rem] font-bold md:display-none"
+          v-if="shareContent"
+        >
+          Share Results
+        </span>
       </summary>
       <ul
         class="p-2 shadow daisy-menu daisy-dropdown-content z-[1] rounded-box w-52 bg-white"

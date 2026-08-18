@@ -62,7 +62,7 @@
   >
     <span
       v-if="underlineLabel"
-      class="decoration-dotted underline underline-offset-4 cursor-help"
+      class="inline-block w-full text-left decoration-dotted underline underline-offset-4 cursor-help"
     >
       <slot />
     </span>

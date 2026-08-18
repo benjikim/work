@@ -486,6 +486,7 @@
           <PlanTag
             :type="isModeEdu ? 'EDU' : plan?.type"
             :plan-code="plan.code"
+            :plan-name="plan.name"
           />
         </div>
         <div class="grid grid-cols-12">

@@ -23,9 +23,17 @@
       }>,
       required: true,
     },
+    hasContent: {
+      type: Boolean,
+      default: true,
+    },
   });
 
   const toggleSection = (header: string) => {
+    if (!props.hasContent) {
+      return;
+    }
+
     if (props.plan.code) {
       userSessionStore.toggleSection(header, props.plan.code);
     }
@@ -59,17 +67,20 @@
 <template>
   <!-- Accordion Header -->
   <div
-    class="flex items-center justify-between pt-[5px] pb-2 mb-2 cursor-pointer select-none transition-colors duration-150 rounded-[6px]"
+    class="flex items-center justify-between pt-[5px] pb-2 mb-2 select-none transition-colors duration-150 rounded-[6px]"
     :class="{
       'border-b border-[#DEDEDE]': userSessionStore.isSectionOpen(
         section.header,
         plan.code
       ),
+      'cursor-pointer': hasContent,
+      'cursor-default opacity-50': !hasContent,
       'hover:bg-[#F7F7F7]': !userSessionStore.isSectionOpen(
         section.header,
         plan.code
-      ),
+      ) && hasContent,
     }"
+    :title="hasContent ? 'Click to expand' : undefined"
     @click="toggleSection(section.header)"
   >
     <div
@@ -78,12 +89,12 @@
       :data-cy="`plan-row-details-accordion-header-${section.header.toLocaleLowerCase().split(' ').join('_')}-${plan.code}`"
     >
       <ChevronUpIcon
-        class="size-5 text-black cursor-pointer transition-transform duration-200 ease-in-out"
+        class="size-5 text-black transition-transform duration-200 ease-in-out"
         :class="{
           'rotate-180': userSessionStore.isSectionOpen(
             section.header,
             plan.code
-          ),
+          ) && hasContent,
         }"
       />
       <p
