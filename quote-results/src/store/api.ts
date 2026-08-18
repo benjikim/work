@@ -116,6 +116,21 @@ const STATIC_DEMO_TYPE_FALLBACKS: Record<string, QuoteResult['type']> = {
   GBTC: 'Travel Medical',
 };
 
+const STATIC_DEMO_CRUISE_FILTER_PLAN_NAMES = new Set([
+  'Ultimate',
+  'Atlas Journey Explore',
+]);
+
+const isCruiseFilterPlan = (
+  plan: QuoteResult,
+  getPlanTypeByKey: (key: string) => string | null
+) => {
+  return (
+    getPlanTypeByKey(plan.code) === 'Cruise' ||
+    STATIC_DEMO_CRUISE_FILTER_PLAN_NAMES.has(plan.name)
+  );
+};
+
 const normalizeStaticDemoProduct = (
   product: Partial<QuoteResult>
 ): QuoteResult => {
@@ -1609,8 +1624,9 @@ export const useApiStore = defineStore('api-store', {
         // Setting for all amounts
         filters['medical-0'].add(plan.code);
         filters['emergencyMedicalEvacuation-0'].add(plan.code);
-        if (contentStore.getPlanTypeByKey(plan.code) == 'Cruise') {
-          // add plan type conditional
+        if (isCruiseFilterPlan(plan, contentStore.getPlanTypeByKey)) {
+          // Keep live cruise plan-type behavior and support the two cruise-focused
+          // plans used by the QRPOCCopy static demo data.
           filters['otherCoverages-2'].add(plan.code);
         }
 

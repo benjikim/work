@@ -113,19 +113,19 @@
     },
     'baggage-0': {
       contentKey: 'baggage',
-      label: 'Baggage Loss up to $750 total',
+      label: 'Baggage Loss up to $750',
     },
     'baggage-1': {
       contentKey: 'baggage',
-      label: 'Baggage Loss $1000 total',
+      label: 'Baggage Loss $1000',
     },
     'baggage-2': {
       contentKey: 'baggage',
-      label: 'Baggage Loss $1500 to $2000 total',
+      label: 'Baggage Loss $1500 to $2000',
     },
     'baggage-3': {
       contentKey: 'baggage',
-      label: 'Baggage Loss $2,500 total and more',
+      label: 'Baggage Loss $2,500 and more',
     },
     'otherCoverages-0': {
       contentKey: 'otherCoverages',

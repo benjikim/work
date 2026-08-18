@@ -660,10 +660,10 @@ export const useContentStore = defineStore('content-store', {
             toolTipText:
               'Coverage for baggage if it is lost, damaged, or stolen.',
             checkBoxLabels: [
-              'up to $750 total',
-              '$1000 total',
-              '$1500 to $2000 total',
-              '$2,500 total and more',
+              'up to $750',
+              '$1000',
+              '$1500 to $2000',
+              '$2,500 and more',
             ],
             radioButtonLabels: [],
             toolTipSecondaryText: '',

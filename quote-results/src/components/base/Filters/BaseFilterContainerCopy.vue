@@ -268,10 +268,10 @@
   const baggageOptions = [
     { key: 'travelDelay-0', label: 'Travel Delay' },
     { key: 'baggageDelay-0', label: 'Baggage Delay' },
-    { key: 'baggage-0', label: 'Baggage Loss up to $750 total' },
-    { key: 'baggage-1', label: 'Baggage Loss $1000 total' },
-    { key: 'baggage-2', label: 'Baggage Loss $1500 to $2000 total' },
-    { key: 'baggage-3', label: 'Baggage Loss $2,500 total and more' },
+    { key: 'baggage-0', label: 'Baggage Loss up to $750' },
+    { key: 'baggage-1', label: 'Baggage Loss $1000' },
+    { key: 'baggage-2', label: 'Baggage Loss $1500 to $2000' },
+    { key: 'baggage-3', label: 'Baggage Loss $2,500 and more' },
   ];
 
   const otherCoverageOptions = [
