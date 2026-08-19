@@ -75,8 +75,7 @@
     if (
       !annualPlanCardWrapRef.value ||
       !annualPlanCardSummaryRef.value ||
-      !annualPlanCardTableRef.value ||
-      sessionStore.isMobileView
+      !annualPlanCardTableRef.value
     ) {
       isAnnualPlanCardScrolled.value = false;
       return;
@@ -2239,12 +2238,13 @@
     }
 
     .annual-plan-card__summary {
-      position: static;
+      position: sticky;
+      top: 0;
+      z-index: 15;
       padding: 10px;
       align-items: flex-start;
       gap: 10px;
-      border-bottom: 0;
-      box-shadow: none;
+      border-bottom: 1px solid #f2f2f2;
     }
 
     .annual-layout {
