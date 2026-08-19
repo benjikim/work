@@ -23,6 +23,7 @@
   import { getShownPlans, initResellerRatings } from '@/utility';
   import { previousRoute } from '@/router/previousRoute';
   import { GAObject } from '@/types';
+  import { ArrowUpOnSquareIcon } from '@heroicons/vue/24/outline';
   import siteLogo from '@/assets/images/logo.svg';
 
   const apiStore = useApiStore();
@@ -328,9 +329,8 @@
           </div>
 
           <button class="annual-share-button" type="button" @click="shareResults">
-            <span class="annual-share-button__chevron" aria-hidden="true"></span>
-            <span>Share Results</span>
-            <span class="annual-share-button__icon" aria-hidden="true"></span>
+            <span class="annual-share-button__label">Share Results</span>
+            <ArrowUpOnSquareIcon class="annual-share-button__icon" aria-hidden="true" />
           </button>
         </section>
 
@@ -352,7 +352,7 @@
               <span class="annual-mobile-actions__chevron" aria-hidden="true"></span>
             </button>
             <button class="annual-mobile-actions__share" type="button" @click="shareResults" aria-label="Share Results">
-              <span class="annual-share-button__icon" aria-hidden="true"></span>
+              <ArrowUpOnSquareIcon class="annual-share-button__icon" aria-hidden="true" />
             </button>
           </div>
         </section>
@@ -456,7 +456,10 @@
               </div>
 
               <div ref="annualPlanCardTableRef" class="annual-plan-card__table">
-                <PlanDetailsTable :plan="plan" />
+                <PlanDetailsTable
+                  :plan="plan"
+                  annual-variant="default"
+                />
               </div>
             </div>
 
@@ -740,6 +743,7 @@
 
   .annual-topbar__utility {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
     gap: 40px;
     font-family: 'gamay', sans-serif;
@@ -751,6 +755,33 @@
     line-height: 1;
     width: 100%;
     padding-right: 248px;
+  }
+
+  .annual-topbar__toggle {
+    margin-right: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-family: 'gamay', sans-serif;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  .annual-topbar__toggle:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.82);
   }
 
   .annual-topbar__nav-row {
@@ -1200,59 +1231,48 @@
   .annual-share-button {
     display: inline-flex;
     align-items: center;
-    gap: 14px;
+    gap: 5px;
     justify-content: center;
-    width: 224px;
-    min-height: 48px;
-    padding: 0 16px;
-    border: 2px solid #d4dbe4;
-    border-radius: 999px;
-    background: #fff;
+    width: 215px;
+    min-height: 35px;
+    padding: 4px;
+    border: 1px solid #dedede;
+    border-radius: 6px;
+    background: #f6fafd;
     color: #0354d6;
     font-family: 'gamay', sans-serif;
     font-size: 16px;
     font-weight: 600;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: none;
+    text-decoration: none;
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      color 0.18s ease;
+    cursor: pointer;
   }
 
-  .annual-share-button__chevron {
-    width: 10px;
-    height: 10px;
-    border-right: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
-    transform: rotate(45deg) translateY(-1px);
+  .annual-share-button:hover {
+    background: #eef5ff;
+    border-color: #cfd6df;
+  }
+
+  .annual-share-button__label {
+    color: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    line-height: 15px;
   }
 
   .annual-share-button__icon {
-    position: relative;
-    width: 16px;
-    height: 16px;
-    border: 2px solid currentColor;
-    border-top: 0;
-    border-radius: 2px;
-    margin-left: 2px;
-  }
-
-  .annual-share-button__icon::before {
-    content: '';
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    border-top: 2px solid currentColor;
-    border-right: 2px solid currentColor;
-    top: -6px;
-    left: 5px;
-    transform: rotate(-45deg);
-  }
-
-  .annual-share-button__icon::after {
-    content: '';
-    position: absolute;
-    width: 2px;
-    height: 8px;
-    background: currentColor;
-    top: -3px;
-    left: 7px;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    color: currentColor;
+    stroke-width: 2.25;
   }
 
   .annual-layout {
@@ -1457,6 +1477,10 @@
     background: #fff;
   }
 
+  .annual-plan-card--proposed {
+    overflow: hidden;
+  }
+
   .annual-plan-card-wrap {
     min-width: 0;
   }
@@ -1600,6 +1624,12 @@
     font-family: 'gamay', sans-serif;
   }
 
+  .annual-additional-coverage-note--inside {
+    margin-top: 0;
+    padding: 18px 20px 22px;
+    border-top: 1px solid #dedede;
+  }
+
   .annual-additional-coverage-note__title {
     margin: 0 0 6px;
     font-size: 14px;
@@ -1625,12 +1655,34 @@
   }
 
   .annual-additional-coverage-note__link {
-    display: inline-block;
-    color: #2a2a2a;
-    font-size: 14px;
-    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 35px;
+    padding: 4px 12px;
+    margin-top: 12px;
+    border: 1px solid #dedede;
+    border-radius: 6px;
+    background: #f6fafd;
+    color: #0354d6;
+    font-size: 10px;
+    line-height: 15px;
     font-weight: 600;
+    text-transform: uppercase;
     text-decoration: none;
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .annual-additional-coverage-note__link:hover {
+    background: #eef5ff;
+    border-color: #cfd6df;
+  }
+
+  .annual-additional-coverage-note--inside .annual-additional-coverage-note__link {
+    margin-top: 12px;
   }
 
   :deep(.annual-plan-card__table .daisy-table) {
@@ -1718,6 +1770,13 @@
     background: var(--action-alt-primary) !important;
     cursor: pointer !important;
     flex-shrink: 0 !important;
+  }
+
+  :deep(.annual-plan-card__table .form-checkbox input:checked:disabled) {
+    accent-color: var(--action-alt-primary) !important;
+    background: var(--action-alt-primary) !important;
+    border-color: var(--action-alt-primary) !important;
+    opacity: 1 !important;
   }
 
   :deep(.annual-plan-card__table .form-checkbox__label) {
@@ -2395,6 +2454,12 @@
     :deep(.annual-plan-card__table .form-checkbox input:checked) {
       background: var(--action-primary) !important;
       border-color: var(--action-primary) !important;
+    }
+
+    :deep(.annual-plan-card__table .form-checkbox input:checked:disabled) {
+      background: var(--action-primary) !important;
+      border-color: var(--action-primary) !important;
+      opacity: 1 !important;
     }
 
     :deep(.annual-plan-card__table .form-checkbox input:checked::after) {

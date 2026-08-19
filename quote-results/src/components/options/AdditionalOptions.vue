@@ -19,6 +19,11 @@
       type: String,
       required: true,
     },
+    allowedOptionKeys: {
+      type: Array as () => string[],
+      required: false,
+      default: () => [],
+    },
   });
 
   const plan = computed(() => sessionStore.getPlanByPlanCode(props.planCode));
@@ -59,6 +64,7 @@
   });
 
   const isModeAnnual = computed(() => themeStore.isModeAnnual);
+  const hasAllowedOptionKeys = computed(() => props.allowedOptionKeys.length > 0);
 
 </script>
 
@@ -74,7 +80,18 @@
         v-for="(optionId, j) in Object.keys(displayOptions[optionHeader])"
         :key="j"
       >
-        <template v-if="isAdditionalOption(optionId)">
+        <template
+          v-if="
+            isAdditionalOption(optionId) ||
+            (isModeAnnual && props.allowedOptionKeys.includes(optionId))
+          "
+        >
+          <template
+            v-if="
+              !hasAllowedOptionKeys ||
+              props.allowedOptionKeys.includes(optionId)
+            "
+          >
           <p
             v-if="optionHeader === 'Optional Coverages' && !isModeAnnual"
             class="pt-2 text-left text-[#878787] font-normal text-sm uppercase"
@@ -88,11 +105,14 @@
             :option-location="optionLocation"
           />
           <div
-            v-if="optionId === 'DeluxeUpgrade' && isModeAnnual"
+            v-if="
+              (optionId === 'DeluxeUpgrade' || optionId === 'tripCancellation') &&
+              isModeAnnual
+            "
             :data-cy="`option-${optionId}__${optionLocation}-${planCode}`"
             class="annual-deluxe-copy"
           >
-            <ul>
+            <ul v-if="optionId === 'DeluxeUpgrade'">
               <li>
                 <strong>Increase Trip delay coverage</strong>
                 <span>5+ hours: $100 per day; $500 per person/per trip</span>
@@ -107,6 +127,7 @@
               </li>
             </ul>
           </div>
+          </template>
         </template>
       </div>
     </div>

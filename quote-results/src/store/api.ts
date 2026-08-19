@@ -41,16 +41,22 @@ import * as configcat from 'configcat-js';
 
 const STATIC_DEMO_QID = '1f1964f4-94b3-62ec-ad3c-415ce827df76';
 const RESULTS_COPY_ROUTES = ['/QRPOCCopy', '/QRPOCSeparate'];
+const STYLE_GUIDE_ROUTES = ['/style-guide-library'];
 const isPlanDetailsPocRoute = () =>
   window.location.pathname.includes('/QRPlanDetailsPOC');
 const isResultsCopyRoute = () =>
-  RESULTS_COPY_ROUTES.some((route) =>
+  [...RESULTS_COPY_ROUTES, ...STYLE_GUIDE_ROUTES].some((route) =>
+    window.location.pathname.includes(route)
+  );
+const isStyleGuideRoute = () =>
+  STYLE_GUIDE_ROUTES.some((route) =>
     window.location.pathname.includes(route)
   );
 const isAnnualResultsCopyRoute = () =>
   window.location.pathname.includes('/annual-results-copy');
 const isStaticDemoMode = () =>
   isResultsCopyRoute() ||
+  isStyleGuideRoute() ||
   import.meta.env.VITE_STATIC_DEMO === 'true' ||
   window.location.hostname.endsWith('github.io');
 

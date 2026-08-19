@@ -1,32 +1,17 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
+  import { ref } from 'vue';
   import { MagnifyingGlassIcon, ChevronDownIcon } from '@heroicons/vue/24/outline';
   import { XMarkIcon } from '@heroicons/vue/24/solid';
-  import { useApiStore } from '@/store/api';
   import logo from '@/assets/images/logo.svg';
 
-  const apiStore = useApiStore();
-
-  const quoteId = computed(() => apiStore.getQuoteId);
-  const resultsHref = computed(() =>
-    quoteId.value ? `/?_qid=${quoteId.value}` : '/'
-  );
-
-  const utilityLinks = [
-    { label: 'Contact Us', href: 'https://www.insuremytrip.com/contact/' },
-  ];
+  const utilityLinks = [{ label: 'Contact Us' }];
 
   const primaryLinks = [
-    {
-      label: 'Discover Insurance',
-      href: 'https://www.insuremytrip.com/travel-insurance-plans/',
-    },
-    { label: 'Reviews & FAQs', href: 'https://www.insuremytrip.com/travel-insurance-reviews/' },
-    { label: 'Resources', href: 'https://www.insuremytrip.com/travel-guidance/' },
-    { label: 'Get Support', href: 'https://www.insuremytrip.com/service/' },
+    { label: 'Discover Insurance' },
+    { label: 'Reviews & FAQs' },
+    { label: 'Resources' },
+    { label: 'Get Support' },
   ];
-
-  const searchHref = 'https://www.insuremytrip.com/?s=';
   const isWhatsNewOpen = ref(false);
   const showWhatsNewPill = ref(false);
 
@@ -167,52 +152,49 @@
         >
           What&apos;s New?
         </button>
-        <a class="compare-page-header__logo-link" href="/">
+        <span class="compare-page-header__logo-link" aria-label="InsureMyTrip logo">
           <img
             class="compare-page-header__logo"
             :src="logo"
             alt="InsureMyTrip"
           />
-        </a>
+        </span>
       </div>
 
       <div class="compare-page-header__nav-group">
         <nav class="compare-page-header__utility-nav" aria-label="Utility">
           <div class="compare-page-header__utility-spacer"></div>
-          <a
+          <span
             v-for="link in utilityLinks"
             :key="link.label"
             class="compare-page-header__utility-link"
-            :href="link.href"
           >
             {{ link.label }}
-          </a>
+          </span>
         </nav>
 
         <div class="compare-page-header__main-row">
           <nav class="compare-page-header__primary-nav" aria-label="Main">
-            <a
+            <span
               v-for="link in primaryLinks"
               :key="link.label"
               class="compare-page-header__primary-link"
-              :href="link.href"
             >
               <span>{{ link.label }}</span>
               <ChevronDownIcon class="compare-page-header__chevron" aria-hidden="true" />
-            </a>
+            </span>
           </nav>
 
-          <a
+          <span
             class="compare-page-header__search"
-            :href="searchHref"
             aria-label="Search"
           >
             <MagnifyingGlassIcon class="compare-page-header__search-icon" />
-          </a>
+          </span>
 
-          <a class="compare-page-header__cta" :href="resultsHref">
+          <span class="compare-page-header__cta" aria-label="Start a Quote">
             Start a Quote
-          </a>
+          </span>
         </div>
       </div>
     </div>

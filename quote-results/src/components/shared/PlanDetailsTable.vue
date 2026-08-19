@@ -21,13 +21,25 @@
       type: Object as PropType<QuoteResult>,
       required: false,
     },
+    annualVariant: {
+      type: String as PropType<'default' | 'proposed'>,
+      required: false,
+      default: 'default',
+    },
   });
 
   const isModeAnnual = computed(() => themeStore.isModeAnnual);
   const annualSingleTripHiddenKeys = new Set([
+    'tripCancellation',
     'financialDefault',
     'cancelForAnyReasonOption',
     'tripInterruptionForAnyReason',
+    'vacationRentalDamage',
+    'preExWaiver',
+  ]);
+
+  const annualProposedHiddenKeys = new Set([
+    'tripCancellation',
     'vacationRentalDamage',
     'preExWaiver',
   ]);
@@ -75,8 +87,13 @@
 
       annualCoverageLimitsMap.forEach((section) => {
         if (section.coverages?.length) {
+          const hiddenKeys =
+            props.annualVariant === 'proposed'
+              ? annualProposedHiddenKeys
+              : annualSingleTripHiddenKeys;
+
           section.coverages = section.coverages.filter(
-            (coverage) => !annualSingleTripHiddenKeys.has(coverage.key)
+            (coverage) => !hiddenKeys.has(coverage.key)
           );
         }
       });
@@ -91,6 +108,30 @@
 
   const medicalSpecificSection = contentStore.getMedicalSpecificMap;
 
+  const tripCancellationTooltipText = computed(
+    () =>
+      contentStore.getCoverageLimitsMap
+        .flatMap((entry) => entry.coverages)
+        .find((coverage) => coverage.key === 'tripCancellation')
+        ?.toolTipText || 'Trip Cancellation'
+  );
+
+  const hasAnnualTripCancellationOptions = computed(() => {
+    const formattedTripCancellationOption = props.plan?.code
+      ? sessionStore.getOptionsOfSelectedPlan(props.plan.code)?.tripCancellation
+      : undefined;
+
+    const hasFormattedValues =
+      !!formattedTripCancellationOption?.values &&
+      Object.keys(formattedTripCancellationOption.values).length > 0;
+
+    const hasRawOptionValues = !!props.plan?.options?.some(
+      (option) => option.id === 'tripCancellation'
+    );
+
+    return hasFormattedValues || hasRawOptionValues;
+  });
+
   const trackCertificateClick = (planCode: string) => {
     event('plan_action_plan_details_modal', {
       hierarchical_layer_1:
@@ -101,6 +142,7 @@
         : 'Quote Results Page',
     } as GAObject);
   };
+
 </script>
 <template>
   <div
@@ -200,13 +242,50 @@
             optionLocation="detailsModal"
           />
         </tr>
+        <template v-else-if="section.header === 'Optional Coverages' && isModeAnnual">
+          <tr class="bg-[#F6FAFD]">
+            <td class="text-sm snap-center">
+              <span class="font-bold text-[#878787] uppercase pr-1">
+                deluxe upgrade
+              </span>
+            </td>
+            <td class="font-bold text-sm snap-center">
+              <AdditionalOptions
+                :plan-code="plan.code"
+                option-location="detailsModal"
+                :allowed-option-keys="['DeluxeUpgrade']"
+              />
+            </td>
+          </tr>
+          <tr
+            v-if="hasAnnualTripCancellationOptions"
+            class="bg-[#F6FAFD]"
+          >
+            <td class="text-sm snap-center">
+              <CoverageLabelToolTip
+                :tool-tip-text="tripCancellationTooltipText"
+                mobile-modal-heading="Trip Cancellation"
+                :underline-label="true"
+              >
+                <span class="font-bold text-[#878787] uppercase pr-1">
+                  trip cancellation
+                </span>
+              </CoverageLabelToolTip>
+            </td>
+            <td class="font-bold text-sm snap-center">
+              <AdditionalOptions
+                :plan-code="plan.code"
+                option-location="detailsModal"
+                :allowed-option-keys="['tripCancellation']"
+              />
+            </td>
+          </tr>
+        </template>
         <tr
           class="bg-[#F6FAFD]"
           v-else-if="section.header === 'Optional Coverages'"
         >
-          <td
-            class="font-bold text-[#878787] uppercase text-sm snap-center"
-          ></td>
+          <td class="font-bold text-[#878787] uppercase text-sm snap-center"></td>
           <td class="font-bold text-sm snap-center">
             <AdditionalOptions
               :plan-code="plan.code"

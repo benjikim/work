@@ -51,6 +51,13 @@
     'preExWaiver',
   ]);
 
+  const annualUpgradeLinkMap: Record<string, string> = {
+    medical: 'DeluxeUpgrade',
+    tripCancellation: 'tripCancellation',
+    travelDelay: 'DeluxeUpgrade',
+    emergencyMedicalEvacuation: 'DeluxeUpgrade',
+  };
+
   const options = computed(() => {
     if (props.planCode)
       return sessionStore.getOptionsOfSelectedPlan(props.planCode);
@@ -59,6 +66,36 @@
   const plan = computed(() => {
     if (props.planCode) return apiStore.getPlanByPlanCode(props.planCode);
   });
+
+  const hasAnnualUpgradeAvailable = computed(() => {
+    if (!isModeAnnual.value || !options.value) return false;
+
+    const optionKey = annualUpgradeLinkMap[props.coverage.key];
+    return Boolean(optionKey && options.value[optionKey]);
+  });
+
+  const scrollToCoverageUpgrades = () => {
+    sessionStore.setScrollPlanCode(props.planCode);
+    sessionStore.setScrollToPlanDetailSection('.tr_optional_coverages');
+
+    const section = document.querySelector('.tr_optional_coverages') as
+      | HTMLElement
+      | null;
+    const stickySummary = document.querySelector(
+      '.annual-plan-card__summary'
+    ) as HTMLElement | null;
+
+    if (section) {
+      const stickyOffset = stickySummary?.offsetHeight ?? 0;
+      const sectionTop =
+        section.getBoundingClientRect().top + window.scrollY - stickyOffset - 8;
+
+      window.scrollTo({
+        top: Math.max(sectionTop, 0),
+        behavior: 'smooth',
+      });
+    }
+  };
 
   const isSecondary = (plan: QuoteResult, coverageId: string) => {
     const currentCoverage = plan.coverages.find(
@@ -234,6 +271,19 @@
           :data-cy="`coverage-${coverage.key}__${optionLocation}-${planCode}-secondary`"
           modal-view
         />
+        <button
+          v-if="
+            isModeAnnual &&
+            optionLocation === 'detailsModal' &&
+            hasAnnualUpgradeAvailable &&
+            coverage.key !== 'tripCancellation'
+          "
+          class="text-sm text-action-primary font-normal btn btn-link p-0 pl-3 tracking-normal normal-case"
+          type="button"
+          @click="scrollToCoverageUpgrades"
+        >
+          Upgrade Available
+        </button>
       </div>
       <template
         v-if="

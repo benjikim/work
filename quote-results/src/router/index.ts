@@ -29,6 +29,11 @@ const routes = [
     component: () => import('@/views/AnnualResultsCopy.vue'),
   },
   {
+    path: '/style-guide-library',
+    name: 'StyleGuideLibrary',
+    component: () => import('@/views/StyleGuideLibrary.vue'),
+  },
+  {
     path: '/QRPlanDetailsPOC',
     name: 'ResultsPlanDetailsPOC',
     component: () => import('@/views/Results.vue'),
